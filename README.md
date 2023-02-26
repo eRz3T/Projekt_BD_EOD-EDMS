@@ -1,11 +1,11 @@
 # Projekt_BD_EOD-EDMS
 
-## TODO
+## :memo: TODO
 
 - Finish server setup
 - install & setup redux for react
 
-### Installation steps
+### :rocket: Installation steps
 
 1. Clone repository
 2. Install dependencies for client by running command:
