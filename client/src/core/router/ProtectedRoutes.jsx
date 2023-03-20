@@ -1,10 +1,13 @@
 import React from 'react'
 import { Outlet, Navigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { selectAuthToken } from '../store/auth/authSelectors'
 
 const ProtectedRoutes = () => {
-  let auth = { token: false }
+  const token = useSelector(selectAuthToken)
+  console.log(token)
 
-  return auth.token ? <Outlet /> : <Navigate to='/login' />
+  return token.length ? <Outlet /> : <Navigate to='/login' />
 }
 
 export default ProtectedRoutes
