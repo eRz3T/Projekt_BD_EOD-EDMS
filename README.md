@@ -3,7 +3,6 @@
 ## :memo: TODO
 
 - Finish server setup
-- install & setup redux for react
 
 ### :rocket: Installation steps
 
