@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import logo from '@/assets/images/eobieg_logo_x64.png'
 import { navItems } from './Navbar.utils.js'
+import { useLocation } from 'react-router-dom'
 import IconWithBadge from './IconWithBadge'
-import { Link, useLocation } from 'react-router-dom'
+import NavLinks from './NavLinks.jsx'
 
 const Navbar = () => {
+  const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const isAuthorized = true
-
-  const location = useLocation()
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
@@ -16,7 +16,7 @@ const Navbar = () => {
 
   return (
     <menu className='sticky top-0 left-0'>
-      <div className='bg-white py-3'>
+      <div className='bg-white py-3 px-2'>
         <div className='container mx-auto'>
           <div className='flex justify-between items-center'>
             <div className='flex items-center space-x-4'>
@@ -26,19 +26,7 @@ const Navbar = () => {
               )}
               {isAuthorized && (
                 <nav className='hidden lg:flex space-x-6 pl-8 text-xl'>
-                  {navItems?.map((navItem) => (
-                    <Link
-                      key={navItem.id}
-                      to={navItem.destinationRoute}
-                      className={`${
-                        location?.pathname === navItem.destinationRoute
-                          ? 'text-slate-900'
-                          : 'text-slate-500'
-                      } font-medium hover:text-gray-300`}
-                    >
-                      {navItem.title}
-                    </Link>
-                  ))}
+                  <NavLinks navItems={navItems} pathname={location.pathname} />
                 </nav>
               )}
             </div>
@@ -80,30 +68,16 @@ const Navbar = () => {
         </div>
       </div>
 
-      {mobileMenuOpen && isAuthorized && (
+      {mobileMenuOpen && isAuthorized && navItems.length > 0 && (
         <div className='fixed top-0 left-0 w-full h-full bg-white'>
           <div className='container mx-auto h-full flex flex-col justify-center items-center space-y-4'>
             <img src={logo} alt='Logo' className='h-10 w-auto' />
-            <a href='#' className=' text-slate-900 font-medium hover:text-gray-300'>
-              Kokpit
-            </a>
-            <a href='#' className=' text-slate-600 hover:text-gray-300'>
-              Zadania
-            </a>
-            <a href='#' className=' text-slate-600 hover:text-gray-300'>
-              Dokumenty
-            </a>
-            <a href='#' className=' text-slate-600 hover:text-gray-300'>
-              Kontakty
-            </a>
-            <a href='#' className=' text-slate-600 hover:text-gray-300'>
-              Admin
-            </a>
+            <NavLinks navItems={navItems} pathname={location.pathname} />
             <button
               onClick={toggleMobileMenu}
               className='text-slate-900 text-xl focus:outline-none mt-4'
             >
-              <i className='bx bx-x'></i>
+              <i className='bx bx-x text-4xl text-slate-700'></i>
             </button>
           </div>
         </div>
