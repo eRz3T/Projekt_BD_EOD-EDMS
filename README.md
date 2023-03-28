@@ -1,8 +1,6 @@
 # Projekt_BD_EOD-EDMS
 
-## :memo: TODO
-
-- Finish server setup
+## develop - test branch
 
 ### :rocket: Installation steps
 
