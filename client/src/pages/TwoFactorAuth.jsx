@@ -1,6 +1,7 @@
 import React from 'react'
 import qrImg from '@/assets/images/mock_qr.png'
-import logoHuge from '@/assets/images/eobieg_logo_x480.png'
+import Input from '../shared/components/Input/Input'
+import ShowcaseRight from '../features/authPages/showcaseRight/ShowcaseRight'
 
 const TwoFactorAuth = () => {
   return (
@@ -15,33 +16,28 @@ const TwoFactorAuth = () => {
               Zeskanuj kod QR w aplikacji mobilnej lub wpisz kod
             </p>
           </header>
-          <main className='flex flex-col'>
+          <form className='flex flex-col'>
             <p className='mb-2 text-lg text-slate-800 font-medium'>QR</p>
             <img src={qrImg} alt='qr code' className=' self-center' />
-            <p className='mb-2 mt-6 text-lg text-slate-800 font-medium'>Kod sześciocyfrowy</p>
-            <input
+            <Input
+              label='Kod sześciocyfrowy'
+              name='qrCode'
               placeholder='Kod z aplikacji mobilnej...'
-              type='text'
-              className='border-solid border-2 border-gray-500 rounded-md px-3 py-2 mb-8'
+              type='tel'
+              isRequired={true}
             />
             <button
               type='submit'
-              className='text-white font-medium focus:outline-none rounded-md py-2 text-lg'
+              className='text-white font-medium focus:outline-none rounded-md py-2 mt-8 text-lg'
               style={{ backgroundColor: '#A29BFE' }}
             >
               Przejdź do panelu
             </button>
-          </main>
+          </form>
         </div>
       </section>
 
-      <aside className='flex-1 hidden lg:flex relative' style={{ background: '#EAF1F9' }}>
-        <img src={logoHuge} alt='eobieg logo' className='self-center mx-auto' />
-        <div
-          className='absolute w-full h-1/2 bottom-0 opacity-75 blur-2xl'
-          style={{ background: '#EAF1F9' }}
-        ></div>
-      </aside>
+      <ShowcaseRight />
     </div>
   )
 }
