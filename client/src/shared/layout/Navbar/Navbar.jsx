@@ -8,7 +8,7 @@ import NavLinks from './NavLinks.jsx'
 const Navbar = () => {
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const isAuthorized = true
+  const isAuthorized = false
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
@@ -16,13 +16,13 @@ const Navbar = () => {
 
   return (
     <menu className='sticky top-0 left-0'>
-      <div className='bg-white py-3 px-2'>
+      <div className='py-3 px-2'>
         <div className='container mx-auto'>
           <div className='flex justify-between items-center'>
             <div className='flex items-center space-x-4'>
               <img src={logo} alt='Logo' className='h-12 w-auto' />
               {!isAuthorized && (
-                <span className='text-slate-900 font-semibold hidden lg:block text-xl'>eOBIEG</span>
+                <span className='text-slate-900 font-semibold text-xl'>eOBIEG</span>
               )}
               {isAuthorized && (
                 <nav className='hidden lg:flex space-x-6 pl-8 text-xl'>
