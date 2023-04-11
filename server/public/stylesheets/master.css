@@ -1,0 +1,99 @@
+body {
+    background-image: url('/images/tlo.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+
+
+  }
+
+  srodek{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+content{
+    color: white;
+    animation: transitionIN 0.8s;
+    }
+
+@keyframes transitionIN {
+    from {
+        opacity: 0;
+        transform: rotateX('-10deg');
+    }
+
+    to {
+        opacity: 1;
+        transform: rotateX('0');
+    }
+    
+}
+
+a{color: white;}
+
+button,input[type="submit"] {
+    background-color: transparent;
+    border: 2px solid white;
+    padding: 5px 5px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+  }
+  
+
+linki{
+    font-size: x-large;
+    color: white;
+    width: 30%;
+}
+
+tytul{
+    margin-top: 40px;
+    font-size: 48px;
+    color: white;
+}
+
+nawigacja {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+
+}
+
+info{
+    display: block;
+    width: 900px;
+}
+
+p{
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+input[type="text"],
+input[type="name"],
+input[type="surname"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: none;
+  color: purple;
+  font-size: large;
+  font-weight: bold;
+  background-color: white;}
