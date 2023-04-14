@@ -1,10 +1,16 @@
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const { validationResult } = require('express-validator')
 const bcrypt = require('bcryptjs')
 const { JWT_SECRET } = process.env
 
 exports.register = async (req, res) => {
   try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() })
+    }
+
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
     const user = await User.createUser(
       req.body.email,
@@ -14,7 +20,7 @@ exports.register = async (req, res) => {
     )
     res.status(201).json({ message: 'User created successfully', user })
   } catch (error) {
-    res.status(500).json({ error })
+    res.status(400).json({ error: error.message })
   }
 }
 
@@ -33,6 +39,6 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' })
     res.json({ message: 'Logged in successfully', token })
   } catch (error) {
-    res.status(500).json({ error })
+    res.status(400).json({ error, message: 'Error' })
   }
 }
