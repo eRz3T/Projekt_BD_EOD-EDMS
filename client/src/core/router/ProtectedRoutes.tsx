@@ -1,4 +1,3 @@
-import React from 'react'
 import { Outlet, Navigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectAuthToken } from '../store/auth/authSelectors'

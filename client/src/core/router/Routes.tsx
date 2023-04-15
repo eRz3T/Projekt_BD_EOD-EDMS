@@ -1,4 +1,3 @@
-import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import ProtectedRoutes from './ProtectedRoutes'
 import Home from '@/pages/Home'
@@ -12,7 +11,7 @@ const Router = () => {
       <Navbar />
       <Routes>
         <Route element={<ProtectedRoutes />}>
-          <Route element={<Home />} path='/' exact />
+          <Route element={<Home />} path='/' />
         </Route>
         <Route element={<Login />} path='/login' />
         <Route element={<TwoFactorAuth />} path='/login-2fa' />

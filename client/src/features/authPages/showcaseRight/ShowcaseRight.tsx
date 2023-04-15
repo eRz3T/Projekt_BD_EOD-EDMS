@@ -1,4 +1,3 @@
-import React from 'react'
 import logoHuge from '@/assets/images/eobieg_logo_x480.png'
 
 const ShowcaseRight = () => {
