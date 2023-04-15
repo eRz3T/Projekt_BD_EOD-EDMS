@@ -1,0 +1,12 @@
+{
+  "email": "Email",
+  "password": "Hasło",
+  "phone": "Telefon",
+  "login.welcomeBack": "Witaj ponownie",
+  "login.subtitle": "Podaj swoje dane logowania, aby wejść do systemu",
+  "login.provideYourEmail": "Wpisz swój adres e-mail",
+  "login.provideYourPassword": "Wpisz swoje hasło",
+  "login.restorePassword": "Przywróć hasło",
+  "login.logIn": "Zaloguj się",
+  "login.dontHaveAnAccount": "Nie masz konta? Skontaktuj się z administratorem"
+}

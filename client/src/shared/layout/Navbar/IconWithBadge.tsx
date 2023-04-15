@@ -1,6 +1,9 @@
-import React from 'react'
+interface IIconWithBadgeProps {
+  iconClass: string
+  number: number
+}
 
-const IconWithBadge = ({ iconClass, number }) => {
+const IconWithBadge = ({ iconClass, number }: IIconWithBadgeProps) => {
   return (
     <div className='relative'>
       <i className={`bx bx-${iconClass} text-slate-600 text-3xl`}></i>

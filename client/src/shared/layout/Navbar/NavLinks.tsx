@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom'
+import { INavItem } from './Navbar.utils'
 
-const NavLinks = ({ navItems, pathname }) => {
+interface INavLinksProps {
+  navItems: INavItem[]
+  pathname: string
+}
+
+const NavLinks = ({ navItems, pathname }: INavLinksProps) => {
   return (
     <>
       {navItems?.map((navItem) => (

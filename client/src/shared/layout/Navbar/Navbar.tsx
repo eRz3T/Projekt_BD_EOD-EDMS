@@ -3,7 +3,7 @@ import logo from '@/assets/images/eobieg_logo_x64.png'
 import { navItems } from './Navbar.utils.js'
 import { useLocation } from 'react-router-dom'
 import IconWithBadge from './IconWithBadge'
-import NavLinks from './NavLinks.jsx'
+import NavLinks from './NavLinks'
 
 const Navbar = () => {
   const location = useLocation()

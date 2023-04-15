@@ -1,4 +1,3 @@
-import React from 'react'
 import qrImg from '@/assets/images/mock_qr.png'
 import Input from '../shared/components/Input/Input'
 import ShowcaseRight from '../features/authPages/showcaseRight/ShowcaseRight'

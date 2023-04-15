@@ -1,6 +1,14 @@
-import React from 'react'
+import { HTMLInputTypeAttribute } from 'react'
 
-const Input = ({ label, name, placeholder, type, isRequired }) => {
+interface IInputProps {
+  label: string
+  name: string
+  placeholder: string
+  type: HTMLInputTypeAttribute
+  isRequired: boolean
+}
+
+const Input = ({ label, name, placeholder, type, isRequired }: IInputProps) => {
   return (
     <>
       <label htmlFor={name} className='mb-2 mt-4 text-lg text-primary font-medium'>
