@@ -8,5 +8,17 @@
   "login.provideYourPassword": "Wpisz swoje hasło",
   "login.restorePassword": "Przywróć hasło",
   "login.logIn": "Zaloguj się",
-  "login.dontHaveAnAccount": "Nie masz konta? Skontaktuj się z administratorem"
+  "login.dontHaveAnAccount": "Nie masz konta? Skontaktuj się z administratorem",
+  "login.emailIsRequired": "Wprowadź adres email",
+  "login.provideValidEmail": "Podaj prawidłowy adres email",
+  "login.passwordIsRequired": "Podaj prawidłowe hasło",
+  "login.minOneLowercase": "Minimum jedna mała litera",
+  "login.minOneUppercase": "Minimum jedna duża litera",
+  "login.min8characters": "Minimum osiem znaków",
+  "login.minOneDigit": "Minimum jedna cyfra",
+  "login.minOneSpecialCharacter": "Minimum jeden znak specjalny",
+  "login.successfulyLoggedIn": "Poprawnie zalogowano!",
+  "login.incorrectCredentials": "Nieprawidłowy email lub hasło",
+  "login.userNotFound": "Podany użytkownik nie istnieje",
+  "login.loginError": "Błąd w trakcie logowania"
 }
