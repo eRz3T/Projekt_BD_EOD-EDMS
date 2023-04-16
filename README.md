@@ -1,6 +1,6 @@
-# eOBIEG - Electronic Document Management System
+# eOBIEG - Electronic Document Management System [![Version - 1.0.1](https://img.shields.io/badge/Version-1.0.1-2ea44f)](https://)
 
-## develop - test branch
+## main - production branch
 
 ### :rocket: Installation steps
 
