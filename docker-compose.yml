@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  # ============================ ZAKOMENTUJ JEŚLI NIE CHCESZ TEGO KONTENERYZOWAĆ ==========================
+  backend:
+    container_name: eobiegAPI
+    build: ./server
+    ports:
+      - '5000:5000'
+    environment:
+      - DATABASE_URL=postgres://postgres:password@db:5432/eobieg
+    depends_on:
+      - db
+
+  # ============================ ZAKOMENTUJ JEŚLI NIE CHCESZ TEGO KONTENERYZOWAĆ ==========================
+  frontend:
+    container_name: eobiegWEB
+    build: ./client
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+
+  # ============================ ZAKOMENTUJ JEŚLI NIE CHCESZ TEGO KONTENERYZOWAĆ ==========================
+  db:
+    container_name: eobiegPSQL
+    image: 'postgres:15'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=eobieg
+    ports:
+      - '5432:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:

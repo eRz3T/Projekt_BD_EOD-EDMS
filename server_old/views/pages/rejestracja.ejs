@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/stylesheets/master.css">
+    <title>eObieg - Rejestracja</title>
+</head>
+  <body>
+    <tytul>eObieg</tytul><br>
+  <srodek>
+
+    <ul>
+      <% if(typeof errors != 'undefined') { %> 
+        <% errors.forEach(error=>{%>
+          <li><%= error.message %></li>
+        
+          
+     <% })  %> <% } %>
+    </ul>
+
+    <nawigacja>
+            <content>
+                <linki>
+                  <button><a href="/">Home</a></button>
+                  <button><a href="logowanie">Logowanie</a></button>
+                </linki>
+            </content>
+    </nawigacja><br>
+
+
+    <content>
+      <form action="/rejestracja" method="POST">
+        <a1>Podaj swoje imię</a1>
+        <div>
+          <input type="name" id="name" name="name" placeholder="Imię użytkownika" required><br>
+        </div>
+      
+        <a2>Podaj swoje nazwisko </a2>
+        <div>
+          <input type="surname" id="surname" name="surname" placeholder="Nazwisko użytkownika" required><br>
+        </div>
+      
+        <a2>Podaj swój email </a2>
+        <div>
+          <input type="email" id="email" name="email" placeholder="Email użytkownika" required>
+        </div>
+      
+        <a2>Podaj hasło</a2>
+        <div>
+          <input type="password" id="password" name="password" placeholder="Hasło" required>
+        </div>
+      
+        <input type="submit" value="Zarejestruj się" style="color: white;" />
+      </form>      
+    </content>
+
+  </srodek>
+  </body>
+</html>

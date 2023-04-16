@@ -1,0 +1,28 @@
+{
+  "email": "Email",
+  "login.dontHaveAnAccount": "Nie masz konta? Skontaktuj się z administratorem",
+  "login.emailIsRequired": "Wprowadź adres email",
+  "login.incorrectCredentials": "Nieprawidłowy email lub hasło",
+  "login.logIn": "Zaloguj się",
+  "login.loginError": "Błąd w trakcie logowania",
+  "login.min8characters": "Minimum osiem znaków",
+  "login.minOneDigit": "Minimum jedna cyfra",
+  "login.minOneLowercase": "Minimum jedna mała litera",
+  "login.minOneSpecialCharacter": "Minimum jeden znak specjalny",
+  "login.minOneUppercase": "Minimum jedna duża litera",
+  "login.passwordIsRequired": "Podaj prawidłowe hasło",
+  "login.provideValidEmail": "Podaj prawidłowy adres email",
+  "login.provideYourEmail": "Wpisz swój adres e-mail",
+  "login.provideYourPassword": "Wpisz swoje hasło",
+  "login.restorePassword": "Przywróć hasło",
+  "login.subtitle": "Podaj swoje dane logowania, aby wejść do systemu",
+  "login.successfulyLoggedIn": "Poprawnie zalogowano!",
+  "login.userNotFound": "Podany użytkownik nie istnieje",
+  "login.welcomeBack": "Witaj ponownie",
+  "password": "Hasło",
+  "phone": "Telefon",
+
+  "notFound.backToDashboard": "Powrót do kokpitu",
+  "notFound.title": "Taka strona nie istnieje!",
+  "notFound.subtitle": "Przepraszamy, nie udało się znaleźć strony której szukałeś."
+}
