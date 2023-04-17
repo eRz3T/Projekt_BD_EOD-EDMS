@@ -111,11 +111,6 @@ app.get("/users/userPanel", checkNotAuthenticated, (req, res) =>{
     console.log("panel uzytkownika") 
 });
 
-app.get("/miesny", (req, res) => {
-  res.render("users/pages-access/miesny");
-});
-
-
 // Obsługa żądania GET na adres "/users/uploads"
 // Renderowanie szablonu "uploads.ejs"
 app.get("/users/uploads",checkAuthenticated, (req, res)=>{ 
