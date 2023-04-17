@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/stylesheets/master.css">
+    <title>eObieg</title>
+</head>
+
+<body>
+  <tytul>eObieg</tytul><br>
+<srodek>
+  <h1>Zalogowano jako <%=user%></h1>
+
+    <content>
+      <img src="/images/us.gif" alt="USER" class="logo-img" style="width: 500px; height: 300px;">
+    </content>
+  
+
+
+    <br><nawigacja>
+    <content>
+      <form action="/wylogowanie" method="POST">
+        <button type="submit" style="color: white;">Wyloguj użytkownika</button>
+        <div>
+
+
+
+      <div style="margin-top: 20px;" ><a>Pliki na serwerze</a></div>
+    </content>
+   </nawigacja>
+      <ul>
+        <% if(messages.success_msg) { %> 
+          <li><%= messages.success_msg %></li> 
+        <% } else if (messages.error_msg) { %>
+          <li><%= messages.error_msg %></li> 
+        <% } %> 
+      </ul>
+      <nawigacja>
+      <content>
+      </div>
+      </form> 
+      <button><a href="/users/uploads">Prześlij plik</a></button>
+      <button><a href="/users/filelist">Wyświetl</a></button>     
+</content>
+</nawigacja><br>
+</srodek>
+
+</body>
+</html>
