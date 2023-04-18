@@ -27,7 +27,7 @@ const upload = require("./uploads"); // Import kodu z uploads.js
 
 
 // PORT: zmienna środowiskowa przechowująca numer portu aplikacji lub 4000, jeśli nie jest określona
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 
 //ustawienie silnika szablonów ejs dla aplikacji.
