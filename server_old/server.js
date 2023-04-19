@@ -153,12 +153,24 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
         console.log(err);
         return res.status(500).send("Wystąpił błąd podczas pobierania pliku");
       }
-      // Odczytanie nazwy pliku
+      // Odczytanie nazwy pliku i nazwy oryginalnej
       const fileName = result.rows[0].hashed_name_file;
+      const originalFileName = result.rows[0].name_file;
       // Konstrukcja ścieżki pliku
       const filePath = path.join(__dirname, 'uploads', fileName);
       // Wysłanie pliku do klienta
-      res.download(filePath, result.rows[0].original_name_file);
+      res.download(filePath, originalFileName, (err) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send("Wystąpił błąd podczas pobierania pliku");
+        }
+        // Aktualizacja nazwy pliku na serwerze
+        fs.rename(filePath, path.join(__dirname, 'uploads', originalFileName), (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+      });
     }
   );
 });
