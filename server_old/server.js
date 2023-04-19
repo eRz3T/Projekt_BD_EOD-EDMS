@@ -140,6 +140,41 @@ app.get("/users/filelist", checkAuthenticated, (req, res) => {
   );
 });
 
+// // Route do pobierania pliku
+// app.get('/users/download/:id', checkAuthenticated, (req, res) => {
+//   const fileId = req.params.id;
+//   // Pobranie informacji o pliku z bazy danych
+//   pool.query(
+//     `SELECT * FROM files WHERE id_file = $1`,
+//     [fileId],
+//     (err, result) => {
+//       // Obsługa błędów zapytania
+//       if (err) {
+//         console.log(err);
+//         return res.status(500).send("Wystąpił błąd podczas pobierania pliku");
+//       }
+//       // Odczytanie nazwy pliku i nazwy oryginalnej
+//       const fileName = result.rows[0].hashed_name_file;
+//       const originalFileName = result.rows[0].name_file;
+//       // Konstrukcja ścieżki pliku
+//       const filePath = path.join(__dirname, 'uploads', fileName);
+//       // Wysłanie pliku do klienta
+//       res.download(filePath, originalFileName, (err) => {
+//         if (err) {
+//           console.log(err);
+//           return res.status(500).send("Wystąpił błąd podczas pobierania pliku");
+//         }
+//         // Aktualizacja nazwy pliku na serwerze
+//         fs.rename(filePath, path.join(__dirname, 'uploads', originalFileName), (err) => {
+//           if (err) {
+//             console.log(err);
+//           }
+//         });
+//       });
+//     }
+//   );
+// });
+
 // Route do pobierania pliku
 app.get('/users/download/:id', checkAuthenticated, (req, res) => {
   const fileId = req.params.id;
@@ -158,23 +193,37 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
       const originalFileName = result.rows[0].name_file;
       // Konstrukcja ścieżki pliku
       const filePath = path.join(__dirname, 'uploads', fileName);
-      // Wysłanie pliku do klienta
-      res.download(filePath, originalFileName, (err) => {
+      // Konstrukcja ścieżki pliku w folderze BUFOR
+      const bufferPath = path.join(__dirname, 'uploads', 'BUFOR', fileName);
+      // Skopiowanie pliku do folderu BUFOR
+      fs.copyFile(filePath, bufferPath, (err) => {
         if (err) {
           console.log(err);
           return res.status(500).send("Wystąpił błąd podczas pobierania pliku");
         }
-        // Aktualizacja nazwy pliku na serwerze
-        fs.rename(filePath, path.join(__dirname, 'uploads', originalFileName), (err) => {
+        // Zmiana nazwy skopiowanego pliku na oryginalną
+        fs.rename(bufferPath, path.join(__dirname, 'uploads', 'BUFOR', originalFileName), (err) => {
           if (err) {
             console.log(err);
           }
+          // Wysłanie pliku do klienta
+          res.download(filePath, originalFileName, (err) => {
+            if (err) {
+              console.log(err);
+              return res.status(500).send("Wystąpił błąd podczas pobierania pliku");
+            }
+            // Usunięcie skopiowanego pliku z folderu BUFOR
+            fs.unlink(path.join(__dirname, 'uploads', 'BUFOR', originalFileName), (err) => {
+              if (err) {
+                console.log(err);
+              }
+            });
+          });
         });
       });
     }
   );
 });
-
 
 // Obsługa żądania POST na adres "/wylogowanie"
 // Wylogowanie użytkownika
@@ -239,13 +288,15 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
     }
   );
 });
-} else {
+}
+ else 
+{
   console.log("nie udało się przesłać pliku")
   req.flash('error_msg', 'Nie udało się przesłać pliku');
   // Przekierowanie użytkownika z powrotem do formularza
   res.redirect("/users/userPanel");
-  }
-  });
+}
+});
 
 
 
