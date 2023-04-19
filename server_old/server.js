@@ -140,40 +140,6 @@ app.get("/users/filelist", checkAuthenticated, (req, res) => {
   );
 });
 
-// // Route do pobierania pliku
-// app.get('/users/download/:id', checkAuthenticated, (req, res) => {
-//   const fileId = req.params.id;
-//   // Pobranie informacji o pliku z bazy danych
-//   pool.query(
-//     `SELECT * FROM files WHERE id_file = $1`,
-//     [fileId],
-//     (err, result) => {
-//       // Obsługa błędów zapytania
-//       if (err) {
-//         console.log(err);
-//         return res.status(500).send("Wystąpił błąd podczas pobierania pliku");
-//       }
-//       // Odczytanie nazwy pliku i nazwy oryginalnej
-//       const fileName = result.rows[0].hashed_name_file;
-//       const originalFileName = result.rows[0].name_file;
-//       // Konstrukcja ścieżki pliku
-//       const filePath = path.join(__dirname, 'uploads', fileName);
-//       // Wysłanie pliku do klienta
-//       res.download(filePath, originalFileName, (err) => {
-//         if (err) {
-//           console.log(err);
-//           return res.status(500).send("Wystąpił błąd podczas pobierania pliku");
-//         }
-//         // Aktualizacja nazwy pliku na serwerze
-//         fs.rename(filePath, path.join(__dirname, 'uploads', originalFileName), (err) => {
-//           if (err) {
-//             console.log(err);
-//           }
-//         });
-//       });
-//     }
-//   );
-// });
 
 // Route do pobierania pliku
 app.get('/users/download/:id', checkAuthenticated, (req, res) => {
@@ -224,6 +190,64 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
     }
   );
 });
+
+
+app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
+  const fileId = req.params.id;
+  pool.query(
+    `SELECT * FROM files WHERE id_file = $1`,
+    [fileId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
+      }
+      if (result.rows.length === 0) {
+        return res.status(404).send("Nie znaleziono pliku o podanym identyfikatorze");
+      }
+      const fileName = result.rows[0].hashed_name_file;
+      const originalFileName = result.rows[0].name_file;
+      const filePath = path.join(__dirname, 'uploads', fileName);
+      const archivePath = path.join(__dirname, 'uploads', 'ARCHIWUM-DEL', originalFileName);
+      fs.copyFile(filePath, archivePath, (err) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
+        }
+        pool.query(
+          `DELETE FROM owners WHERE id_file = $1`,
+          [fileId],
+          (err) => {
+            if (err) {
+              console.log(err);
+              return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
+            }
+            const userId = req.user.id_user;
+            const dateArch = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            pool.query(
+              `INSERT INTO file_archive_del (id_user_arch, date_arch, file_id) VALUES ($1, $2, $3)`,
+              [req.user.id, dateArch, fileId],
+              (err) => {
+                if (err) {
+                  console.log(err);
+                  return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
+                }
+                fs.unlink(filePath, (err) => {
+                  if (err) {
+                    console.log(err);
+                    return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
+                  }
+                  res.redirect('/users/filelist');
+                });
+              }
+            );
+          }
+        );
+      });
+    }
+  );
+});
+
 
 // Obsługa żądania POST na adres "/wylogowanie"
 // Wylogowanie użytkownika
@@ -357,6 +381,7 @@ app.post('/users/rejestracja', async (req, res) => {
       )}
   });
 
+  
 
 // Jest to funkcja obsługująca żądanie POST na adres "/users/logowanie", 
 // która korzysta z funkcjonalności autentykacji paszportowej Passport.js.

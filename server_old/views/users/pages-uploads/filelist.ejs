@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pl">
-
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -9,24 +8,24 @@
   <link rel="stylesheet" href="/stylesheets/master.css">
   <title>eObieg - uploads</title>
 </head>
-
 <body>
   <tytul>eObieg</tytul><br>
   <srodek>
-
     <h1>Lista plików:</h1>
-    <ul>
-      <% files.forEach(function(file) { %>
-      <li>
-        <%= file.name_file %>
-        <a href="/users/download/<%= file.id_file %>"><button>Pobierz</button></a>
-      </li>
-      <% }); %>
-    </ul>
+<ul>
+  <% files.forEach(function(file) { %>
+  <li>
+    <%= file.name_file %>
+    <a href="/users/download/<%= file.id_file %>"><button>Pobierz</button></a>
+    <form action="/users/delete/<%= file.id_file %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć ten plik?')">
+      <button type="submit">Usuń</button>
+    </form>
+  </li>
+  <% }); %>
+</ul>
 
-    <button><a href="/users/uploads">Prześlij kolejny plik</a></button>
-    <button><a href="/users/userPanel">Powrót do panelu użytkownika</a></button>
-  </srodek>
+<button><a href="/users/uploads">Prześlij kolejny plik</a></button>
+<button><a href="/users/userPanel">Powrót do panelu użytkownika</a></button>
+</srodek>
 </body>
-
 </html>
