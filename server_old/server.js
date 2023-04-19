@@ -17,14 +17,16 @@ const passport = require("passport");
 // initializePassport: funkcja, która inicjalizuje konfigurację uwierzytelniania w Passport.js
 const initializePassport = require("./passportConfig");
 const fs = require('fs');
+const crypto = require('crypto');
 process.env.NLS_LANG = 'POLISH_POLAND.UTF8';
 
 initializePassport(passport);
 
 
 //Pliki wykonujące
-const upload = require("./uploads"); // Import kodu z uploads.js
-
+// Import kodu z uploads.js
+const uploadModule = require("./uploads");
+const upload = uploadModule.upload;
 
 // PORT: zmienna środowiskowa przechowująca numer portu aplikacji lub 4000, jeśli nie jest określona
 const PORT = process.env.PORT || 5000;
@@ -151,25 +153,81 @@ app.post("/wylogowanie", (req, res) =>{
     console.log("wylogowano uzytkownika")
 });
 
-app.post("/users/uploads", upload.single('image'), (req, res) => { 
+// app.post("/users/uploads", upload.single('image'), (req, res) => { 
+//   // Jeśli plik został przesłany pomyślnie
+//   if (req.file) {
+//     pool.connect((err, client, done) => {
+//       if (err) throw err;
+  
+//       // Dodanie nazwy pliku do tabeli files i pobranie przydzielonego mu id
+//       client.query(
+//         "INSERT INTO files (name_file) VALUES ($1) RETURNING id_file",
+//         [req.file.filename],
+//         (err, result) => {
+//           if (err) {
+//             done(); // zwolnienie klienta
+//             console.log(err);
+//             req.flash('error_msg', 'Błąd bazy danych');
+//             res.redirect("/users/userPanel"); 
+//           } else {
+//             const fileId = result.rows[0].id_file;
+            
+//             // Dodanie rekordu do tabeli owners, uwzględniając id użytkownika i id przesłanego pliku
+//             client.query(
+//               "INSERT INTO owners (id_user, id_file) VALUES ($1, $2)",
+//               [req.user.id, fileId],
+//               (err, result) => {
+//                 done(); // zwolnienie klienta
+//                 if (err) {
+//                   console.log(err);
+//                   req.flash('error_msg', 'Błąd bazy danych');
+//                 } else {
+//                   console.log("Plik został pomyślnie przesłany i dodany do bazy danych, a informacje o nim zostały dodane do tabeli owners");
+//                   req.flash('success_msg', 'Plik został przesłany do systemu');
+//                 }
+//                 // Przekierowanie użytkownika do panelu użytkownika po przesłaniu pliku
+//                 res.redirect("/users/userPanel"); 
+//               }
+//             );
+//           }
+//         }
+//       );
+//     });
+//   } else {
+//     console.log("nie udało się przesłać pliku") 
+//     req.flash('error_msg', 'Nie udało się przesłać pliku');
+//     // Przekierowanie użytkownika z powrotem do formularza
+//     res.redirect("/users/userPanel"); 
+//   }
+// });
+
+app.post("/users/uploads", upload.single('image'), (req, res) => {
   // Jeśli plik został przesłany pomyślnie
   if (req.file) {
     pool.connect((err, client, done) => {
       if (err) throw err;
-  
-      // Dodanie nazwy pliku do tabeli files i pobranie przydzielonego mu id
+      // Zapisanie oryginalnej nazwy pliku do zmiennej
+      const fileName = req.file.originalname;
+      // Wygenerowanie hasha z oryginalnej nazwy pliku
+      const hash = crypto.createHash('sha256').update(fileName).digest('hex');
+      // Pobranie informacji o przesłanym pliku
+      const fileExtension = path.extname(fileName).toLowerCase();
+      const fileSize = req.file.size;
+      const uploadTimestamp = new Date().toISOString();
+      const originalFileName = fileName.replace(/\.[^/.]+$/, "");
+
+      // Dodanie hasha jako nazwy pliku do tabeli files i pobranie przydzielonego mu id
       client.query(
-        "INSERT INTO files (name_file) VALUES ($1) RETURNING id_file",
-        [req.file.filename],
+        "INSERT INTO files (name_file, hashed_name_file, upload_timestamp, size_file, type_file) VALUES ($1, $2, $3, $4, $5) RETURNING id_file",
+        [originalFileName, hash, uploadTimestamp, fileSize, fileExtension],
         (err, result) => {
           if (err) {
             done(); // zwolnienie klienta
             console.log(err);
             req.flash('error_msg', 'Błąd bazy danych');
-            res.redirect("/users/userPanel"); 
+            res.redirect("/users/userPanel");
           } else {
             const fileId = result.rows[0].id_file;
-            
             // Dodanie rekordu do tabeli owners, uwzględniając id użytkownika i id przesłanego pliku
             client.query(
               "INSERT INTO owners (id_user, id_file) VALUES ($1, $2)",
@@ -184,7 +242,7 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
                   req.flash('success_msg', 'Plik został przesłany do systemu');
                 }
                 // Przekierowanie użytkownika do panelu użytkownika po przesłaniu pliku
-                res.redirect("/users/userPanel"); 
+                res.redirect("/users/userPanel");
               }
             );
           }
@@ -192,12 +250,13 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
       );
     });
   } else {
-    console.log("nie udało się przesłać pliku") 
+    console.log("nie udało się przesłać pliku")
     req.flash('error_msg', 'Nie udało się przesłać pliku');
     // Przekierowanie użytkownika z powrotem do formularza
-    res.redirect("/users/userPanel"); 
+    res.redirect("/users/userPanel");
   }
 });
+
 
 
 // Tworzymy nowego użytkownika i dodajemy go do bazy danych

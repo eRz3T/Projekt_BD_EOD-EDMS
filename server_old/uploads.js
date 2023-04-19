@@ -1,10 +1,9 @@
-// Import biblioteki do obsługi plików
+// Import biblioteki do obsługi plików i kryptografii
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const iconv = require("iconv-lite");
-
-let fileName;
+const crypto = require("crypto");
 
 // Konfiguracja folderu docelowego dla pliku
 const storage = multer.diskStorage({
@@ -14,8 +13,12 @@ const storage = multer.diskStorage({
   // Konfiguracja nazwy pliku z zachowaniem oryginalnej nazwy oraz polskich znaków
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    fileName = iconv.encode(path.basename(file.originalname, ext), "utf-8");
-    cb(null, `${fileName}${ext}`);
+    const fileName = iconv.encode(path.basename(file.originalname, ext), "utf-8");
+    // Wygenerowanie hasha na podstawie oryginalnej nazwy pliku
+    const hash = crypto.createHash('sha256').update(fileName).digest('hex');
+    const hashedFileName = `${hash}${ext}`;
+    cb(null, hashedFileName);
+    req.hashedFileName = hashedFileName;
   }
 });
 
@@ -42,6 +45,6 @@ const upload = multer({
   }
 });
 
-
-module.exports = { fileName };
-module.exports = upload;
+module.exports = {
+  upload: upload
+};
