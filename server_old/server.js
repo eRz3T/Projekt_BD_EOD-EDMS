@@ -258,18 +258,22 @@ app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
 });
 
 app.post('/documents', checkAuthenticated, (req, res) => {
-  const { user_id, document_title, note, date } = req.body;
+  const { document_title, note} = req.body;
+  const date = new Date().toISOString(); // Dodajemy brakującą datę
   
   pool.query(
-    `INSERT INTO documents (user_id, document_title, note, date) VALUES ($1, $2, $3, $4)`,
-    [user_id, document_title, note, date],
-    (err) => {
+    `INSERT INTO documents (user_id, document_title, note, date)
+     VALUES ($1, $2, $3, $4)
+     RETURNING document_id`,
+    [req.user.id, document_title, note, date],
+    (err, result) => {
       if (err) {
         console.log(err);
         return res.status(500).send("Wystąpił błąd podczas dodawania dokumentu");
       }
-      
-      res.redirect('/documents');
+      const document_id = result.rows[0].document_id;
+      req.flash("success_msg", "Dokument w systemie");
+      res.redirect("users/userPanel");
     }
   );
 });
