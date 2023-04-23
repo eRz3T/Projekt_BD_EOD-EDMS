@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="/stylesheets/master.css">
-  <title>eObieg - uploads</title>
+  <title>eObieg - Pliki</title>
 </head>
 <body>
   <tytul>eObieg</tytul><br>
@@ -16,9 +16,9 @@
   <% files.forEach(function(file) { %>
   <li>
     <%= file.name_file %>
-    <a href="/users/download/<%= file.id_file %>"><button>Pobierz</button></a>
+    <a href="/users/download/<%= file.id_file %>"><button style="color: white;">Pobierz</button></a>
     <form action="/users/delete/<%= file.id_file %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć ten plik?')">
-      <button type="submit">Usuń</button>
+    <button type="submit" style="color: white;">Usuń</button>
     </form>
   </li>
   <% }); %>

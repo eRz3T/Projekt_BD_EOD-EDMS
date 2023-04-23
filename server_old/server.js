@@ -29,7 +29,7 @@ const uploadModule = require("./uploads");
 const upload = uploadModule.upload;
 
 // PORT: zmienna środowiskowa przechowująca numer portu aplikacji lub 4000, jeśli nie jest określona
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 
 
 //ustawienie silnika szablonów ejs dla aplikacji.
@@ -208,7 +208,7 @@ app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
       const fileName = result.rows[0].hashed_name_file;
       const originalFileName = result.rows[0].name_file;
       const filePath = path.join(__dirname, 'uploads', fileName);
-      const archivePath = path.join(__dirname, 'uploads', 'ARCHIWUM-DEL', originalFileName);
+      const archivePath = path.join(__dirname, 'uploads', 'ARCHIWUM-DEL', fileName);
       fs.copyFile(filePath, archivePath, (err) => {
         if (err) {
           console.log(err);
