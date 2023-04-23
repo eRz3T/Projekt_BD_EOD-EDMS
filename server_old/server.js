@@ -120,7 +120,6 @@ app.get("/users/uploads",checkAuthenticated, (req, res)=>{
     console.log("panel upload") 
 });
 
-
 app.get("/users/doclists", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
 
@@ -189,6 +188,19 @@ app.get("/users/filelist", checkAuthenticated, (req, res) => {
   );
 });
 
+app.get("/users/document/:id", checkAuthenticated, (req, res) => {
+  const documentId = req.params.id;
+  // Fetch the document from the database based on its ID
+  pool.query('SELECT * FROM documents WHERE document_id = $1', [documentId], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.redirect('/users/documents');
+    } else {
+      // Render the document.ejs template and pass the fetched document data to it
+      res.render("users/document-flow/document", { document: result.rows[0] });
+    }
+  });
+});
 
 // Route do pobierania pliku
 app.get('/users/download/:id', checkAuthenticated, (req, res) => {

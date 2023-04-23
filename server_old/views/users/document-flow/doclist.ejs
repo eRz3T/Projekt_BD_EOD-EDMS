@@ -18,17 +18,17 @@
     <ul>
       <% documents.forEach((document) => { %>
         <li>
-          <a href="/users/documents/<%= document.id %>">
-            <div><%= document.document_id %><span> </span>
-              <%= document.document_title %><span> </span>
-                <%= document.date %></div>
-          </a>
+          <div>
+            <%= document.document_id %>
+            <%= document.document_title %>
+            <%= document.date %>
+            <a href="/users/document/<%= document.document_id %>"><button style="color: white;">Podgląd</button></a>
+            
+          </div>
         </li>
       <% }); %>
     </ul>
   <% } %>
+</srodek>
 </body>
 </html>
-
-
-
