@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Dokumenty</title>
+</head>
+
+<tytul>eObieg</tytul><br>
+<srodek>
+  <h1>Twoje dokumenty:</h1>
+  <% if (documents.length === 0) { %>
+    <p>Brak dokumentów do wyświetlenia.</p>
+  <% } else { %>
+    <ul>
+      <% documents.forEach((document) => { %>
+        <li>
+          <a href="/users/documents/<%= document.id %>">
+            <div><%= document.document_id %><span> </span>
+              <%= document.document_title %><span> </span>
+                <%= document.date %></div>
+          </a>
+        </li>
+      <% }); %>
+    </ul>
+  <% } %>
+</body>
+</html>
+
+
+

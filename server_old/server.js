@@ -121,26 +121,33 @@ app.get("/users/uploads",checkAuthenticated, (req, res)=>{
 });
 
 
-// app.get('/users/docform', checkAuthenticated, (req, res) => {
-//   const userId = req.user.id_user;
-//   const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+app.get("/users/doclists", checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
 
-//   pool.query(
-//     `SELECT f.id_file as id, f.name_file as filename FROM public.files f
-//      JOIN public.owners o ON f.id_file = o.id_file
-//      WHERE o.id_user = $1`,
-//     [userId],
-//     (err, result) => {
-//       if (err) {
-//         console.log(err);
-//         return res.status(500).send("Wystąpił błąd podczas pobierania plików");
-//       }
+  pool.query(
+    `SELECT documents.document_id, documents.document_title, documents.note, files.name_file
+     FROM documents
+     INNER JOIN files ON documents.file_id = files.id_file
+     INNER JOIN owners ON files.id_file = owners.id_file
+     INNER JOIN appusers ON owners.id_user = appusers.id
+     WHERE appusers.id = $1`,
+    [userId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Wystąpił błąd przy pobieraniu dokumentów.");
+        return;
+      }
 
-//       const fileTList = result.rows;
-//       res.render('users/document-flow/docform', { userId, date, fileTList });
-//     }
-//   );
-// });
+      if (result.rows.length === 0) {
+        res.render("users/document-flow/doclist", { documents: [] });
+        return;
+      }
+
+      res.render("users/document-flow/doclist", { documents: result.rows });
+    }
+  );
+});
 
 app.get("/users/docform", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
