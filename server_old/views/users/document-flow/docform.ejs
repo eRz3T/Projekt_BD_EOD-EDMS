@@ -21,16 +21,14 @@
       <label for="note">Notatka:</label><br>
       <textarea id="note" name="note" style="height: 200px; width: 700px;"></textarea><br>
 
-      <label for="file_id">Wybierz plik:</label>
+    
 
+      <label for="file_id">Wybierz plik:</label>
       <select id="file_id" name="file_id">
-        <% files.forEach(file => { 
-             if (file.owner_id === userId) { %>
-               <option value="<%= file.id %>"><%= file.filename %></option>
-        <% } }) %>
+        <% files.forEach(function(file) { %>
+          <option value="<%= file.id_file %>"><%= file.name_file %></option>
+        <% }); %>
       </select>
-      
-      
 
       <button type="submit">Dodaj dokument</button>
     </form> 

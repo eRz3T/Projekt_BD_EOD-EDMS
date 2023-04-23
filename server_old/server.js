@@ -121,23 +121,42 @@ app.get("/users/uploads",checkAuthenticated, (req, res)=>{
 });
 
 
-app.get('/users/docform', checkAuthenticated, (req, res) => {
-  const userId = req.user.id_user;
-  const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+// app.get('/users/docform', checkAuthenticated, (req, res) => {
+//   const userId = req.user.id_user;
+//   const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+//   pool.query(
+//     `SELECT f.id_file as id, f.name_file as filename FROM public.files f
+//      JOIN public.owners o ON f.id_file = o.id_file
+//      WHERE o.id_user = $1`,
+//     [userId],
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//         return res.status(500).send("Wystąpił błąd podczas pobierania plików");
+//       }
+
+//       const fileTList = result.rows;
+//       res.render('users/document-flow/docform', { userId, date, fileTList });
+//     }
+//   );
+// });
+
+app.get("/users/docform", checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
 
   pool.query(
-    `SELECT f.id_file as id, f.name_file as filename FROM public.files f
-     JOIN public.owners o ON f.id_file = o.id_file
-     WHERE o.id_user = $1`,
+    `SELECT files.id_file, files.name_file
+     FROM files
+     INNER JOIN owners ON files.id_file = owners.id_file
+     INNER JOIN appusers ON owners.id_user = appusers.id
+     WHERE appusers.id = $1`,
     [userId],
     (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).send("Wystąpił błąd podczas pobierania plików");
-      }
+      if (err) throw err;
 
       const files = result.rows;
-      res.render('users/document-flow/docform', { userId, date, files });
+      res.render('users/document-flow/docform', { userId, files });
     }
   );
 });
