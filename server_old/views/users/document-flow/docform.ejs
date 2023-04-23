@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Dokumenty</title>
+</head>
+
+<body>
+  <tytul>eObieg</tytul><br>
+  <srodek>
+    <form method="POST" action="/documents">
+        <input type="hidden" id="user_id" name="user_id" value="<%= userId %>" required>
+              
+        <label for="document_title">Tytuł dokumentu:</label>
+        <input type="text" id="document_title" name="document_title" required>
+              
+        <label for="note">Notatka:</label><br>
+        <textarea id="note" name="note" style="height: 200px; width: 700px;"></textarea><br>
+              
+        <label for="date">Data:</label>
+        <input type="datetime-local" id="date" name="date" value="<%= date %>" required>
+      
+
+<a href="/documents">
+  <button>Dodaj dokument</button>
+</a>
+
+</form> 
+  </srodek>
+</body>
+</html>

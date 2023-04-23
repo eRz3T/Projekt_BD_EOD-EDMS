@@ -120,6 +120,15 @@ app.get("/users/uploads",checkAuthenticated, (req, res)=>{
     console.log("panel upload") 
 });
 
+
+app.get('/users/docform', checkAuthenticated, (req, res) => {
+  const userId = req.user.id_user;
+  const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  res.render('users/document-flow/docform', { userId, date });
+});
+
+
+
 // Route do wyświetlenia listy plików użytkownika
 app.get("/users/filelist", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
@@ -244,6 +253,23 @@ app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
           }
         );
       });
+    }
+  );
+});
+
+app.post('/documents', checkAuthenticated, (req, res) => {
+  const { user_id, document_title, note, date } = req.body;
+  
+  pool.query(
+    `INSERT INTO documents (user_id, document_title, note, date) VALUES ($1, $2, $3, $4)`,
+    [user_id, document_title, note, date],
+    (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Wystąpił błąd podczas dodawania dokumentu");
+      }
+      
+      res.redirect('/documents');
     }
   );
 });
