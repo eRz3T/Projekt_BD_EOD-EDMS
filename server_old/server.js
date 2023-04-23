@@ -122,14 +122,13 @@ app.get("/users/uploads",checkAuthenticated, (req, res)=>{
 
 app.get("/users/doclists", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
-
+  
   pool.query(
     `SELECT documents.document_id, documents.document_title, documents.note, files.name_file
      FROM documents
      INNER JOIN files ON documents.file_id = files.id_file
      INNER JOIN owners ON files.id_file = owners.id_file
-     INNER JOIN appusers ON owners.id_user = appusers.id
-     WHERE appusers.id = $1`,
+     WHERE owners.id_user = $1`,
     [userId],
     (err, result) => {
       if (err) {
@@ -146,6 +145,20 @@ app.get("/users/doclists", checkAuthenticated, (req, res) => {
       res.render("users/document-flow/doclist", { documents: result.rows });
     }
   );
+});
+
+app.get("/users/document/:id", checkAuthenticated, (req, res) => {
+  const documentId = req.params.id;
+  // Fetch the document from the database based on its ID
+  pool.query('SELECT * FROM documents WHERE document_id = $1', [documentId], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.redirect('/users/documents');
+    } else {
+      // Render the document.ejs template and pass the fetched document data to it
+      res.render("users/document-flow/document", { document: result.rows[0] });
+    }
+  });
 });
 
 app.get("/users/docform", checkAuthenticated, (req, res) => {
@@ -186,20 +199,6 @@ app.get("/users/filelist", checkAuthenticated, (req, res) => {
       res.render("users/pages-uploads/filelist", { files: result.rows });
     }
   );
-});
-
-app.get("/users/document/:id", checkAuthenticated, (req, res) => {
-  const documentId = req.params.id;
-  // Fetch the document from the database based on its ID
-  pool.query('SELECT * FROM documents WHERE document_id = $1', [documentId], (err, result) => {
-    if (err) {
-      console.log(err);
-      res.redirect('/users/documents');
-    } else {
-      // Render the document.ejs template and pass the fetched document data to it
-      res.render("users/document-flow/document", { document: result.rows[0] });
-    }
-  });
 });
 
 // Route do pobierania pliku
@@ -313,19 +312,11 @@ app.post('/documents', checkAuthenticated, (req, res) => {
   const { document_title, note, file_id } = req.body;
   const date = new Date().toISOString();
 
-  // Szyfrowanie pola "note"
-  const algorithm = 'aes-256-cbc';
-  const key = crypto.randomBytes(32);
-  const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
-  let encryptedNote = cipher.update(note, 'utf8', 'hex');
-  encryptedNote += cipher.final('hex');
-
   pool.query(
     `INSERT INTO documents (user_id, document_title, note, date, file_id)
      VALUES ($1, $2, $3, $4, $5)
      RETURNING document_id`,
-    [req.user.id, document_title, encryptedNote, date, file_id],
+    [req.user.id, document_title, note, date, file_id],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -333,7 +324,19 @@ app.post('/documents', checkAuthenticated, (req, res) => {
       }
       const document_id = result.rows[0].document_id;
       req.flash("success_msg", "Dokument w systemie");
-      res.redirect("users/userPanel");
+
+      pool.query(
+        `INSERT INTO document_owner (document_id, user_id)
+         VALUES ($1, $2)`,
+        [document_id, req.user.id],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send("Wystąpił błąd podczas dodawania dokumentu");
+          }
+          res.redirect("users/userPanel");
+        }
+      );
     }
   );
 });
