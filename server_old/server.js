@@ -124,9 +124,23 @@ app.get("/users/uploads",checkAuthenticated, (req, res)=>{
 app.get('/users/docform', checkAuthenticated, (req, res) => {
   const userId = req.user.id_user;
   const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-  res.render('users/document-flow/docform', { userId, date });
-});
 
+  pool.query(
+    `SELECT f.id_file as id, f.name_file as filename FROM public.files f
+     JOIN public.owners o ON f.id_file = o.id_file
+     WHERE o.id_user = $1`,
+    [userId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Wystąpił błąd podczas pobierania plików");
+      }
+
+      const files = result.rows;
+      res.render('users/document-flow/docform', { userId, date, files });
+    }
+  );
+});
 
 
 // Route do wyświetlenia listy plików użytkownika
@@ -258,14 +272,22 @@ app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
 });
 
 app.post('/documents', checkAuthenticated, (req, res) => {
-  const { document_title, note} = req.body;
-  const date = new Date().toISOString(); // Dodajemy brakującą datę
-  
+  const { document_title, note, file_id } = req.body;
+  const date = new Date().toISOString();
+
+  // Szyfrowanie pola "note"
+  const algorithm = 'aes-256-cbc';
+  const key = crypto.randomBytes(32);
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
+  let encryptedNote = cipher.update(note, 'utf8', 'hex');
+  encryptedNote += cipher.final('hex');
+
   pool.query(
-    `INSERT INTO documents (user_id, document_title, note, date)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO documents (user_id, document_title, note, date, file_id)
+     VALUES ($1, $2, $3, $4, $5)
      RETURNING document_id`,
-    [req.user.id, document_title, note, date],
+    [req.user.id, document_title, encryptedNote, date, file_id],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -277,7 +299,6 @@ app.post('/documents', checkAuthenticated, (req, res) => {
     }
   );
 });
-
 
 // Obsługa żądania POST na adres "/wylogowanie"
 // Wylogowanie użytkownika
