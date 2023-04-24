@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="/stylesheets/master.css">
-    <title>eObieg - Panel Uzytkownika</title>
+    <title>eObieg - Panel Użytkownika</title>
 </head>
 
 <body>
@@ -16,12 +16,14 @@
   <h1>Zalogowano jako <%=user%></h1>
 
     <content>
-      <img src="/images/us.gif" alt="USER" class="logo-img" style="width: 500px; height: 300px;">
-    </content>
+      <img src="/images/user.png" alt="USER" class="logo-img" style="width: 290px; height: 250px;">
+    </content><br>
   
 
 
-    <br><nawigacja>
+    <br>
+    
+    <nawigacja>
     <content>
       <form action="/wylogowanie" method="POST">
         <button type="submit" style="color: white;">Wyloguj użytkownika</button>
@@ -29,7 +31,7 @@
 
 
 
-      <div style="margin-top: 20px;" ><a>Pliki na serwerze</a></div>
+      <div style="margin-top: 20px;" ><a>Twoje materiały</a></div>
     </content>
    </nawigacja>
       <ul>
@@ -43,10 +45,9 @@
       <content>
       </div>
       </form> 
-      <button><a href="/users/uploads">Prześlij plik</a></button>
-      <button><a href="/users/filelist">Wyświetl</a></button><br>
-      <button><a href="/users/docform">Dodaj dokument</a></button>   
-      <button><a href="/users/doclists">Dokumenty</a></button>
+      <button><a href="/users/filelist">Wyświetl pliki</a></button><br>
+      <button><a href="/users/doclists">Wyświetl dokumenty</a></button>
+           
          
 </content>
 </nawigacja><br>

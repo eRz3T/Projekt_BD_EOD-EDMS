@@ -6,19 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="/stylesheets/master.css">
-  <title>eObieg - Dokument <%= document.title %></title>
+  <title>eObieg - Dokumenty</title>
 </head>
 
 <body>
-  <tytul>eObieg - Dokument <%= document.title %></tytul>
+  <tytul>eObieg</tytul>
   <srodek>
-
+    <left style="text-align: left;">
     <p>ID: <%= document.document_id %></p>
     <p>Tytuł: <%= document.document_title %></p>
     <p>Przesłał: <%= document.user_id %></p>
     <p>Notatka: <%= document.note %></p>
     <p>Data dodania: <%= document.date %></p>
     <p>Plik: <%= document.file_id %></p>
+  </left>
+
+    <button style="margin-top: 50px;"><a href="/users/docform">Dodaj dokument</a></button> 
+    <button><a href="/users/userPanel">Powrót do panelu użytkownika</a></button><br>
+  
+    <content>
+      <form action="/wylogowanie" method="POST">
+        <button type="submit" style="color: white;">Wyloguj użytkownika z systemu</button>
+      </form>
+    </content>
+
 
   </srodek>
 </body>

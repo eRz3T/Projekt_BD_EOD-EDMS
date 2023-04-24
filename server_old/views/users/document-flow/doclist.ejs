@@ -20,15 +20,27 @@
       <% documents.forEach((document) => { %>
         <li>
           <div>
-            <h3>ID <%= document.document_id %>
-            Tytuł<%= document.document_title %> </h3>
+            <h2>ID dokumentu: <%= document.document_id %>
+            Tytuł dokumentu: <%= document.document_title %>
             <a href="/users/document/<%= document.document_id %>"><button style="color: white;">Podgląd</button></a>
-            <a href="/users/docsend/<%= document.document_id %>"><button style="color: white;">Prześlij dokument</button></a>
+            <a href="/users/docsend/<%= document.document_id %>"><button style="color: white;">Prześlij</button></a>
+            </h2>
           </div>
         </li>
       <% }); %>
     </ul>
   <% } %>
+
+
+  <button style="margin-top: 50px;"><a href="/users/docform">Dodaj dokument</a></button> 
+  <button><a href="/users/userPanel">Powrót do panelu użytkownika</a></button><br>
+
+  <content>
+    <form action="/wylogowanie" method="POST">
+      <button type="submit" style="color: white;">Wyloguj użytkownika z systemu</button>
+    </form>
+  </content> 
+
 </srodek>
 </body>
 </html>
