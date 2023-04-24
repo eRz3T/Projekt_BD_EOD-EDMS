@@ -24,5 +24,10 @@
 
   "notFound.backToDashboard": "Powrót do kokpitu",
   "notFound.title": "Taka strona nie istnieje!",
-  "notFound.subtitle": "Przepraszamy, nie udało się znaleźć strony której szukałeś."
+  "notFound.subtitle": "Przepraszamy, nie udało się znaleźć strony której szukałeś.",
+
+  "dashboard.name": "Nazwa dokumentu",
+  "dashboard.receiveDate": "Data otrzymania",
+  "dashboard.expiryDate": "Data wygaśnięcia",
+  "dashboard.createdBy": "Stworzony przez"
 }

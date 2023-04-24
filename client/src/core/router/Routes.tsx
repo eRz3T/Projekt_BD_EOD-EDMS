@@ -5,7 +5,7 @@ import Navbar from '../../shared/layout/Navbar/Navbar'
 import { useAuth } from '@/providers/AuthProvider'
 
 import NotFound from '@/pages/NotFound'
-import Home from '@/pages/Home'
+import Dashboard from '@/pages/Dashboard'
 import Login from '@/pages/Login'
 
 const Router = () => {
@@ -16,7 +16,8 @@ const Router = () => {
       <Navbar />
       <Routes>
         <Route element={<ProtectedRoutes />}>
-          <Route element={<Home />} path='/dashboard' />
+          <Route element={<Dashboard />} path='/' />
+          <Route element={<Dashboard />} path='/dashboard' />
         </Route>
         <Route
           element={isAuthenticated ? <Navigate to={'/dashboard'} /> : <Login />}

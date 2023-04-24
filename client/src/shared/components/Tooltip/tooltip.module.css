@@ -1,0 +1,7 @@
+.tooltipLabel {
+  cursor: help;
+}
+
+.tooltipLabel:hover + div {
+  visibility: visible;
+}

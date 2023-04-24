@@ -24,5 +24,10 @@
 
   "notFound.backToDashboard": "Back to dashboard",
   "notFound.title": "That page doesn't exist!",
-  "notFound.subtitle": "Sorry, the page you were looking for could not be found."
+  "notFound.subtitle": "Sorry, the page you were looking for could not be found.",
+
+  "dashboard.name": "Document name",
+  "dashboard.receiveDate": "Date received",
+  "dashboard.expiryDate": "Expiration date",
+  "dashboard.createdBy": "Created by"
 }
