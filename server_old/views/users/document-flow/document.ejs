@@ -13,12 +13,12 @@
   <tytul>eObieg</tytul>
   <srodek>
     <left style="text-align: left;">
-    <p>ID: <%= document.document_id %></p>
-    <p>Tytuł: <%= document.document_title %></p>
-    <p>Przesłał: <%= document.user_id %></p>
-    <p>Notatka: <%= document.note %></p>
-    <p>Data dodania: <%= document.date %></p>
-    <p>Plik: <%= document.file_id %></p>
+    <p>ID: <%= document.id_document %></p>
+    <p>Tytuł: <%= document.title_document %></p>
+    <p>Przesłał: <%= document.id_user_document %></p>
+    <p>Notatka: <%= document.note_document %></p>
+    <p>Data dodania: <%= document.date_document %></p>
+    <p>Plik: <%= document.id_file_document %></p>
   </left>
 
     <button style="margin-top: 50px;"><a href="/users/docform">Dodaj dokument</a></button> 

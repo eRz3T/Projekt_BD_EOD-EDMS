@@ -20,10 +20,10 @@
       <% documents.forEach((document) => { %>
         <li>
           <div>
-            <h2>ID dokumentu: <%= document.document_id %>
-            Tytuł dokumentu: <%= document.document_title %>
-            <a href="/users/document/<%= document.document_id %>"><button style="color: white;">Podgląd</button></a>
-            <a href="/users/docsend/<%= document.document_id %>"><button style="color: white;">Prześlij</button></a>
+            <h2>ID dokumentu: <%= document.id_document %>
+            Tytuł dokumentu: <%= document.title_document %>
+            <a href="/users/document/<%= document.id_document %>"><button style="color: white;">Podgląd</button></a>
+            <a href="/users/docsend/<%= document.id_document %>"><button style="color: white;">Prześlij</button></a>
             </h2>
           </div>
         </li>

@@ -157,11 +157,11 @@ app.get("/users/doclists", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
   
   pool.query(
-    `SELECT documents.document_id, documents.document_title, documents.note, files.name_file
+    `SELECT documents.id_document, documents.title_document, documents.note_document, files.name_file
      FROM documents
-     INNER JOIN files ON documents.file_id = files.id_file
-     INNER JOIN owners ON files.id_file = owners.id_file
-     WHERE owners.id_user = $1`,
+     INNER JOIN files ON documents.id_file_document = files.id_file 
+     INNER JOIN file_owner ON files.id_file = file_owner.id_file_filown
+     WHERE file_owner.id_user_filown = $1`,
     [userId],
     (err, result) => {
       if (err) {
@@ -183,7 +183,8 @@ app.get("/users/doclists", checkAuthenticated, (req, res) => {
 app.get("/users/document/:id", checkAuthenticated, (req, res) => {
   const documentId = req.params.id;
   // Fetch the document from the database based on its ID
-  pool.query('SELECT * FROM documents WHERE document_id = $1', [documentId], (err, result) => {
+
+  pool.query('SELECT * FROM documents WHERE id_document = $1', [documentId], (err, result) => {
     if (err) {
       console.log(err);
       res.redirect('/users/documents');
@@ -198,10 +199,10 @@ app.get("/users/docform", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
 
   pool.query(
-    `SELECT files.id_file, files.name_file
+    `SELECT files.id_file, files.name_file 
      FROM files
-     INNER JOIN owners ON files.id_file = owners.id_file
-     INNER JOIN appusers ON owners.id_user = appusers.id
+     INNER JOIN file_owner ON files.id_file = file_owner.id_file_filown
+     INNER JOIN appusers ON file_owner.id_user_filown = appusers.id
      WHERE appusers.id = $1`,
     [userId],
     (err, result) => {
@@ -219,10 +220,10 @@ app.get("/users/filelist", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
   // Pobranie plików użytkownika z bazy danych
   pool.query(
-    `SELECT files.id_file, files.name_file
+    `SELECT files.id_file, files.name_file 
      FROM files
-     INNER JOIN owners ON files.id_file = owners.id_file
-     INNER JOIN appusers ON owners.id_user = appusers.id
+     INNER JOIN file_owner ON files.id_file = file_owner.id_file_filown
+     INNER JOIN appusers ON file_owner.id_user_filown = appusers.id
      WHERE appusers.id = $1`,
     [userId],
     (err, result) => {
@@ -290,7 +291,7 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
   const email = req.body.email;
 
   pool.query(
-    `SELECT file_id FROM documents WHERE document_id = $1`,
+    `SELECT id_file_document FROM documents WHERE id_document = $1`,
     [documentId],
     (err, result) => {
       if (err) {
@@ -304,9 +305,9 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
         return;
       }
 
-      const fileId = result.rows[0].file_id; // pobieramy file_id z wyniku zapytania
+      const fileId = result.rows[0].id_file_document;
 
-      const userIdQuery = pool.query(
+      pool.query(
         `SELECT id FROM appusers WHERE email = $1`,
         [email],
         (err, result) => {
@@ -322,10 +323,9 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
           }
 
           const userId = result.rows[0].id;
-          
 
           pool.query(
-            `INSERT INTO document_owner (document_id, user_id) VALUES ($1, $2)`,
+            `INSERT INTO document_owner (id_document_docown, id_user_docown) VALUES ($1, $2)`,
             [documentId, userId],
             (err, result) => {
               if (err) {
@@ -334,8 +334,8 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
                 return;
               }
 
-              pool.query(
-                `INSERT INTO owners (id_user, id_file) VALUES ($1, $2)`,
+              pool.query( 
+                `INSERT INTO file_owner (id_user_filown, id_file_filown) VALUES ($1, $2)`,
                 [userId, fileId],
                 (err, result) => {
                   if (err) {
@@ -377,8 +377,8 @@ app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
           console.log(err);
           return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
         }
-        pool.query(
-          `DELETE FROM owners WHERE id_file = $1`,
+        pool.query( 
+          `DELETE FROM file_owner WHERE id_file_filown = $1`,
           [fileId],
           (err) => {
             if (err) {
@@ -388,7 +388,8 @@ app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
             const userId = req.user.id_user;
             const dateArch = new Date().toISOString().slice(0, 19).replace('T', ' ');
             pool.query(
-              `INSERT INTO file_archive_del (id_user_arch, date_arch, file_id) VALUES ($1, $2, $3)`,
+
+              `INSERT INTO file_archive_del (id_user_arch_filarchdel, date_arch_filarchdel, id_file_filarchdel) VALUES ($1, $2, $3)`,
               [req.user.id, dateArch, fileId],
               (err) => {
                 if (err) {
@@ -416,22 +417,23 @@ app.post('/documents', checkAuthenticated, (req, res) => {
   const date = new Date().toISOString();
 
   pool.query(
-    `INSERT INTO documents (user_id, document_title, note, date, file_id)
+
+    `INSERT INTO documents (id_user_document, title_document, note_document, date_document, id_file_document)
      VALUES ($1, $2, $3, $4, $5)
-     RETURNING document_id`,
+     RETURNING id_document`,
     [req.user.id, document_title, note, date, file_id],
     (err, result) => {
       if (err) {
         console.log(err);
         return res.status(500).send("Wystąpił błąd podczas dodawania dokumentu");
       }
-      const document_id = result.rows[0].document_id;
+      const id_document = result.rows[0].id_document;
       req.flash("success_msg", "Dokument w systemie");
 
       pool.query(
-        `INSERT INTO document_owner (document_id, user_id)
+        `INSERT INTO document_owner (id_document_docown, id_user_docown)
          VALUES ($1, $2)`,
-        [document_id, req.user.id],
+        [id_document, req.user.id],
         (err, result) => {
           if (err) {
             console.log(err);
@@ -486,9 +488,9 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
         return res.redirect("/users/userPanel");
       } else {
         const fileId = result.rows[0].id_file;
-        // Dodanie rekordu do tabeli owners, uwzględniając id użytkownika i id przesłanego pliku
+        // Dodanie rekordu do tabeli file_owner, uwzględniając id użytkownika i id przesłanego pliku
         client.query(
-          "INSERT INTO owners (id_user, id_file) VALUES ($1, $2)",
+          "INSERT INTO file_owner (id_user_filown, id_file_filown) VALUES ($1, $2)",
           [req.user.id, fileId],
           (err, result) => {
             done(); // zwolnienie klienta
@@ -496,7 +498,7 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
               console.log(err);
               req.flash('error_msg', 'Błąd bazy danych');
             } else {
-              console.log("Plik został pomyślnie przesłany i dodany do bazy danych, a informacje o nim zostały dodane do tabeli owners");
+              console.log("Plik został pomyślnie przesłany i dodany do bazy danych, a informacje o nim zostały dodane do tabeli file_owner");
               req.flash('success_msg', 'Plik został przesłany do systemu');
             }
             // Przekierowanie użytkownika do panelu użytkownika po przesłaniu pliku
