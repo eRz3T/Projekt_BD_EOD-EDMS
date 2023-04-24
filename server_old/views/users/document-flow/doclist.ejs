@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Dokumenty</title>
+</head>
+
+<tytul>eObieg</tytul><br>
+
+<srodek>
+  <h1>Twoje dokumenty:</h1>
+  <% if (documents.length === 0) { %>
+    <p>Brak dokumentów do wyświetlenia.</p>
+  <% } else { %>
+    <ul>
+      <% documents.forEach((document) => { %>
+        <li>
+          <div>
+            <h2>ID dokumentu: <%= document.id_document %>
+            Tytuł dokumentu: <%= document.title_document %>
+            <a href="/users/document/<%= document.id_document %>"><button style="color: white;">Podgląd</button></a>
+            <a href="/users/docsend/<%= document.id_document %>"><button style="color: white;">Prześlij</button></a>
+            </h2>
+          </div>
+        </li>
+      <% }); %>
+    </ul>
+  <% } %>
+
+
+  <button style="margin-top: 50px;"><a href="/users/docform">Dodaj dokument</a></button> 
+  <button><a href="/users/userPanel">Powrót do panelu użytkownika</a></button><br>
+
+  <content>
+    <form action="/wylogowanie" method="POST">
+      <button type="submit" style="color: white;">Wyloguj użytkownika z systemu</button>
+    </form>
+  </content> 
+
+</srodek>
+</body>
+</html>

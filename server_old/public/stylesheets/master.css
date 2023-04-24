@@ -5,9 +5,7 @@ body {
     background-size: cover;
     color: white;
     font-family: 'Poppins', sans-serif;
-
-
-  }
+}
 
   srodek{
     position: absolute;
@@ -83,11 +81,7 @@ p{
     align-items: center;
 }
 
-input[type="text"],
-input[type="name"],
-input[type="surname"],
-input[type="email"],
-input[type="password"] {
+input {
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;

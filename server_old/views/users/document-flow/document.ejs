@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Dokumenty</title>
+</head>
+
+<body>
+  <tytul>eObieg</tytul>
+  <srodek>
+    <left style="text-align: left;">
+    <p>ID: <%= document.id_document %></p>
+    <p>Tytuł: <%= document.title_document %></p>
+    <p>Przesłał: <%= document.id_user_document %></p>
+    <p>Notatka: <%= document.note_document %></p>
+    <p>Data dodania: <%= document.date_document %></p>
+    <p>Plik: <%= document.id_file_document %></p>
+  </left>
+
+    <button style="margin-top: 50px;"><a href="/users/docform">Dodaj dokument</a></button> 
+    <button><a href="/users/userPanel">Powrót do panelu użytkownika</a></button><br>
+  
+    <content>
+      <form action="/wylogowanie" method="POST">
+        <button type="submit" style="color: white;">Wyloguj użytkownika z systemu</button>
+      </form>
+    </content>
+
+
+  </srodek>
+</body>
+</html>

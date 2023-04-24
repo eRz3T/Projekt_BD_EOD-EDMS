@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Pliki</title>
+</head>
+<body>
+  <tytul>eObieg</tytul><br>
+  <srodek>
+    <h1>Lista plików:</h1>
+<ul>
+  <% files.forEach(function(file) { %>
+  <li>
+    <%= file.name_file %>
+    <a href="/users/download/<%= file.id_file %>"><button style="color: white;">Pobierz</button></a>
+    <form action="/users/delete/<%= file.id_file %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć ten plik?')">
+    <button type="submit" style="color: white;">Usuń</button>
+    </form>
+  </li>
+  <% }); %>
+</ul>
+
+<button style="margin-top: 50px;"><a href="/users/uploads">Prześlij plik do systemu</a></button>
+<button><a href="/users/userPanel">Powrót do panelu użytkownika</a></button><br>
+
+<content>
+  <form action="/wylogowanie" method="POST">
+    <button type="submit" style="color: white;">Wyloguj użytkownika z systemu</button>
+  </form>
+</content> 
+
+</srodek>
+</body>
+</html>
