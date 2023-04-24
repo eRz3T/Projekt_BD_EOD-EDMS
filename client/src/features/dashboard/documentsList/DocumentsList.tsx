@@ -2,6 +2,8 @@ import moment from 'moment'
 import { documents } from './dummyData'
 import { trimText } from '@/shared/utilities/textTrimmer'
 import Tooltip from '@/shared/components/Tooltip/Tooltip'
+import { useAppDispatch } from '@/shared/hooks/useStore'
+import { setObservedDocuments } from '@/core/store/documents/documentsSlice'
 
 interface IDocument {
   id: number
@@ -12,7 +14,13 @@ interface IDocument {
 }
 
 const DocumentsList = ({ data }: { data: IDocument[] }) => {
+  const dispatch = useAppDispatch()
   documents.map((doc) => console.log(moment(doc.expiryDate).format('YYYY-MM-DD')))
+
+  const handleObserve = (index: number) => {
+    const pickedDocument = documents[index]
+    dispatch(setObservedDocuments(pickedDocument))
+  }
 
   return (
     <div className='overflow-x-auto bg-white p-4 rounded-md m-4 h-full'>
@@ -42,7 +50,7 @@ const DocumentsList = ({ data }: { data: IDocument[] }) => {
           </tr>
         </thead>
         <tbody className='bg-white divide-y divide-gray-200 text-secondary'>
-          {data.map((item) => (
+          {data.map((item, index) => (
             <tr key={item.id}>
               <td className='px-6 py-4 whitespace-nowrap'>{item.id}</td>
               <td className='px-6 py-4 whitespace-nowrap'>
@@ -56,7 +64,10 @@ const DocumentsList = ({ data }: { data: IDocument[] }) => {
                 {item.expiryDate.toLocaleDateString()}
               </td>
               <td className='px-6 py-4 whitespace-nowrap'>{item.createdBy}</td>
-              <td className='px-6 py-4 whitespace-nowrap'>
+              <td
+                className='px-6 py-4 whitespace-nowrap cursor-pointer'
+                onClick={() => handleObserve(index)}
+              >
                 <i className='bx bx-bookmark-plus'></i>
               </td>
             </tr>
