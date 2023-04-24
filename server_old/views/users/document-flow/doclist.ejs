@@ -10,6 +10,7 @@
 </head>
 
 <tytul>eObieg</tytul><br>
+
 <srodek>
   <h1>Twoje dokumenty:</h1>
   <% if (documents.length === 0) { %>
@@ -19,11 +20,10 @@
       <% documents.forEach((document) => { %>
         <li>
           <div>
-            <%= document.document_id %>
-            <%= document.document_title %>
-            <%= document.date %>
+            <h3>ID <%= document.document_id %>
+            Tytuł<%= document.document_title %> </h3>
             <a href="/users/document/<%= document.document_id %>"><button style="color: white;">Podgląd</button></a>
-            
+            <a href="/users/docsend/<%= document.document_id %>"><button style="color: white;">Prześlij dokument</button></a>
           </div>
         </li>
       <% }); %>

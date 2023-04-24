@@ -120,6 +120,39 @@ app.get("/users/uploads",checkAuthenticated, (req, res)=>{
     console.log("panel upload") 
 });
 
+
+app.get("/users/docsend/:id", checkAuthenticated, (req, res) => {
+  const documentId = req.params.id;
+  
+  pool.query(
+    `SELECT email FROM appusers`,
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Wystąpił błąd przy pobieraniu użytkowników.");
+        return;
+      }
+
+      const emails = result.rows.map(row => row.email);
+
+      res.render("users/document-flow/docsend", { documentId, emails });
+    }
+  );
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.get("/users/doclists", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
   
@@ -251,6 +284,76 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
   );
 });
 
+
+app.post("/users/docsend", checkAuthenticated, (req, res) => {
+  const documentId = req.body.document_id;
+  const email = req.body.email;
+
+  pool.query(
+    `SELECT file_id FROM documents WHERE document_id = $1`,
+    [documentId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Wystąpił błąd przy pobieraniu dokumentu.");
+        return;
+      }
+
+      if (result.rows.length === 0) {
+        res.status(400).send("Nie znaleziono dokumentu o podanym ID.");
+        return;
+      }
+
+      const fileId = result.rows[0].file_id; // pobieramy file_id z wyniku zapytania
+
+      const userIdQuery = pool.query(
+        `SELECT id FROM appusers WHERE email = $1`,
+        [email],
+        (err, result) => {
+          if (err) {
+            console.error(err);
+            res.status(500).send("Wystąpił błąd przy pobieraniu użytkownika.");
+            return;
+          }
+
+          if (result.rows.length === 0) {
+            res.status(400).send("Nie znaleziono użytkownika o podanym adresie email.");
+            return;
+          }
+
+          const userId = result.rows[0].id;
+          
+
+          pool.query(
+            `INSERT INTO document_owner (document_id, user_id) VALUES ($1, $2)`,
+            [documentId, userId],
+            (err, result) => {
+              if (err) {
+                console.error(err);
+                res.status(500).send("Wystąpił błąd przy przypisywaniu dokumentu do użytkownika.");
+                return;
+              }
+
+              pool.query(
+                `INSERT INTO owners (id_user, id_file) VALUES ($1, $2)`,
+                [userId, fileId],
+                (err, result) => {
+                  if (err) {
+                    console.error(err);
+                    res.status(500).send("Wystąpił błąd przy aktualizowaniu właściciela dokumentu.");
+                    return;
+                  }
+
+                  res.redirect("/users/doclists");
+                }
+              );
+            }
+          );
+        }
+      );
+    }
+  );
+});
 
 app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
   const fileId = req.params.id;
