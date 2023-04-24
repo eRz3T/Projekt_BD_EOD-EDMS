@@ -5,9 +5,12 @@ import { useLocation } from 'react-router-dom'
 import IconWithBadge from './IconWithBadge'
 import NavLinks from './NavLinks'
 import { useAuth } from '@/providers/AuthProvider.js'
+import { logout } from '@/core/store/auth/authSlice.js'
+import { useAppDispatch } from '@/shared/hooks/useStore.js'
 
 const Navbar = () => {
   const location = useLocation()
+  const dispatch = useAppDispatch()
   const { isAuthenticated } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -46,6 +49,9 @@ const Navbar = () => {
                 <div className='flex items-center space-x-4'>
                   <IconWithBadge iconClass='chat' number={9} />
                   <IconWithBadge iconClass='bell' number={5} />
+                  <button onClick={() => dispatch(logout())}>
+                    <IconWithBadge iconClass='log-out' />
+                  </button>
                   <div className='flex items-center space-x-2 pl-2'>
                     <div className='relative'>
                       <img

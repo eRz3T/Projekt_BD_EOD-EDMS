@@ -1,6 +1,6 @@
 interface IIconWithBadgeProps {
   iconClass: string
-  number: number
+  number?: number
 }
 
 const IconWithBadge = ({ iconClass, number }: IIconWithBadgeProps) => {
