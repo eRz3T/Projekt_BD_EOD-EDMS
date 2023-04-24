@@ -7,6 +7,7 @@ import { useAuth } from '@/providers/AuthProvider'
 import NotFound from '@/pages/NotFound'
 import Dashboard from '@/pages/Dashboard'
 import Login from '@/pages/Login'
+import Documents from '@/pages/Documents'
 
 const Router = () => {
   const { isAuthenticated } = useAuth()
@@ -18,6 +19,7 @@ const Router = () => {
         <Route element={<ProtectedRoutes />}>
           <Route element={<Dashboard />} path='/' />
           <Route element={<Dashboard />} path='/dashboard' />
+          <Route element={<Documents />} path='/documents' />
         </Route>
         <Route
           element={isAuthenticated ? <Navigate to={'/dashboard'} /> : <Login />}
