@@ -6,7 +6,7 @@ const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/user')
 require('dotenv').config()
 
-app.use(express.json({ limit: '5MB' })) // pozwala na używanie/wysyłanie JSONów z backendu do frontu i na odwrót
+app.use(express.json({ limit: '10MB' })) // pozwala na używanie/wysyłanie JSONów z backendu do frontu i na odwrót
 const corsOptions = {
   origin: 'http://localhost:3000', // Dopuszcza zapytania tylko z tego adresu:portu - można usunąć jeśli powoduje błędy
   optionsSuccessStatus: 200,
