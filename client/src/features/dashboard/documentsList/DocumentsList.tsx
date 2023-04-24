@@ -2,8 +2,10 @@ import moment from 'moment'
 import { documents } from './dummyData'
 import { trimText } from '@/shared/utilities/textTrimmer'
 import Tooltip from '@/shared/components/Tooltip/Tooltip'
-import { useAppDispatch } from '@/shared/hooks/useStore'
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/useStore'
 import { setObservedDocuments } from '@/core/store/documents/documentsSlice'
+import { selectObservedDocuments } from '@/core/store/documents/documentsSelectors'
+import { enqueueSnackbar } from 'notistack'
 
 interface IDocument {
   id: number
@@ -15,11 +17,14 @@ interface IDocument {
 
 const DocumentsList = ({ data }: { data: IDocument[] }) => {
   const dispatch = useAppDispatch()
+  const observedDocuments = useAppSelector(selectObservedDocuments)
   documents.map((doc) => console.log(moment(doc.expiryDate).format('YYYY-MM-DD')))
 
-  const handleObserve = (index: number) => {
+  const handleObserveDocument = (index: number) => {
     const pickedDocument = documents[index]
-    dispatch(setObservedDocuments(pickedDocument))
+    !observedDocuments.includes(pickedDocument)
+      ? dispatch(setObservedDocuments(pickedDocument))
+      : enqueueSnackbar('Już obserwujesz ten dokument', { variant: 'error' })
   }
 
   return (
@@ -66,7 +71,7 @@ const DocumentsList = ({ data }: { data: IDocument[] }) => {
               <td className='px-6 py-4 whitespace-nowrap'>{item.createdBy}</td>
               <td
                 className='px-6 py-4 whitespace-nowrap cursor-pointer'
-                onClick={() => handleObserve(index)}
+                onClick={() => handleObserveDocument(index)}
               >
                 <i className='bx bx-bookmark-plus'></i>
               </td>

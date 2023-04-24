@@ -1,6 +1,5 @@
 import { loginUser } from '@/core/api/httpApi'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { enqueueSnackbar } from 'notistack'
 
 interface AuthState {
   token: string | null
