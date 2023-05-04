@@ -29,25 +29,58 @@
     </ul>
 
    <table>
-      <h3>Użytkownicy znajdujący się w systemie</h3>
+      <h3>Aktywni użytkownicy znajdujący się w systemie</h3>
       <thead>
         <tr>
           <th>ID</th>
           <th>Imię i nazwisko</th>
           <th>Data email</th>
           <th>Uprawnienia</th>
+          <th> </th>
         </tr>
       </thead>
-
       <tbody>
-        <% users.forEach(user => { %>
+        <% users.forEach(users => { %>
         <tr>
               <td><%= index = index + 1 %></td>
-              <td><%= user.name %> <%= user.surname %></td>
-              <td><%= user.email %></td>
-              <td><%= user.class %></td>
-              
-            </tr>  
+              <td><%= users.name %> <%= users.surname %></td>
+              <td><%= users.email %></td>
+              <td><%= users.class %></td>           
+              <td>
+               <form action="/users/delete_user/<%= users.id %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz zarchiwizować użytkownika?')">
+                 <button type="submit" style="color: white;">Archiwizuj</button>
+               </form>
+             </td>          
+         </tr>  
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <table>
+      <h3>Nieaktywni użytkownicy znajdujący się w systemie</h3>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Imię i nazwisko</th>
+          <th>Data email</th>
+          <th>Uprawnienia</th>
+          <th> </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% not_users.forEach(not_users => { %>
+        <tr>
+              <td><%= indexB = indexB + 1 %></td>
+              <td><%= not_users.name %> <%= not_users.surname %></td>
+              <td><%= not_users.email %></td>
+              <td><%= not_users.class %></td>           
+              <td>
+               <form action="/users/UNDOdelete_user/<%= not_users.id %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz przywrócić użytkownika?')">
+                 <button type="submit" style="color: white;">Przywróć</button>
+               </form>
+             </td>          
+         </tr>  
         </tr>
         <% }); %>
       </tbody>

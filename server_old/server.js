@@ -120,18 +120,32 @@ app.get("/users/uploads",checkAuthenticated, (req, res)=>{
     console.log("panel upload") 
 });
 
-app.get("/users/userlist",checkAuthenticated, (req, res)=>{ 
-  pool.query('SELECT * FROM appusers', function(error, results, fields) {
+app.get("/users/userlist", checkAuthenticated, (req, res) => {
+  pool.query('SELECT * FROM appusers WHERE status = $1', ['active'], (error, activeResults) => {
     if (error) throw error;
-    const users = results.rows.map(row => ({
+    const users = activeResults.rows.map(row => ({
+      id: row.id,
       name: row.name,
       surname: row.surname,
       email: row.email,
       class: row.class
     }));
-    let index = 0;
-    res.render("users/userlist", { users, index });
-    console.log("lista użytkowników") 
+
+    pool.query('SELECT * FROM appusers WHERE status = $1', ['not_active'], (error, inactiveResults) => {
+      if (error) throw error;
+      const not_users = inactiveResults.rows.map(row => ({
+        id: row.id,
+        name: row.name,
+        surname: row.surname,
+        email: row.email,
+        class: row.class
+      }));
+
+      let index = 0;
+      let indexB = 0;
+      res.render("users/userlist", { users, not_users, index, indexB });
+      console.log("Lista użytkowników");
+    });
   });
 });
 
@@ -289,6 +303,55 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
           });
         });
       });
+    }
+  );
+});
+
+
+app.post('/users/UNDOdelete_user/:id', checkAuthenticated, (req, res) => {
+  const userId = req.params.id;
+  const dateArch = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  
+  pool.query(
+    `UPDATE appusers SET status = 'active' WHERE id = $1`,
+    [userId],
+    (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Wystąpił błąd podczas przywracania użytkownika");
+      }
+      
+      res.redirect('/users/userlist');
+    }
+  );
+
+});
+
+app.post('/users/delete_user/:id', checkAuthenticated, (req, res) => {
+  const userId = req.params.id;
+  const dateArch = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  
+  pool.query(
+    `INSERT INTO users_archive_del (id_user_arch_usrarchdel, date_arch_usrarchdel) VALUES ($1, $2)`,
+    [userId, dateArch],
+    (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Wystąpił błąd podczas archiwizowania użytkownika");
+      }
+      
+      pool.query(
+        `UPDATE appusers SET status = 'not_active' WHERE id = $1`,
+        [userId],
+        (err) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send("Wystąpił błąd podczas usuwania użytkownika");
+          }
+          
+          res.redirect('/users/userlist');
+        }
+      );
     }
   );
 });
