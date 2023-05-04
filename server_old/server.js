@@ -108,7 +108,7 @@ app.get("/users/rejestracja", (req, res) => {
 // Przekazanie funkcji pośredniczącej "checkNotAuthenticated"
 // Renderowanie szablonu "userPanel.ejs"
 // Przekazanie obiektu z właściwością "user", która zawiera nazwę użytkownika
-app.get("/users/userPanel", checkNotAuthenticated, (req, res) =>{
+app.get("/users/userPanel", checkAuthenticated, (req, res) =>{
     res.render("users/userPanel", {user: req.user.name});
     console.log("panel uzytkownika") 
 });
@@ -670,11 +670,22 @@ passport.authenticate("local",{
 // a jeśli nie, przekazuje żądanie dalej za pomocą funkcji next().
 
 function checkAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-      return next();
-    } 
+  if (req.isAuthenticated()) {
+    const userId = req.user.id;
+    pool.query('SELECT status FROM appusers WHERE id = $1', [req.user.id], (error, results) => {
+      if (error) throw error;
+      const userStatus = results.rows[0].status;
+      if (userStatus === 'active') {
+        return next();
+      }
+      req.flash('error_msg', 'Konto nie jest aktywne');
+      res.redirect("/users/logowanie");
+    });
+  } else {
+    req.flash('error_msg', 'Błąd bazy danych');
     res.redirect("/users/logowanie");
   }
+}
 
 
 // Jest to funkcja pośrednicząca, która sprawdza, czy użytkownik 
