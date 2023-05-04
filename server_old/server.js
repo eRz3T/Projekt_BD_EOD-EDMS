@@ -157,11 +157,10 @@ app.get("/users/doclists", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
   
   pool.query(
-    `SELECT documents.id_document, documents.title_document, documents.note_document, files.name_file
+    `SELECT documents.id_document, documents.title_document, documents.note_document
      FROM documents
-     INNER JOIN files ON documents.id_file_document = files.id_file 
-     INNER JOIN file_owner ON files.id_file = file_owner.id_file_filown
-     WHERE file_owner.id_user_filown = $1`,
+     INNER JOIN document_owner ON documents.id_document = document_owner.id_document_docown 
+     WHERE document_owner.id_user_docown = $1  `,
     [userId],
     (err, result) => {
       if (err) {
@@ -174,17 +173,23 @@ app.get("/users/doclists", checkAuthenticated, (req, res) => {
         res.render("users/document-flow/doclist", { documents: [] });
         return;
       }
-
       res.render("users/document-flow/doclist", { documents: result.rows });
     }
   );
 });
 
+
 app.get("/users/document/:id", checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
   const documentId = req.params.id;
   // Fetch the document from the database based on its ID
 
-  pool.query('SELECT * FROM documents WHERE id_document = $1', [documentId], (err, result) => {
+  pool.query(`SELECT documents.id_document, documents.title_document, documents.note_document, documents.date_document, documents.id_file_document, files.name_file
+  FROM documents 
+  INNER JOIN document_owner ON documents.id_document = document_owner.id_document_docown
+  INNER JOIN file_owner ON document_owner.id_user_docown = file_owner.id_user_filown
+  INNER JOIN files ON file_owner.id_file_filown = files.id_file 
+  WHERE documents.id_document = $1 AND documents.id_file_document = files.id_file`, [documentId], (err, result) => {
     if (err) {
       console.log(err);
       res.redirect('/users/documents');
@@ -418,10 +423,10 @@ app.post('/documents', checkAuthenticated, (req, res) => {
 
   pool.query(
 
-    `INSERT INTO documents (id_user_document, title_document, note_document, date_document, id_file_document)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO documents (title_document, note_document, date_document, id_file_document)
+     VALUES ($1, $2, $3, $4)
      RETURNING id_document`,
-    [req.user.id, document_title, note, date, file_id],
+    [document_title, note, date, file_id],
     (err, result) => {
       if (err) {
         console.log(err);
