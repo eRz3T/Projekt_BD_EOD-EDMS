@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/stylesheets/master.css">
+    <title>eObieg - Panel Użytkownika</title>
+</head>
+
+<body>
+  <tytul>eObieg</tytul><br>
+
+<srodek>
+
+
+   <ul>
+      <% if(messages.success_msg) { %> 
+          <li><%= messages.success_msg %></li> 
+     <% }  %> 
+    </ul>
+
+    <ul>
+      <% if(messages.error) { %> 
+          <li><%= messages.success_msg %></li> 
+     <% }  %> 
+    </ul>
+
+   <table>
+      <h3>Użytkownicy znajdujący się w systemie</h3>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Imię i nazwisko</th>
+          <th>Data email</th>
+          <th>Uprawnienia</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% users.forEach(user => { %>
+        <tr>
+              <td><%= index = index + 1 %></td>
+              <td><%= user.name %> <%= user.surname %></td>
+              <td><%= user.email %></td>
+              <td><%= user.class %></td>
+              
+            </tr>  
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <button><a href="rejestracja">Dodaj nowego użytkownika</a></button>
+    <button><a href="/users/userPanel">Powrót do panelu użytkownika</a></button><br>
+</srodek>
+
+</body>
+</html>

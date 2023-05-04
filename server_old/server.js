@@ -120,6 +120,22 @@ app.get("/users/uploads",checkAuthenticated, (req, res)=>{
     console.log("panel upload") 
 });
 
+app.get("/users/userlist",checkAuthenticated, (req, res)=>{ 
+  pool.query('SELECT * FROM appusers', function(error, results, fields) {
+    if (error) throw error;
+    const users = results.rows.map(row => ({
+      name: row.name,
+      surname: row.surname,
+      email: row.email,
+      class: row.class
+    }));
+    let index = 0;
+    res.render("users/userlist", { users, index });
+    console.log("lista użytkowników") 
+  });
+});
+
+
 
 app.get("/users/docsend/:id", checkAuthenticated, (req, res) => {
   const documentId = req.params.id;
@@ -139,19 +155,6 @@ app.get("/users/docsend/:id", checkAuthenticated, (req, res) => {
     }
   );
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 app.get("/users/doclists", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
@@ -575,9 +578,9 @@ app.post('/users/rejestracja', async (req, res) => {
                   throw err;
                 }
                 console.log(results.rows);
-                console.log("nowy uzytkownik w bazie") 
-                req.flash("success_msg", "Zostałeś zarejestrowany");
-                res.redirect("/users/logowanie");
+                console.log("Nowy uzytkownik w bazie") 
+                req.flash("success_msg", "Został dodany nowy użytkowwnik!");
+                res.redirect("/users/userlist");
               })
           }}
       )}

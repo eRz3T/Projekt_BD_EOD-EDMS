@@ -21,29 +21,20 @@
      <% })  %> <% } %>
     </ul>
 
-    <nawigacja>
-            <content>
-                <linki>
-                  <button><a href="/">Home</a></button>
-                  <button><a href="logowanie">Logowanie</a></button>
-                </linki>
-            </content>
-    </nawigacja><br>
-
-
+  
     <content>
       <form action="/users/rejestracja" method="POST">
-        <a1>Podaj swoje imię</a1>
+        <a1>Podaj imię</a1>
         <div>
           <input type="name" id="name" name="name" placeholder="Imię użytkownika" required><br>
         </div>
       
-        <a2>Podaj swoje nazwisko </a2>
+        <a2>Podaj nazwisko </a2>
         <div>
           <input type="surname" id="surname" name="surname" placeholder="Nazwisko użytkownika" required><br>
         </div>
       
-        <a2>Podaj swój email </a2>
+        <a2>Podaj email </a2>
         <div>
           <input type="email" id="email" name="email" placeholder="Email użytkownika" required>
         </div>
@@ -53,8 +44,9 @@
           <input type="password" id="password" name="password" placeholder="Hasło" required>
         </div>
       
-        <input type="submit" value="Zarejestruj się" style="color: white;" />
-      </form>      
+        <input type="submit" value="Dodaj użytkownika" style="color: white;" />
+      </form>  
+      <button><a href="/users/userlist">Powrót do listy użytkowników</a></button><br>    
     </content>
 
   </srodek>
