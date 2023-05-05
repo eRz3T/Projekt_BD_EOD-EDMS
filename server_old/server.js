@@ -83,13 +83,6 @@ app.get("/", (req, res)=>{
     res.render("about/welcome");
 });
 
-// Obsługa żądania GET na adres "/about/informacje"
-// Renderowanie szablonu "informacje.ejs"
-app.get("/about/informacje", (req, res) =>{
-    res.render("about/informacje");
-});
-
-
 // Obsługa żądania GET na adres "/users/logowanie"
 // Renderowanie szablonu "logowanie.ejs"
 app.get("/users/logowanie", (req, res) =>{
@@ -362,7 +355,7 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
   const email = req.body.email;
 
   pool.query(
-    `SELECT id_file_document FROM documents WHERE id_document = $1`,
+    `SELECT id_document FROM documents WHERE id_document = $1`,
     [documentId],
     (err, result) => {
       if (err) {
@@ -536,7 +529,7 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
   if (err) {
   console.log(err);
   req.flash('error_msg', 'Błąd bazy danych');
-  return res.redirect("/users/userPanel");
+  return res.redirect("/users/filelist");
   }
   // Zapisanie oryginalnej nazwy pliku do zmiennej
   const fileName = req.file.originalname;
@@ -556,7 +549,7 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
         done(); // zwolnienie klienta
         console.log(err);
         req.flash('error_msg', 'Błąd bazy danych');
-        return res.redirect("/users/userPanel");
+        return res.redirect("/users/filelist");
       } else {
         const fileId = result.rows[0].id_file;
         // Dodanie rekordu do tabeli file_owner, uwzględniając id użytkownika i id przesłanego pliku
@@ -573,7 +566,7 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
               req.flash('success_msg', 'Plik został przesłany do systemu');
             }
             // Przekierowanie użytkownika do panelu użytkownika po przesłaniu pliku
-            res.redirect("/users/userPanel");
+            res.redirect("/users/filelist");
           }
         );
       }

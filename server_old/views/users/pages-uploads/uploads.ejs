@@ -12,27 +12,37 @@
 
 <body>
   <tytul>eObieg</tytul><br>
+
+<tablenav>
+  <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="color: white;">Wyloguj użytkownika</button>
+        </form>   
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+    </tbody>
+</tablenav>
+
 <srodek>
   <div style="margin-bottom: 20px;" >
-
-    <div>Proszę wybierz plik który chcesz przesłać</div>
-
-    <div>Obsługiwane formaty plików to .docx oraz .pdf</div>
-
-    <div>Maksymalny rozmiar pliku to 10Mb</div>
-  
+    <h2 style="text-align: center;">Proszę wybierz plik który chcesz przesłać <br>
+    Obsługiwane formaty plików to .docx oraz .pdf <br>
+    Maksymalny rozmiar pliku to 10Mb</h2>
   </div>
-  <form method="POST" action="/users/uploads" enctype="multipart/form-data">
-    
-    <div>
-      <input type="file" name="image">
-    </div>
-    
-    <div>
-        <input type="submit" value="Prześlij plik" style="color: white;">
-    </div>
-    
-  </form>
+  
+
+    <table></form>
+      <tbody>
+        <tr>           
+          <form method="POST" action="/users/uploads" enctype="multipart/form-data">
+              <td><input type="file" name="image"></td>
+              <td><input type="submit" value="Prześlij plik"></td>
+            </form>        
+         </tr>  
+      </tbody>
+    </table>
+
   </srodek>
 </body>
 </html>

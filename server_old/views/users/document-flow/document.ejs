@@ -10,24 +10,45 @@
 </head>
 
 <body>
-  <tytul>eObieg</tytul>
-  <srodek>
-    <left style="text-align: left;">
-    <p>ID: <%= document.id_document %></p>
-    <p>Tytuł: <%= document.title_document %></p>
-    <p>Notatka: <%= document.note_document %></p>
-    <p>Data dodania: <%= document.date_document %></p>
-    <p>ID pliku: <%= document.id_file_document %> Nazwa pliku: <%= document.name_file %> </p>
-  </left>
+  <tytul>eObieg</tytul><br>
 
-    <button style="margin-top: 50px;"><a href="/users/docform">Dodaj dokument</a></button> 
-    <button><a href="/users/userPanel">Powrót do panelu użytkownika</a></button><br>
-  
-    <content>
-      <form action="/wylogowanie" method="POST">
-        <button type="submit" style="color: white;">Wyloguj użytkownika z systemu</button>
-      </form>
-    </content>
+<tablenav>
+  <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="color: white;">Wyloguj użytkownika</button>
+        </form>   
+        <td><a href="/users/doclists">Lista dokumentów</a></td>
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+    </tbody>
+</tablenav>
+
+<srodek>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tytuł</th>
+        <th>Notatka</th>
+        <th>Data dodania</th>
+        <th>ID pliku</th>
+        <th>Nazwa pliku</th>
+        <th> </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+            <td><%= document.id_document %></td>
+            <td><%= document.title_document %></td>
+            <td><%= document.note_document %></td>
+            <td><%= document.date_document %></td> 
+            <td><%= document.id_file_document %></td>          
+            <td><%= document.name_file %></td>          
+       </tr>  
+      </tr>
+    </tbody>
+  </table>
 
 
   </srodek>

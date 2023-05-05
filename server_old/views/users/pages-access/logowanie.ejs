@@ -8,19 +8,42 @@
     <link rel="stylesheet" href="/stylesheets/master.css">
     <title>eObieg - Logowanie</title>
 </head>
-  <body>
-    <tytul>eObieg</tytul><br>
+<body>
+  <tytul>eObieg</tytul>
+    <tablenav>
+      <tbody>
+        
+        <td><a href="/">Home</a></td> 
+             
+      </tbody>
+    </tablenav>
   <srodek>
+    
+  
 
-    <nawigacja>
-            <content>
-                <linki>
-                  <button><a href="/">Home</a></button>
-                </linki>
-            </content>
-    </nawigacja><br>
 
-    <ul>
+    <h3>Logowanie do systemu</h3>
+    <form action="logowanie" method="POST">
+      <table>
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Hasło</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+                <td><input type="email" id="email" name="email" placeholder="Email użytkownika" required></td>
+                <td><input type="password" id="password" name="password" placeholder="Hasło" required></td>
+                <td><button type="submit">Zaloguj się</button></td>
+              </tr>  
+            </tbody>
+          </table>
+    </form> 
+
+
+    <ul style="margin-top: 30px;">
       <% if(messages.success_msg) { %> 
         <li><%= messages.success_msg %></li> 
       <% } else if (messages.error_msg) { %>
@@ -28,25 +51,6 @@
       <% } %> 
     </ul>
 
-
-    <content>
-        <form action="logowanie" method="POST">
-
-            <a1>Podaj email</a1>
-            <div>
-              <input type="email" id="email" name="email" placeholder="Email użytkownika" required>
-            </div>
-  
-              <a2>Podaj hasło</a2>
-              <div>
-              <input type="password" id="password" name="password" placeholder="Hasło" required>
-              </div>
-  
-            <input type="submit" value="Zaloguj się" style="color: white;"/>
-        </form>
-    </content>
-
   </srodek>
-
   </body>
 </html>

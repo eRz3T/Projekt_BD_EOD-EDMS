@@ -11,48 +11,41 @@
 </head>
 
 <body>
-  <tytul>eObieg</tytul><br>
-<srodek>
-  <h1>Zalogowano jako <%=user%></h1>
+  <tytul>eObieg</tytul>
 
-    <content>
-      <img src="/images/user.png" alt="USER" class="logo-img" style="width: 290px; height: 250px;">
-    </content><br>
-  
+<tablenav>
+  <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" >Wyloguj użytkownika</button>
+        </form>     
+      </tr> 
+      <tr>Zalogowano jako <%=user%></tr>
+    </tbody>
+</tablenav>
+
+  <srodek>
+
+        <table>
+          <h2>Twoje materiały</h2>
+            <tbody>
+            <tr>
+                  <td><button><a href="/users/filelist">Pliki</a></button></td>
+                  <td><button><a href="/users/doclists">Dokumenty</a></button></td>
+                  <td><button><a href="/users/userlist">Użytkownicy</a></button></td>                  
+            </tr>  
+          </tbody>
+        </table>
 
 
-    <br>
-    
-    <nawigacja>
-    <content>
-      <form action="/wylogowanie" method="POST">
-        <button type="submit" style="color: white;">Wyloguj użytkownika</button>
-        <div>
+        <ul style="margin-top: 30px;">
+          <% if(messages.success_msg) { %> 
+            <li><%= messages.success_msg %></li> 
+          <% } else if (messages.error_msg) { %>
+            <li><%= messages.error_msg %></li> 
+          <% } %> 
+        </ul>
 
-
-
-      <div style="margin-top: 20px;" ><a>Twoje materiały</a></div>
-    </content>
-   </nawigacja>
-      <ul>
-        <% if(messages.success_msg) { %> 
-          <li><%= messages.success_msg %></li> 
-        <% } else if (messages.error_msg) { %>
-          <li><%= messages.error_msg %></li> 
-        <% } %> 
-      </ul>
-      <nawigacja>
-      <content>
-      </div>
-      </form> 
-      <button><a href="/users/filelist">Wyświetl pliki</a></button><br>
-      <button><a href="/users/doclists">Wyświetl dokumenty</a></button>
-      <button><a href="/users/userlist">Wyświetl użytkowników</a></button><br>
-           
-         
-</content>
-</nawigacja><br>
-</srodek>
-
+  </srodek>
 </body>
 </html>

@@ -8,8 +8,25 @@
     <link rel="stylesheet" href="/stylesheets/master.css">
     <title>eObieg - Rejestracja</title>
 </head>
-  <body>
-    <tytul>eObieg</tytul><br>
+
+<body>
+  <tytul>eObieg</tytul><br>
+
+<tablenav>
+  <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="color: white;">Wyloguj użytkownika</button>
+        </form>   
+        <td><a href="/users/userlist">Lista użytkowników</a></td>
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+    </tbody>
+</tablenav>
+
+        
+
+
   <srodek>
 
     <ul>
@@ -22,33 +39,37 @@
     </ul>
 
   
-    <content>
+    <h2>Wprowadź dane nowego użytkownika systemu eObieg</h2>
+          <p>Pamiętaj aby wypełnić wszystkie pola, a hasło ma mieć minimalną długość 6 znaków</p>
       <form action="/users/rejestracja" method="POST">
-        <a1>Podaj imię</a1>
-        <div>
-          <input type="name" id="name" name="name" placeholder="Imię użytkownika" required><br>
-        </div>
-      
-        <a2>Podaj nazwisko </a2>
-        <div>
-          <input type="surname" id="surname" name="surname" placeholder="Nazwisko użytkownika" required><br>
-        </div>
-      
-        <a2>Podaj email </a2>
-        <div>
-          <input type="email" id="email" name="email" placeholder="Email użytkownika" required>
-        </div>
-      
-        <a2>Podaj hasło</a2>
-        <div>
-          <input type="password" id="password" name="password" placeholder="Hasło" required>
-        </div>
-      
-        <input type="submit" value="Dodaj użytkownika" style="color: white;" />
-      </form>  
-      <button><a href="/users/userlist">Powrót do listy użytkowników</a></button><br>    
-    </content>
-
+        <table>
+          <thead>
+            <tr>
+              <th>Imię</th>
+              <th>Nazwisko</th>
+              <th>Email</th>
+              <th>Hasło</th>
+              <th> </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                  <td><input type="name" id="name" name="name" placeholder=" " required></td>
+                  <td><input type="surname" id="surname" name="surname" placeholder=" " required></td>
+                  <td><input type="email" id="email" name="email" placeholder=" " required></td>
+                  <td><input type="password" id="password" name="password" placeholder=" " required></td>                  
+                  <td><button type="submit">Dodaj użytkownika</button></td>
+                </tr>  
+          </tbody>
+        </table>
+        
+      </form>       
+    
   </srodek>
+
+
+
+
+
   </body>
 </html>

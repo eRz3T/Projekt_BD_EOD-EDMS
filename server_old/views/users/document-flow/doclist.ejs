@@ -9,37 +9,55 @@
   <title>eObieg - Dokumenty</title>
 </head>
 
-<tytul>eObieg</tytul><br>
+<body>
+  <tytul>eObieg</tytul><br>
+
+<tablenav>
+  <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="color: white;">Wyloguj użytkownika</button>
+        </form>
+          <a href="/users/docform">Dodaj dokument</a>
+          <a href="/users/userPanel">Panel użytkownika</a>
+        </form>     
+       </tr> 
+    </tbody>
+</tablenav>
 
 <srodek>
-  <h1>Twoje dokumenty:</h1>
-  <% if (documents.length === 0) { %>
-    <p>Brak dokumentów do wyświetlenia.</p>
-  <% } else { %>
-    <ul>
-      <% documents.forEach((document) => { %>
-        <li>
-          <div>
-            <h2>ID dokumentu: <%= document.id_document %>
-            Tytuł dokumentu: <%= document.title_document %>
-            <a href="/users/document/<%= document.id_document %>"><button style="color: white;">Podgląd</button></a>
-            <a href="/users/docsend/<%= document.id_document %>"><button style="color: white;">Prześlij</button></a>
-            </h2>
-          </div>
-        </li>
-      <% }); %>
-    </ul>
+<% if (documents.length === 0) { %>
+  <h3>Brak dokumentów do wyświetlenia</h3>
+<% } else { %>
+<table>
+  <h3>Dokumenty przypisane do tego konta</h3>
+  <thead>
+    <tr>
+      <th>Numer identyfikacyjny</th>
+      <th>Tytuł dokumentu</th>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% documents.forEach((document) => { %>
+    <tr>
+          <td><%= document.id_document %></td>
+          <td><%= document.title_document %></td>
+          <td><a href="/users/document/<%= document.id_document %>"><button style="color: white;">Podgląd</button></a>
+          <a href="/users/docsend/<%= document.id_document %>"><button style="color: white;">Prześlij</button></a></td>                     
+     </tr>  
+    </tr>
+    <% }); %>
+  </tbody>
+</table>        
   <% } %>
 
 
-  <button style="margin-top: 50px;"><a href="/users/docform">Dodaj dokument</a></button> 
-  <button><a href="/users/userPanel">Powrót do panelu użytkownika</a></button><br>
 
-  <content>
-    <form action="/wylogowanie" method="POST">
-      <button type="submit" style="color: white;">Wyloguj użytkownika z systemu</button>
-    </form>
-  </content> 
+
+ 
 
 </srodek>
 </body>
