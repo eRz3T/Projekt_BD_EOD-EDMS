@@ -101,9 +101,16 @@ app.get("/users/rejestracja", (req, res) => {
 // Przekazanie funkcji pośredniczącej "checkNotAuthenticated"
 // Renderowanie szablonu "userPanel.ejs"
 // Przekazanie obiektu z właściwością "user", która zawiera nazwę użytkownika
-app.get("/users/userPanel", checkAuthenticated, (req, res) =>{
-    res.render("users/userPanel", {user: req.user.name});
-    console.log("panel uzytkownika") 
+app.get("/users/userPanel", checkAuthenticated, (req, res) => {
+  const userId = req.user.id; // pobranie ID logującego się użytkownika
+
+  pool.query('SELECT id, name, surname, email, class FROM appusers WHERE id = $1 AND status = $2', [userId, 'active'], (error, results) => {
+    if (error) throw error;
+    const users = results.rows[0];
+
+    res.render("users/userPanel", {user: req.user.name, users});
+    console.log("panel użytkownika");
+  });
 });
 
 app.get('/users/edit_user/:id', checkAuthenticated, (req, res) => {

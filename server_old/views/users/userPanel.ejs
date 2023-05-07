@@ -20,7 +20,7 @@
           <button type="submit" >Wyloguj użytkownika</button>
         </form>     
       </tr> 
-      <tr>Zalogowano jako <%=user%></tr>
+      <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
     </tbody>
 </tablenav>
 
@@ -30,12 +30,35 @@
           <h2>Twoje materiały</h2>
             <tbody>
             <tr>
-                  <td><button><a href="/users/filelist">Pliki</a></button></td>
-                  <td><button><a href="/users/doclists">Dokumenty</a></button></td>
-                  <td><button><a href="/users/userlist">Użytkownicy</a></button></td>                  
+                  <td>Pliki: <button><a href="/users/filelist">Wyświetl</a></button></td>
+                  <td>Dokumenty: <button><a href="/users/doclists">Wyświetl</a></button></td>
+                  <td>Użytkownicy: <button><a href="/users/userlist">Wyświetl</a></button></td>                  
             </tr>  
           </tbody>
         </table>
+
+        <table>
+          <h3>Twoje dane</h3>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Imię i nazwisko</th>
+              <th>Data email</th>
+              <th>Uprawnienia</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <td><%= users.id %></td> 
+                <td><%= users.name %> <%= users.surname %></td>
+                <td><%= users.email %></td>
+                <td><%= users.class %></td> 
+                <td><img src="/images/user.png" alt="Logo" style="height: 50px; width: 50px;"></td>               
+              </tr> 
+               
+          </tbody>
+        </table>
+        
 
 
         <ul style="margin-top: 30px;">

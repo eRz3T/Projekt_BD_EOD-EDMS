@@ -21,6 +21,7 @@
         <td><a href="/users/doclists">Lista dokumentów</a></td>
         <a href="/users/userPanel">Panel użytkownika</a>  
        </tr> 
+       <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
     </tbody>
 </tablenav>
 
@@ -41,10 +42,10 @@
       <tr>
             <td><%= document.id_document %></td>
             <td><%= document.title_document %></td>
-            <td><%= document.note_document %></td>
-            <td><%= document.date_document %></td> 
-            <td><%= document.id_file_document %></td>          
-            <td><%= document.name_file %></td>          
+            <td><button onclick="alert('<%= document.note_document %>')">Wyświetl</button></td>
+            <td><button onclick="alert('<%= document.date_document %>')">Wyświetl</button></td>
+            <td><%= document.id_file_document %></td> 
+            <td><button onclick="alert('<%= document.name_file %>')">Wyświetl</button></td>          
        </tr>  
       </tr>
     </tbody>
