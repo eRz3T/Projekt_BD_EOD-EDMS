@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Dokumenty</title>
+</head>
+
+<body>
+  <tytul>eObieg</tytul><br>
+
+<tablenav>
+  <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="color: white;">Wyloguj użytkownika</button>
+        </form>   
+        <td><a href="/users/doclists">Lista dokumentów</a></td>
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+    </tbody>
+</tablenav>
+
+<srodek>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tytuł</th>
+        <th>Notatka</th>
+        <th>Data dodania</th>
+        <th>ID pliku</th>
+        <th>Nazwa pliku</th>
+        <th> </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+            <td><%= document.id_document %></td>
+            <td><%= document.title_document %></td>
+            <td><%= document.note_document %></td>
+            <td><%= document.date_document %></td> 
+            <td><%= document.id_file_document %></td>          
+            <td><%= document.name_file %></td>          
+       </tr>  
+      </tr>
+    </tbody>
+  </table>
+
+
+  </srodek>
+</body>
+</html>

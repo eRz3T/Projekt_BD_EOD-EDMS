@@ -106,6 +106,26 @@ app.get("/users/userPanel", checkAuthenticated, (req, res) =>{
     console.log("panel uzytkownika") 
 });
 
+app.get('/users/edit_user/:id', checkAuthenticated, (req, res) => {
+  const userId = req.params.id;
+
+  pool.query('SELECT * FROM appusers WHERE id = $1', [userId], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.sendStatus(500);
+      return;
+    }
+
+    if (result.rows.length === 0) {
+      res.sendStatus(404);
+      return;
+    }
+
+    const user = result.rows[0];
+    res.render('users/editUser', { userId: userId, userData: user });
+  });
+});
+
 // Obsługa żądania GET na adres "/users/uploads"
 // Renderowanie szablonu "uploads.ejs"
 app.get("/users/uploads",checkAuthenticated, (req, res)=>{ 
@@ -296,6 +316,26 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
           });
         });
       });
+    }
+  );
+});
+
+app.post('/users/edit_user/:id', checkAuthenticated, (req, res) => {
+  const userId = req.params.id;
+
+  const { name, surname, email, password, userClass } = req.body;
+
+  pool.query(
+    'UPDATE appusers SET name = $1, surname = $2, email = $3, password = $4, class = $5 WHERE id = $6',
+    [name, surname, email, password, userClass, userId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.sendStatus(500);
+        return;
+      }
+
+      res.redirect('/users/userlist');
     }
   );
 });

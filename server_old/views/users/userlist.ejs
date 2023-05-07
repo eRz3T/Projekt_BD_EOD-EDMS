@@ -62,7 +62,8 @@
                <form action="/users/delete_user/<%= users.id %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz zarchiwizować użytkownika?')">
                  <button type="submit" style="color: white;">Archiwizuj</button>
                </form>
-             </td>          
+              </td>    
+              <td><button><a href="/users/edit_user/<%= users.id %>">Edytuj</a></button></td>      
          </tr>  
         </tr>
         <% }); %>
@@ -94,7 +95,8 @@
                <form action="/users/UNDOdelete_user/<%= not_users.id %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz przywrócić użytkownika?')">
                  <button type="submit" style="color: white;">Przywróć</button>
                </form>
-             </td>          
+              </td>
+               <td><button><a href="/users/edit_user/<%= users.id %>">Edytuj</a></button></td>          
          </tr>  
         </tr>
         <% }); %>

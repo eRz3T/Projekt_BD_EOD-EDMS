@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/stylesheets/master.css">
+    <title>eObieg - Edytuj użytkownika</title>
+  </head>
+  <body>
+    <h1>Edytuj użytkownika</h1>
+    <form action="/users/edit_user/<%= userId %>" method="POST">
+      <label for="name">Imię:</label>
+      <input type="text" name="name" value="<%= userData.name %>" required><br>
+      <label for="surname">Nazwisko:</label>
+      <input type="text" name="surname" value="<%= userData.surname %>" required><br>
+
+      <label for="email">Email:</label>
+      <input type="email" name="email" value="<%= userData.email %>" required><br>
+
+      <label for="password">Hasło:</label>
+      <input type="password" name="password" value="<%= userData.password %>" required><br>
+
+      <label for="userClass">Uprawnienia:</label>
+      <select name="userClass" required>
+        <option value="user" <%= userData.class === "user" ? "selected" : "" %>>Użytkownik</option>
+        <option value="admin" <%= userData.class === "admin" ? "selected" : "" %>>Administrator</option>
+      </select><br>
+
+      <button type="submit">Zapisz zmiany</button>
+    </form>
+  </body>
+</html>
+
+
