@@ -101,8 +101,7 @@ body {
   
   /* Style dla komunikatu sukcesu */
   ul li:nth-child(1) {
-    color: purple;
-    font-weight: bold;
+    color: black;
   }
   
   

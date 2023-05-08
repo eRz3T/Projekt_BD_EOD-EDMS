@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Podgląd sprawy</title>
+</head>
+
+<body>
+  <tytul>eObieg</tytul><br>
+
+  <tablenav>
+    <tbody>
+        <tr>
+          <form action="/wylogowanie" method="POST">
+            <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+          </form>   
+        <td><a href="/users/caselist">Powrót do listy spraw</a></td>
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+       <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
+    </tbody>
+</tablenav>
+
+<srodek>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tytuł</th>
+        <th>Opis</th>
+        <th>Dokumenty</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= caseData[0].id_case %></td>
+        <td><%= caseData[0].title_case %></td>
+        <td><%= caseData[0].opis_case %></td>
+        <td>
+          <ul>
+            <% caseData.forEach(document => { %>
+              <li><%= document.title_document %></li>
+            <% }); %>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</srodek>
+</body>
+</html>

@@ -112,9 +112,22 @@ app.get("/users/caselist", checkAuthenticated, (req, res) => {
   );
 });
 
-app.get("/users/caseform",checkAuthenticated, (req, res)=>{ 
-  res.render("users/cases/caseform", {user: req.user.name});
-  console.log("formularzSprawy") 
+app.get("/users/caseView/:id", checkAuthenticated, (req, res) => {
+  const caseId = req.params.id;
+  // Fetch the case data and the documents assigned to it from the database based on its ID
+  pool.query(`SELECT casefile.id_case, casefile.title_case, casefile.opis_case, documents.id_document, documents.title_document 
+  FROM casefile 
+  INNER JOIN case_documents ON casefile.id_case = case_documents.id_case_casdoc
+  INNER JOIN documents ON case_documents.id_document_casdoc = documents.id_document
+  WHERE casefile.id_case = $1`, [caseId], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.redirect('/users/cases');
+    } else {
+      // Render the caseView.ejs template and pass the fetched case data and documents to it
+      res.render("users/cases/caseView", { caseData: result.rows });
+    }
+  });
 });
 
 app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
@@ -141,6 +154,11 @@ app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
       res.render("users/cases/docselect", { documents: result.rows, caseId: req.params.id });
     }
   );
+});
+
+app.get("/users/caseView/:id", checkAuthenticated, (req, res) => {
+  res.render("users/cases/caseView");
+  console.log("Podgląd sprawy") 
 });
 
 //checkNotAuthenticated
