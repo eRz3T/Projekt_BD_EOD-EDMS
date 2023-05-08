@@ -10,7 +10,7 @@
 </head>
 
 <body>
-  <tytul>eObieg</tytul><br>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
 
   <tablenav>
     <tbody>
@@ -56,7 +56,13 @@
   <% } %>
 
 
-
+  <ul style="margin-top: 30px;">
+    <% if(messages.success_msg) { %> 
+      <li><%= messages.success_msg %></li> 
+    <% } else if (messages.error_msg) { %>
+      <li><%= messages.error_msg %></li> 
+    <% } %> 
+  </ul>
 
  
 

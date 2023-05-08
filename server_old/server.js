@@ -130,6 +130,39 @@ app.get("/users/caseView/:id", checkAuthenticated, (req, res) => {
   });
 });
 
+app.get("/users/caseform",checkAuthenticated, (req, res)=>{ 
+  res.render("users/cases/caseform", {user: req.user.name});
+  console.log("formularzSprawy") 
+});
+
+app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
+
+  pool.query(
+    `SELECT documents.id_document, documents.title_document, documents.note_document
+     FROM documents
+     INNER JOIN document_owner ON documents.id_document = document_owner.id_document_docown 
+     WHERE document_owner.id_user_docown = $1  `,
+    [userId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        if (res.headersSent) { return; }
+        res.status(500).send("Wystąpił błąd przy pobieraniu dokumentów.");
+        return;
+      }
+
+      if (result.rows.length === 0) {
+        res.render("users/cases/docselect", { documents: [] });
+        return;
+      }
+      res.render("users/cases/docselect", { documents: result.rows, caseId: req.params.id });
+    }
+  );
+});
+
+
+
 app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
   
@@ -505,12 +538,13 @@ app.post('/users/delete_user/:id', checkAuthenticated, (req, res) => {
 });
 
 
-app.post("/users/docsend", checkAuthenticated, (req, res) => {
-  const documentId = req.body.document_id;
+app.post("/users/docsend/:id", checkAuthenticated, (req, res) => {
+  const documentId = req.params.id;
   const email = req.body.email;
 
+  // Check if the document exists
   pool.query(
-    `SELECT id_document FROM documents WHERE id_document = $1`,
+    `SELECT id_file_document FROM documents WHERE id_document = $1`,
     [documentId],
     (err, result) => {
       if (err) {
@@ -526,6 +560,7 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
 
       const fileId = result.rows[0].id_file_document;
 
+      // Check if the user exists
       pool.query(
         `SELECT id FROM appusers WHERE email = $1`,
         [email],
@@ -543,6 +578,7 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
 
           const userId = result.rows[0].id;
 
+          // Assign the document to the user
           pool.query(
             `INSERT INTO document_owner (id_document_docown, id_user_docown) VALUES ($1, $2)`,
             [documentId, userId],
@@ -553,6 +589,7 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
                 return;
               }
 
+              // Assign the file to the user
               pool.query( 
                 `INSERT INTO file_owner (id_user_filown, id_file_filown) VALUES ($1, $2)`,
                 [userId, fileId],
@@ -563,6 +600,8 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
                     return;
                   }
 
+                  // Redirect to the document list page
+                  req.flash('success_msg', 'Plik został przesłany');
                   res.redirect("/users/doclists");
                 }
               );
@@ -658,7 +697,7 @@ app.post('/documents', checkAuthenticated, (req, res) => {
             console.log(err);
             return res.status(500).send("Wystąpił błąd podczas dodawania dokumentu");
           }
-          res.redirect("users/userPanel");
+          res.redirect("/users/doclists");
         }
       );
     }
