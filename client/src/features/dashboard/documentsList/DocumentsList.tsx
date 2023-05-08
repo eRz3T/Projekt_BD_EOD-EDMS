@@ -1,11 +1,13 @@
 import moment from 'moment'
+import { enqueueSnackbar } from 'notistack'
+import { useNavigate } from 'react-router-dom'
+
 import { documents } from './dummyData'
 import { trimText } from '@/shared/utilities/textTrimmer'
 import Tooltip from '@/shared/components/Tooltip/Tooltip'
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/useStore'
 import { setObservedDocuments } from '@/core/store/documents/documentsSlice'
 import { selectObservedDocuments } from '@/core/store/documents/documentsSelectors'
-import { enqueueSnackbar } from 'notistack'
 
 interface IDocument {
   id: number
@@ -16,15 +18,19 @@ interface IDocument {
 }
 
 const DocumentsList = ({ data }: { data: IDocument[] }) => {
+  const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const observedDocuments = useAppSelector(selectObservedDocuments)
-  documents.map((doc) => console.log(moment(doc.expiryDate).format('YYYY-MM-DD')))
 
   const handleObserveDocument = (index: number) => {
     const pickedDocument = documents[index]
     !observedDocuments.includes(pickedDocument)
       ? dispatch(setObservedDocuments(pickedDocument))
       : enqueueSnackbar('Już obserwujesz ten dokument', { variant: 'error' })
+  }
+
+  const handleGoToCase = (caseId: number) => {
+    navigate(`/case/${caseId}`)
   }
 
   return (
@@ -56,17 +62,17 @@ const DocumentsList = ({ data }: { data: IDocument[] }) => {
         </thead>
         <tbody className='bg-white divide-y divide-gray-200 text-secondary'>
           {data.map((item, index) => (
-            <tr key={item.id}>
+            <tr key={item.id} className=' hover:opacity-80 cursor-pointer'>
               <td className='px-6 py-4 whitespace-nowrap'>{item.id}</td>
-              <td className='px-6 py-4 whitespace-nowrap'>
+              <td className='px-6 py-4 whitespace-nowrap' onClick={() => handleGoToCase(item.id)}>
                 {' '}
                 <Tooltip label={trimText(item.name, 20)} tooltipContent={item.name} />{' '}
               </td>
               <td className='px-6 py-4 whitespace-nowrap'>
-                {item.receiveDate.toLocaleDateString()}
+                {moment(item.receiveDate).format('YYYY-MM-DD')}
               </td>
               <td className='px-6 py-4 whitespace-nowrap'>
-                {item.expiryDate.toLocaleDateString()}
+                {moment(item.expiryDate).format('YYYY-MM-DD')}
               </td>
               <td className='px-6 py-4 whitespace-nowrap'>{item.createdBy}</td>
               <td
