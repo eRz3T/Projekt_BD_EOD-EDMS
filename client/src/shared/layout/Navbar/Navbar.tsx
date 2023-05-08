@@ -19,7 +19,7 @@ const Navbar = () => {
   }
 
   return (
-    <menu className='sticky top-0 left-0 bg-white'>
+    <menu className='sticky top-0 left-0 bg-white z-50'>
       <div className='py-3 px-2'>
         <div className='container mx-auto'>
           <div className='flex justify-between items-center'>
