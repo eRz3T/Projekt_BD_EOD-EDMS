@@ -96,6 +96,53 @@ app.get("/users/rejestracja", (req, res) => {
     res.render("users/pages-access/rejestracja");
 });
 
+app.get("/users/caselist", checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
+
+  pool.query(
+    'SELECT id_case, opis_case, id_group_case, title_case FROM casefile WHERE id_user_case = $1',
+    [userId],
+    (error, results) => {
+      if (error) throw error;
+      const cases = results.rows;
+
+      res.render("users/cases/caselist", { user: req.user.name, cases });
+      console.log("listaSpraw");
+    }
+  );
+});
+
+app.get("/users/caseform",checkAuthenticated, (req, res)=>{ 
+  res.render("users/cases/caseform", {user: req.user.name});
+  console.log("formularzSprawy") 
+});
+
+app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
+  
+  pool.query(
+    `SELECT documents.id_document, documents.title_document, documents.note_document
+     FROM documents
+     INNER JOIN document_owner ON documents.id_document = document_owner.id_document_docown 
+     WHERE document_owner.id_user_docown = $1  `,
+    [userId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        if (res.headersSent) { return; }
+        res.status(500).send("Wystąpił błąd przy pobieraniu dokumentów.");
+        return;
+      }
+
+      if (result.rows.length === 0) {
+        res.render("users/cases/docselect", { documents: [] });
+        return;
+      }
+      res.render("users/cases/docselect", { documents: result.rows, caseId: req.params.id });
+    }
+  );
+});
+
 //checkNotAuthenticated
 // Obsługa żądania GET na adres "/users/userPanel"
 // Przekazanie funkcji pośredniczącej "checkNotAuthenticated"
@@ -323,6 +370,49 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
           });
         });
       });
+    }
+  );
+});
+
+app.post("/dodaj-do-sprawy/:caseId", checkAuthenticated, (req, res) => {
+  const caseId = req.params.caseId;
+  const selectedDocuments = req.body.documents;
+
+  // Insert the selected documents into the case_documents table
+  selectedDocuments.forEach(documentId => {
+    pool.query(
+      `INSERT INTO case_documents (id_case_casdoc, id_document_casdoc) VALUES ($1, $2)`,
+      [caseId, documentId],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          if (res.headersSent) { return; }
+          res.status(500).send("Wystąpił błąd przy dodawaniu dokumentów do sprawy.");
+          return;
+        }
+      }
+    );
+  });
+
+  res.redirect("/users/caselist");
+});
+
+app.post("/users/caseform", checkAuthenticated, (req, res) => {
+  const title = req.body.nazwaSprawy;
+  const description = req.body.note;
+  const userId = req.user.id;
+
+  pool.query(
+    `INSERT INTO casefile (title_case, opis_case, id_user_case) VALUES ($1, $2, $3)`,
+    [title, description, userId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Wystąpił błąd przy dodawaniu sprawy.");
+        return;
+      }
+
+      res.redirect("/users/caselist");
     }
   );
 });

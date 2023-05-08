@@ -14,17 +14,40 @@
 
   <tablenav>
     <tbody>
-        <tr>
-          <form action="/wylogowanie" method="POST">
-            <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
-          </form>    
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+        </form>    
         <td></td>
+        <a href="/users/caseform">Dodaj nową sprawę</a>
         <a href="/users/userPanel">Panel użytkownika</a>  
-       </tr> 
-       <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
+      </tr> 
+      <tr>
+        <td colspan="4"><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></td>
+      </tr>
     </tbody>
-</tablenav>
+  </tablenav>
 
-
+  <srodek>
+  <table>
+    <thead>
+      <tr>
+        <th>Nr sprawy</th>
+        <th>Tytuł</th>
+        <th> </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (let i = 0; i < cases.length; i++) { %>
+        <tr>
+          <td><%= cases[i].id_case %></td>
+          <td><%= cases[i].title_case %></td>
+          <td><a href="/users/docselect/<%= cases[i].id_case %>"><button style="color: white;">Dodaj dokument do sprawy</button>
+          <a href="/users/docselect/<%= cases[i].id_case %>"><button style="color: white;">Podgląd</button></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</srodek>
 </body>
 </html>

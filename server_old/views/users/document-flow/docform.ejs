@@ -37,33 +37,53 @@
     <thead>
       <tr>
         <th>Tytuł dokumentu</th>
-        <th>Plik</th>
-        <th> </th>
       </tr>
     </thead>
-
     <tbody>
       <tr>
             <td><input type="text" id="document_title" name="document_title" required></td>
-              <td><select id="file_id" name="file_id">
-                <% files.forEach(function(file) { %>
-                  <option value="<%= file.id_file %>"><%= file.name_file %></option>
-                <% }); %>
-              </select></td>
+              
                
-              <td><input type="submit" value="Preślij dokument do systemu"></td>                     
+                                   
       </tr>  
-    </tbody>
-    <tbody2>
-      
-      <tr>
-        
-        <td><h2>Notatka</h2><td><textarea id="note" name="note" style="height: 200px; width: 400px;"></textarea></td>
-        
-      </tr>
-      
-    </tbody2>
-  </table>        
+      </tbody>
+          <thead2>
+            <tr>
+              <th>Plik</th>
+            </tr>
+        </thead2>
+        <tbody2>
+              <tr>
+                <td><select id="file_id" name="file_id">
+                  <% files.forEach(function(file) { %>
+                    <option value="<%= file.id_file %>"><%= file.name_file %></option>
+                  <% }); %>
+                </select></td>
+              </tr>
+        </tbody2>
+            <thead3>
+                <tr>
+                  <th>Notatka</th>
+                </tr>
+            </thead3>
+            <tbody3>
+                  <tr>
+                    <td><textarea id="note" name="note" style="height: 200px; width: 400px;"></textarea></td>
+                  </tr>
+            </tbody3>
+          </tbody>
+              <thead4>
+                  <tr>
+                    <th> </th>
+                  </tr>
+              </thead4>
+              <tbody4>
+                    <tr>
+                      <td><button type="submit">Preślij dokument do systemu</button></td>
+                    </tr>
+              </tbody4>
+  </table> 
+  </form>       
   </srodek>
 </body>
 </html>

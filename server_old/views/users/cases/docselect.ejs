@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Dodawanie sprawy</title>
+</head>
+
+<body>
+  <tytul>eObieg</tytul><br>
+
+  <tablenav>
+    <tbody>
+        <tr>
+          <form action="/wylogowanie" method="POST">
+            <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+          </form>   
+        <td></td>
+        <a href="/users/caselist">Powrót do listy spraw</a> 
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+       <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
+    </tbody>
+</tablenav>
+
+
+    <srodek>
+            
+            
+                
+                <table>
+                    <thead>
+                        <tr>
+                        <th>ID</th>
+                        <th>Tytuł dokumentu</th>
+                        <th></th>
+                        </tr>
+                    </thead>
+                            
+                        <tbody>
+                                <form action="/dodaj-do-sprawy/<%= caseId %>" method="POST">
+                                <% documents.forEach((document) => { %>
+                                    <tr>
+                                        <td><%= document.id_document %></td>
+                                        <td><%= document.title_document %></td>
+                                        <td><input type="checkbox" name="documents[]" value="<%= document.id_document %>" /></td> 
+                                                        
+                                    </tr>  
+                                <% }); %>
+                                    <button type="submit" style="font-weight: bolder;">Dodaj do sprawy</button>
+                                </form> 
+                        </tbody>
+                            
+                </table>        
+                
+            
+            
+    </srodek>
+</body>
+</html>

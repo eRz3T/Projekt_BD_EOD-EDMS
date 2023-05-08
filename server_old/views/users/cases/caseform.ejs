@@ -19,12 +19,60 @@
             <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
           </form>   
         <td></td>
+        <a href="/users/caselist">Powrót do listy spraw</a> 
         <a href="/users/userPanel">Panel użytkownika</a>  
        </tr> 
        <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
     </tbody>
 </tablenav>
 
+<srodek>
+  <form action="/users/caseform" method="POST">
+  <table>
+    <thead>
+      <tr>
+        <th>Tytuł sprawy</th>
+        
+        
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          
+          <td><input type="text" id="title_case" name="nazwaSprawy" required></td>
+          
+          
+        
+        </tr>
+      
+    </tbody>
+          <thead2>
+                <tr>
+                  <th>Opis sprawy</th>
+                </tr>
+          </thead2>
+              <tbody2>
+                    <tr>
+                      <td><textarea id="opis_case" name="note" style="height: 200px; width: 400px;"></textarea></td>
+                    </tr>
+              </tbody2>
+                    <thead3>
+                      <tr>
+                        <th> </th>
+                      </tr>
+                </thead3>
+                    <tbody3>
+                          <tr>
+                            <td><button type="submit">Pozpocznij sprawę</button></td>
+                          </tr>
+                    </tbody3>
+  </table> 
+</form>
+  
+</srodek>
 
 </body>
 </html>
+
+
