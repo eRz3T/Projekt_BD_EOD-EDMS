@@ -944,22 +944,12 @@ app.post("/users/docsend/:id", checkAuthenticated, (req, res) => {
                 return;
               }
 
-              // Assign the file to the user
-              pool.query( 
-                `INSERT INTO file_owner (id_user_filown, id_file_filown) VALUES ($1, $2)`,
-                [userId, fileId],
-                (err, result) => {
-                  if (err) {
-                    console.error(err);
-                    res.status(500).send("Wystąpił błąd przy aktualizowaniu właściciela dokumentu.");
-                    return;
-                  }
+              
 
                   // Redirect to the document list page
                   req.flash('success_msg', 'Plik został przesłany');
                   res.redirect("/users/doclists");
-                }
-              );
+                
             }
           );
         }

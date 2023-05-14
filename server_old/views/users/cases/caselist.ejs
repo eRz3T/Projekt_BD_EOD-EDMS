@@ -69,6 +69,7 @@
     <tr>
       <th>ID sprawy</th>
       <th>Tytuł sprawy</th>
+      <th> </th>
     </tr>
   </thead>
   <tbody>
@@ -77,6 +78,10 @@
       <tr>
         <td><%= sharedCasesUSR.id_case_casusr %></td>
         <td><%= sharedCasesUSR.title_case %></td>
+        <td>
+          <a href="/users/docselect/<%= sharedCasesUSR.id_case_casusr %>"><button style="color: white;">Załącz dokument</button></a>
+        <a href="/users/caseView/<%= sharedCasesUSR.id_case_casusr %>"><button style="color: white;">Podgląd</button></a>
+      </td>
       </tr>
     <% }); %>
   </tbody>
@@ -88,7 +93,7 @@
     <tr>
       <th>ID sprawy</th>
       <th>Tytuł sprawy</th>
-
+      <th> </th>
     </tr>
   </thead>
   <tbody>
@@ -97,6 +102,10 @@
       <tr>
         <td><%= sharedCasesGROUP.id_case_casgrup %></td>
         <td><%= sharedCasesGROUP.title_case %></td>
+        <td>
+          <a href="/users/docselect/<%= sharedCasesGROUP.id_case_casgrup %>"><button style="color: white;">Załącz dokument</button></a>
+        <a href="/users/caseView/<%= sharedCasesGROUP.id_case_casgrup %>"><button style="color: white;">Podgląd</button></a>
+      </td>
       </tr>
     <% }); %>
   </tbody>

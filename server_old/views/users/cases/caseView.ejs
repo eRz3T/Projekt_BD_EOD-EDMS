@@ -32,7 +32,6 @@
         <th>ID</th>
         <th>Tytuł</th>
         <th>Opis</th>
-        <th>Dokumenty</th>
       </tr>
     </thead>
     <tbody>
@@ -40,16 +39,29 @@
         <td><%= caseData[0].id_case %></td>
         <td><%= caseData[0].title_case %></td>
         <td><%= caseData[0].opis_case %></td>
-        <td>
-          <ul>
-            <% caseData.forEach(document => { %>
-              <li><%= document.title_document %></li>
-            <% }); %>
-          </ul>
-        </td>
       </tr>
     </tbody>
   </table>
+
+  <table>
+    <thead>
+      <tr>
+
+        <th>Dokumenty</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% caseData.forEach(document => { %>
+      <tr>
+        
+        <td><%= document.title_document %></td>
+        <td><a href="/users/document/<%= document.id_document %>"><button style="color: white;">Podgląd</button></a>
+          
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
 </srodek>
 </body>
 </html>
