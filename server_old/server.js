@@ -96,6 +96,94 @@ app.get("/users/rejestracja", (req, res) => {
     res.render("users/pages-access/rejestracja");
 });
 
+
+app.get("/users/nowiczlonkowie/:id", (req, res) => {
+  const groupId = req.params.id;
+  
+  pool.query('SELECT * FROM appusers WHERE status = $1', ['active'], (error, activeResults) => {
+    if (error) throw error;
+    const users = activeResults.rows.map(row => ({
+      id: row.id,
+      name: row.name,
+      surname: row.surname,
+      email: row.email,
+      class: row.class
+    }));
+    res.render("users/groups/userselect", { users,  groupId });
+  });
+});
+
+app.get("/groupedit/:id", checkAuthenticated, (req, res) => {
+  const groupId = req.params.id;
+
+  pool.query(
+    `SELECT name_group
+     FROM groups WHERE id_group =$1`,
+    [groupId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        if (res.headersSent) { return; }
+        res.status(500).send("Wystąpił błąd przy pobieraniu informacji o grupie.");
+        return;
+      }
+
+      const idgroup = groupId;
+      const groupName = result.rows[0].name_group;
+
+      pool.query(
+        `SELECT au.id, au.email, au.name, au.surname
+         FROM appusers au
+         JOIN group_users gu ON au.id = gu.id_user_grpusr
+         WHERE gu.id_group_grpusr = $1`,
+        [groupId],
+        (err, result) => {
+          if (err) {
+            console.error(err);
+            if (res.headersSent) { return; }
+            res.status(500).send("Wystąpił błąd przy pobieraniu listy członków grupy.");
+            return;
+          }
+
+          const members = result.rows;
+
+          res.render("users/groups/groupedit", { groupName: groupName, idgroup: idgroup, members: members });
+        }
+      );
+    }
+  );
+});
+
+app.get('/groups/grouplist', checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
+
+  pool.query('SELECT * FROM groups WHERE creator_group = $1', [userId], (err, result1) => {
+    if (err) {
+      console.error(err);
+      res.sendStatus(500);
+      return;
+    }
+
+    const groups = result1.rows;
+
+    pool.query('SELECT groups.name_group FROM groups INNER JOIN group_users ON groups.id_group = group_users.id_group_grpusr WHERE group_users.id_user_grpusr = $1', [userId], (err, result2) => {
+      if (err) {
+        console.error(err);
+        res.sendStatus(500);
+        return;
+      }
+
+      const userGroups = result2.rows;
+
+      res.render('users/groups/grouplist', { groups: groups, userGroups: userGroups });
+    });
+  });
+});
+
+app.get("/users/grupy", (req, res) =>{
+  res.render("users/groups/groupcreate");
+});
+
 app.get("/users/caselist", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
 
@@ -163,36 +251,41 @@ app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
 
 
 
-app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
-  const userId = req.user.id;
+// app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
+//   const userId = req.user.id;
   
-  pool.query(
-    `SELECT documents.id_document, documents.title_document, documents.note_document
-     FROM documents
-     INNER JOIN document_owner ON documents.id_document = document_owner.id_document_docown 
-     WHERE document_owner.id_user_docown = $1  `,
-    [userId],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        if (res.headersSent) { return; }
-        res.status(500).send("Wystąpił błąd przy pobieraniu dokumentów.");
-        return;
-      }
+//   pool.query(
+//     `SELECT documents.id_document, documents.title_document, documents.note_document
+//      FROM documents
+//      INNER JOIN document_owner ON documents.id_document = document_owner.id_document_docown 
+//      WHERE document_owner.id_user_docown = $1  `,
+//     [userId],
+//     (err, result) => {
+//       if (err) {
+//         console.error(err);
+//         if (res.headersSent) { return; }
+//         res.status(500).send("Wystąpił błąd przy pobieraniu dokumentów.");
+//         return;
+//       }
 
-      if (result.rows.length === 0) {
-        res.render("users/cases/docselect", { documents: [] });
-        return;
-      }
-      res.render("users/cases/docselect", { documents: result.rows, caseId: req.params.id });
-    }
-  );
-});
+//       if (result.rows.length === 0) {
+//         res.render("users/cases/docselect", { documents: [] });
+//         return;
+//       }
+//       res.render("users/cases/docselect", { documents: result.rows, caseId: req.params.id });
+//     }
+//   );
+// });
 
 app.get("/users/caseView/:id", checkAuthenticated, (req, res) => {
   res.render("users/cases/caseView");
   console.log("Podgląd sprawy") 
 });
+
+
+
+
+
 
 //checkNotAuthenticated
 // Obsługa żądania GET na adres "/users/userPanel"
@@ -214,22 +307,34 @@ app.get("/users/userPanel", checkAuthenticated, (req, res) => {
 app.get('/users/edit_user/:id', checkAuthenticated, (req, res) => {
   const userId = req.params.id;
 
-  pool.query('SELECT * FROM appusers WHERE id = $1', [userId], (err, result) => {
+  pool.query('SELECT * FROM appusers WHERE id = $1', [userId], (err, userResult) => {
     if (err) {
       console.error(err);
       res.sendStatus(500);
       return;
     }
 
-    if (result.rows.length === 0) {
+    if (userResult.rows.length === 0) {
       res.sendStatus(404);
       return;
     }
 
-    const user = result.rows[0];
-    res.render('users/editUser', { userId: userId, userData: user });
+    const user = userResult.rows[0];
+
+    pool.query('SELECT * FROM groups', (err, groupsResult) => {
+      if (err) {
+        console.error(err);
+        res.sendStatus(500);
+        return;
+      }
+
+      const groups = groupsResult.rows;
+
+      res.render('users/editUser', { userId: userId, userData: user, groups: groups });
+    });
   });
 });
+
 
 // Obsługa żądania GET na adres "/users/uploads"
 // Renderowanie szablonu "uploads.ejs"
@@ -425,6 +530,72 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
   );
 });
 
+
+app.post('/groupUSRdelete/:id', checkAuthenticated, (req, res) => {
+  const userId = req.params.id;
+  const groupId = req.body.groupId;
+console.log(userId, groupId);
+  pool.query(
+    `DELETE FROM group_users
+     WHERE id_user_grpusr = $1 AND id_group_grpusr = $2`,
+    [userId, groupId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        if (res.headersSent) { return; }
+        res.status(500).send('Wystąpił błąd podczas usuwania członka grupy.');
+        return;
+      }
+
+      res.redirect(`/groupedit/${groupId}`);
+    }
+  );
+});
+
+
+app.post('/groupUpdateName/:id', checkAuthenticated, (req, res) => {
+  const groupId = req.params.id;
+  const groupName = req.body.groupName;
+
+  // Aktualizacja nazwy grupy
+  pool.query(
+    `UPDATE groups SET name_group = $1 WHERE id_group = $2`,
+    [groupName, groupId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Wystąpił błąd przy aktualizacji nazwy grupy.");
+        return;
+      } else {
+        res.redirect(`/groupedit/${groupId}`);
+      }
+    }
+  );
+});
+
+
+// Dodanie nowej grupy do bazy danych
+app.post('/groups/create', (req, res) => {
+  const { name_group } = req.body;
+  const userId = req.user.id;
+
+  pool.query(
+    `INSERT INTO groups (name_group, creator_group)
+     VALUES ($1, $2)`,
+    [name_group, userId],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+
+      console.log(`Utworzono grupę o nazwie ${name_group}`);
+
+      req.flash('success_msg', 'Grupa została utworzona.');
+      res.redirect('/users/userPanel');
+    },
+  );
+});
+
 app.post("/dodaj-do-sprawy/:caseId", checkAuthenticated, (req, res) => {
   const caseId = req.params.caseId;
   const selectedDocuments = req.body.documents;
@@ -447,6 +618,30 @@ app.post("/dodaj-do-sprawy/:caseId", checkAuthenticated, (req, res) => {
 
   res.redirect("/users/caselist");
 });
+
+app.post("/dodaj-do-sprawy/:caseId", checkAuthenticated, (req, res) => {
+  const caseId = req.params.caseId;
+  const selectedDocuments = req.body.documents;
+
+  // Insert the selected documents into the case_documents table
+  selectedDocuments.forEach(documentId => {
+    pool.query(
+      `INSERT INTO case_documents (id_case_casdoc, id_document_casdoc) VALUES ($1, $2)`,
+      [caseId, documentId],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          if (res.headersSent) { return; }
+          res.status(500).send("Wystąpił błąd przy dodawaniu dokumentów do sprawy.");
+          return;
+        }
+      }
+    );
+  });
+
+  res.redirect("/users/caselist");
+});
+
 
 app.post("/users/caseform", checkAuthenticated, (req, res) => {
   const title = req.body.nazwaSprawy;
@@ -471,7 +666,7 @@ app.post("/users/caseform", checkAuthenticated, (req, res) => {
 app.post('/users/edit_user/:id', checkAuthenticated, (req, res) => {
   const userId = req.params.id;
 
-  const { name, surname, email, password, userClass } = req.body;
+  const { name, surname, email, password, userClass, groupId } = req.body;
 
   pool.query(
     'UPDATE appusers SET name = $1, surname = $2, email = $3, password = $4, class = $5 WHERE id = $6',
@@ -481,6 +676,26 @@ app.post('/users/edit_user/:id', checkAuthenticated, (req, res) => {
         console.error(err);
         res.sendStatus(500);
         return;
+      }
+
+      // Dodanie użytkownika do grupy
+      if (groupId) {
+        pool.query(
+          `INSERT INTO group_users (id_group_grpusr, id_user_grpusr)
+           VALUES ($1, $2)`,
+          [groupId, userId],
+          (error, results) => {
+            if (error) {
+              console.error(error);
+              res.sendStatus(500);
+              return;
+            }
+
+            console.log(`Dodano użytkownika ${userId} do grupy ${groupId}`);
+          }
+        );
+      } else {
+        console.log(`Nie wybrano grupy dla użytkownika ${userId}`);
       }
 
       res.redirect('/users/userlist');
