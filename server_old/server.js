@@ -200,11 +200,50 @@ app.get("/users/caselist", checkAuthenticated, (req, res) => {
     'SELECT id_case, opis_case, id_group_case, title_case FROM casefile WHERE id_user_case = $1',
     [userId],
     (error, results) => {
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        res.status(500).send("Wystąpił błąd podczas pobierania listy spraw.");
+        return;
+      }
+
       const cases = results.rows;
 
-      res.render("users/cases/caselist", { user: req.user.name, cases });
-      console.log("listaSpraw");
+      pool.query(
+        `SELECT id_case_casusr, title_case FROM case_user 
+        INNER JOIN casefile ON case_user.id_case_casusr = casefile.id_case
+        WHERE id_user_casusr = $1`,
+        [userId],
+        (error, results) => {
+          if (error) {
+            console.error(error);
+            res.status(500).send("Wystąpił błąd podczas pobierania informacji o udostępnionych sprawach.");
+            return;
+          }
+
+          const sharedCasesUSR = results.rows;
+
+          pool.query(
+            `SELECT id_case_casgrup, title_case FROM case_group 
+            INNER JOIN groups ON case_group.id_group_casgrup = groups.id_group
+            INNER JOIN group_users ON groups.id_group = group_users.id_group_grpusr
+            INNER JOIN casefile ON case_group.id_case_casgrup = casefile.id_case
+            WHERE group_users.id_user_grpusr = $1`,
+            [userId],
+            (error, results) => {
+              if (error) {
+                console.error(error);
+                res.status(500).send("Wystąpił błąd podczas pobierania informacji o udostępnionych sprawach.");
+                return;
+              }
+    
+              const sharedCasesGROUP = results.rows;
+
+          res.render("users/cases/caselist", { user: req.user.name, cases, sharedCasesUSR, sharedCasesGROUP });
+          console.log("listaSpraw");
+         }
+        );
+        }
+      );
     }
   );
 });

@@ -29,6 +29,7 @@
   </tablenav>
 
   <srodek>
+
   <table>
     <h3>Twoje sprawy</h3>
     <thead>
@@ -59,6 +60,48 @@
       <% } %>
     </tbody>
   </table>
+
+
+
+  <h3>Lista udostępnionych spraw tobie przez użytkowników</h3>
+<table>
+  <thead>
+    <tr>
+      <th>ID sprawy</th>
+      <th>Tytuł sprawy</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <% sharedCasesUSR.forEach(sharedCasesUSR => { %>
+      <tr>
+        <td><%= sharedCasesUSR.id_case_casusr %></td>
+        <td><%= sharedCasesUSR.title_case %></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<h3>Lista udostępnionych spraw tobie po przez twoje grupy</h3>
+<table>
+  <thead>
+    <tr>
+      <th>ID sprawy</th>
+      <th>Tytuł sprawy</th>
+
+    </tr>
+  </thead>
+  <tbody>
+
+    <% sharedCasesGROUP.forEach(sharedCasesGROUP => { %>
+      <tr>
+        <td><%= sharedCasesGROUP.id_case_casgrup %></td>
+        <td><%= sharedCasesGROUP.title_case %></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
 </srodek>
 </body>
 </html>
