@@ -83,13 +83,6 @@ app.get("/", (req, res)=>{
     res.render("about/welcome");
 });
 
-// Obsługa żądania GET na adres "/about/informacje"
-// Renderowanie szablonu "informacje.ejs"
-app.get("/about/informacje", (req, res) =>{
-    res.render("about/informacje");
-});
-
-
 // Obsługa żądania GET na adres "/users/logowanie"
 // Renderowanie szablonu "logowanie.ejs"
 app.get("/users/logowanie", (req, res) =>{
@@ -103,15 +96,245 @@ app.get("/users/rejestracja", (req, res) => {
     res.render("users/pages-access/rejestracja");
 });
 
+
+app.get("/users/nowiczlonkowie/:id", (req, res) => {
+  const groupId = req.params.id;
+  
+  pool.query('SELECT * FROM appusers WHERE status = $1', ['active'], (error, activeResults) => {
+    if (error) throw error;
+    const users = activeResults.rows.map(row => ({
+      id: row.id,
+      name: row.name,
+      surname: row.surname,
+      email: row.email,
+      class: row.class
+    }));
+    res.render("users/groups/userselect", { users,  groupId });
+  });
+});
+
+app.get("/groupedit/:id", checkAuthenticated, (req, res) => {
+  const groupId = req.params.id;
+
+  pool.query(
+    `SELECT name_group
+     FROM groups WHERE id_group =$1`,
+    [groupId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        if (res.headersSent) { return; }
+        res.status(500).send("Wystąpił błąd przy pobieraniu informacji o grupie.");
+        return;
+      }
+
+      const idgroup = groupId;
+      const groupName = result.rows[0].name_group;
+
+      pool.query(
+        `SELECT au.id, au.email, au.name, au.surname
+         FROM appusers au
+         JOIN group_users gu ON au.id = gu.id_user_grpusr
+         WHERE gu.id_group_grpusr = $1`,
+        [groupId],
+        (err, result) => {
+          if (err) {
+            console.error(err);
+            if (res.headersSent) { return; }
+            res.status(500).send("Wystąpił błąd przy pobieraniu listy członków grupy.");
+            return;
+          }
+
+          const members = result.rows;
+
+          res.render("users/groups/groupedit", { groupName: groupName, idgroup: idgroup, members: members });
+        }
+      );
+    }
+  );
+});
+
+app.get('/groups/grouplist', checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
+
+  pool.query('SELECT * FROM groups WHERE creator_group = $1', [userId], (err, result1) => {
+    if (err) {
+      console.error(err);
+      res.sendStatus(500);
+      return;
+    }
+
+    const groups = result1.rows;
+
+    pool.query('SELECT groups.name_group FROM groups INNER JOIN group_users ON groups.id_group = group_users.id_group_grpusr WHERE group_users.id_user_grpusr = $1', [userId], (err, result2) => {
+      if (err) {
+        console.error(err);
+        res.sendStatus(500);
+        return;
+      }
+
+      const userGroups = result2.rows;
+
+      res.render('users/groups/grouplist', { groups: groups, userGroups: userGroups });
+    });
+  });
+});
+
+app.get("/users/grupy", (req, res) =>{
+  res.render("users/groups/groupcreate");
+});
+
+app.get("/users/caselist", checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
+
+  pool.query(
+    'SELECT id_case, opis_case, id_group_case, title_case FROM casefile WHERE id_user_case = $1',
+    [userId],
+    (error, results) => {
+      if (error) throw error;
+      const cases = results.rows;
+
+      res.render("users/cases/caselist", { user: req.user.name, cases });
+      console.log("listaSpraw");
+    }
+  );
+});
+
+app.get("/users/caseView/:id", checkAuthenticated, (req, res) => {
+  const caseId = req.params.id;
+  // Fetch the case data and the documents assigned to it from the database based on its ID
+  pool.query(`SELECT casefile.id_case, casefile.title_case, casefile.opis_case, documents.id_document, documents.title_document 
+  FROM casefile 
+  INNER JOIN case_documents ON casefile.id_case = case_documents.id_case_casdoc
+  INNER JOIN documents ON case_documents.id_document_casdoc = documents.id_document
+  WHERE casefile.id_case = $1`, [caseId], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.redirect('/users/cases');
+    } else {
+      // Render the caseView.ejs template and pass the fetched case data and documents to it
+      res.render("users/cases/caseView", { caseData: result.rows });
+    }
+  });
+});
+
+app.get("/users/caseform",checkAuthenticated, (req, res)=>{ 
+  res.render("users/cases/caseform", {user: req.user.name});
+  console.log("formularzSprawy") 
+});
+
+app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
+
+  pool.query(
+    `SELECT documents.id_document, documents.title_document, documents.note_document
+     FROM documents
+     INNER JOIN document_owner ON documents.id_document = document_owner.id_document_docown 
+     WHERE document_owner.id_user_docown = $1  `,
+    [userId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        if (res.headersSent) { return; }
+        res.status(500).send("Wystąpił błąd przy pobieraniu dokumentów.");
+        return;
+      }
+
+      if (result.rows.length === 0) {
+        res.render("users/cases/docselect", { documents: [] });
+        return;
+      }
+      res.render("users/cases/docselect", { documents: result.rows, caseId: req.params.id });
+    }
+  );
+});
+
+
+
+// app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
+//   const userId = req.user.id;
+  
+//   pool.query(
+//     `SELECT documents.id_document, documents.title_document, documents.note_document
+//      FROM documents
+//      INNER JOIN document_owner ON documents.id_document = document_owner.id_document_docown 
+//      WHERE document_owner.id_user_docown = $1  `,
+//     [userId],
+//     (err, result) => {
+//       if (err) {
+//         console.error(err);
+//         if (res.headersSent) { return; }
+//         res.status(500).send("Wystąpił błąd przy pobieraniu dokumentów.");
+//         return;
+//       }
+
+//       if (result.rows.length === 0) {
+//         res.render("users/cases/docselect", { documents: [] });
+//         return;
+//       }
+//       res.render("users/cases/docselect", { documents: result.rows, caseId: req.params.id });
+//     }
+//   );
+// });
+
+app.get("/users/caseView/:id", checkAuthenticated, (req, res) => {
+  res.render("users/cases/caseView");
+  console.log("Podgląd sprawy") 
+});
+
+
+
+
+
+
 //checkNotAuthenticated
 // Obsługa żądania GET na adres "/users/userPanel"
 // Przekazanie funkcji pośredniczącej "checkNotAuthenticated"
 // Renderowanie szablonu "userPanel.ejs"
 // Przekazanie obiektu z właściwością "user", która zawiera nazwę użytkownika
-app.get("/users/userPanel", checkNotAuthenticated, (req, res) =>{
-    res.render("users/userPanel", {user: req.user.name});
-    console.log("panel uzytkownika") 
+app.get("/users/userPanel", checkAuthenticated, (req, res) => {
+  const userId = req.user.id; // pobranie ID logującego się użytkownika
+
+  pool.query('SELECT id, name, surname, email, class FROM appusers WHERE id = $1 AND status = $2', [userId, 'active'], (error, results) => {
+    if (error) throw error;
+    const users = results.rows[0];
+
+    res.render("users/userPanel", {user: req.user.name, users});
+    console.log("panel użytkownika");
+  });
 });
+
+app.get('/users/edit_user/:id', checkAuthenticated, (req, res) => {
+  const userId = req.params.id;
+
+  pool.query('SELECT * FROM appusers WHERE id = $1', [userId], (err, userResult) => {
+    if (err) {
+      console.error(err);
+      res.sendStatus(500);
+      return;
+    }
+
+    if (userResult.rows.length === 0) {
+      res.sendStatus(404);
+      return;
+    }
+
+    const user = userResult.rows[0];
+
+    pool.query('SELECT * FROM groups', (err, groupsResult) => {
+      if (err) {
+        console.error(err);
+        res.sendStatus(500);
+        return;
+      }
+
+      const groups = groupsResult.rows;
+
+      res.render('users/editUser', { userId: userId, userData: user, groups: groups });
+    });
+  });
+});
+
 
 // Obsługa żądania GET na adres "/users/uploads"
 // Renderowanie szablonu "uploads.ejs"
@@ -119,6 +342,36 @@ app.get("/users/uploads",checkAuthenticated, (req, res)=>{
     res.render("users/pages-uploads/uploads", {user: req.user.name});
     console.log("panel upload") 
 });
+
+app.get("/users/userlist", checkAuthenticated, (req, res) => {
+  pool.query('SELECT * FROM appusers WHERE status = $1', ['active'], (error, activeResults) => {
+    if (error) throw error;
+    const users = activeResults.rows.map(row => ({
+      id: row.id,
+      name: row.name,
+      surname: row.surname,
+      email: row.email,
+      class: row.class
+    }));
+
+    pool.query('SELECT * FROM appusers WHERE status = $1', ['not_active'], (error, inactiveResults) => {
+      if (error) throw error;
+      const not_users = inactiveResults.rows.map(row => ({
+        id: row.id,
+        name: row.name,
+        surname: row.surname,
+        email: row.email,
+        class: row.class
+      }));
+
+      let index = 0;
+      let indexB = 0;
+      res.render("users/userlist", { users, not_users, index, indexB });
+      console.log("Lista użytkowników");
+    });
+  });
+});
+
 
 
 app.get("/users/docsend/:id", checkAuthenticated, (req, res) => {
@@ -140,28 +393,14 @@ app.get("/users/docsend/:id", checkAuthenticated, (req, res) => {
   );
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.get("/users/doclists", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
   
   pool.query(
-    `SELECT documents.id_document, documents.title_document, documents.note_document, files.name_file
+    `SELECT documents.id_document, documents.title_document, documents.note_document
      FROM documents
-     INNER JOIN files ON documents.id_file_document = files.id_file 
-     INNER JOIN file_owner ON files.id_file = file_owner.id_file_filown
-     WHERE file_owner.id_user_filown = $1`,
+     INNER JOIN document_owner ON documents.id_document = document_owner.id_document_docown 
+     WHERE document_owner.id_user_docown = $1  `,
     [userId],
     (err, result) => {
       if (err) {
@@ -174,17 +413,23 @@ app.get("/users/doclists", checkAuthenticated, (req, res) => {
         res.render("users/document-flow/doclist", { documents: [] });
         return;
       }
-
       res.render("users/document-flow/doclist", { documents: result.rows });
     }
   );
 });
 
+
 app.get("/users/document/:id", checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
   const documentId = req.params.id;
   // Fetch the document from the database based on its ID
 
-  pool.query('SELECT * FROM documents WHERE id_document = $1', [documentId], (err, result) => {
+  pool.query(`SELECT documents.id_document, documents.title_document, documents.note_document, documents.date_document, documents.id_file_document, files.name_file
+  FROM documents 
+  INNER JOIN document_owner ON documents.id_document = document_owner.id_document_docown
+  INNER JOIN file_owner ON document_owner.id_user_docown = file_owner.id_user_filown
+  INNER JOIN files ON file_owner.id_file_filown = files.id_file 
+  WHERE documents.id_document = $1 AND documents.id_file_document = files.id_file`, [documentId], (err, result) => {
     if (err) {
       console.log(err);
       res.redirect('/users/documents');
@@ -286,10 +531,248 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
 });
 
 
-app.post("/users/docsend", checkAuthenticated, (req, res) => {
-  const documentId = req.body.document_id;
+app.post('/groupUSRdelete/:id', checkAuthenticated, (req, res) => {
+  const userId = req.params.id;
+  const groupId = req.body.groupId;
+console.log(userId, groupId);
+  pool.query(
+    `DELETE FROM group_users
+     WHERE id_user_grpusr = $1 AND id_group_grpusr = $2`,
+    [userId, groupId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        if (res.headersSent) { return; }
+        res.status(500).send('Wystąpił błąd podczas usuwania członka grupy.');
+        return;
+      }
+
+      res.redirect(`/groupedit/${groupId}`);
+    }
+  );
+});
+
+
+
+
+
+app.post('/groupUpdateName/:id', checkAuthenticated, (req, res) => {
+  const groupId = req.params.id;
+  const groupName = req.body.groupName;
+
+  // Aktualizacja nazwy grupy
+  pool.query(
+    `UPDATE groups SET name_group = $1 WHERE id_group = $2`,
+    [groupName, groupId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Wystąpił błąd przy aktualizacji nazwy grupy.");
+        return;
+      } else {
+        req.flash('success_msg', 'Zmieniono nazwę grupy');
+        res.redirect(`/groupedit/${groupId}`);
+      }
+    }
+  );
+});
+
+
+// Dodanie nowej grupy do bazy danych
+app.post('/groups/create', (req, res) => {
+  const { name_group } = req.body;
+  const userId = req.user.id;
+
+  pool.query(
+    `INSERT INTO groups (name_group, creator_group)
+     VALUES ($1, $2)`,
+    [name_group, userId],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+
+      console.log(`Utworzono grupę o nazwie ${name_group}`);
+
+      req.flash('success_msg', 'Grupa została utworzona.');
+      res.redirect('/users/userPanel');
+    },
+  );
+});
+
+
+
+app.post("/dodaj-do-sprawy/:caseId", checkAuthenticated, (req, res) => {
+  const caseId = req.params.caseId;
+  const selectedDocuments = req.body.documents;
+
+  // Insert the selected documents into the case_documents table
+  selectedDocuments.forEach(documentId => {
+    pool.query(
+      `INSERT INTO case_documents (id_case_casdoc, id_document_casdoc) VALUES ($1, $2)`,
+      [caseId, documentId],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          if (res.headersSent) { return; }
+          res.status(500).send("Wystąpił błąd przy dodawaniu dokumentów do sprawy.");
+          return;
+        }
+      }
+    );
+  });
+
+  res.redirect("/users/caselist");
+});
+
+app.post("/dodaj-do-grupy/:groupId", checkAuthenticated, (req, res) => {
+  const groupId = req.params.groupId;
+  let selectedUsers = req.body.user_id;
+
+  if (!Array.isArray(selectedUsers)) {
+    selectedUsers = [selectedUsers];
+  }
+
+  selectedUsers.forEach(user_Id => {
+    pool.query(
+      `INSERT INTO group_users (id_user_grpusr, id_group_grpusr) VALUES ($1, $2)`,
+      [user_Id, groupId],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          if (res.headersSent) { return; }
+          res.status(500).send("Wystąpił błąd przy dodawaniu użytkowników do grupy.");
+          return;
+        }
+      }
+    );
+  });
+
+  // Add delay and then redirect
+  setTimeout(() => {
+    req.flash('success_msg', 'Dodano nowych użytkowników !!');
+    res.redirect(`/groupedit/${groupId}`);
+  }, 500);
+});
+
+
+
+
+app.post("/users/caseform", checkAuthenticated, (req, res) => {
+  const title = req.body.nazwaSprawy;
+  const description = req.body.note;
+  const userId = req.user.id;
+
+  pool.query(
+    `INSERT INTO casefile (title_case, opis_case, id_user_case) VALUES ($1, $2, $3)`,
+    [title, description, userId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Wystąpił błąd przy dodawaniu sprawy.");
+        return;
+      }
+
+      res.redirect("/users/caselist");
+    }
+  );
+});
+
+app.post('/users/edit_user/:id', checkAuthenticated, (req, res) => {
+  const userId = req.params.id;
+
+  const { name, surname, email, password, userClass, groupId } = req.body;
+
+  pool.query(
+    'UPDATE appusers SET name = $1, surname = $2, email = $3, password = $4, class = $5 WHERE id = $6',
+    [name, surname, email, password, userClass, userId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.sendStatus(500);
+        return;
+      }
+
+      // Dodanie użytkownika do grupy
+      if (groupId) {
+        pool.query(
+          `INSERT INTO group_users (id_group_grpusr, id_user_grpusr)
+           VALUES ($1, $2)`,
+          [groupId, userId],
+          (error, results) => {
+            if (error) {
+              console.error(error);
+              res.sendStatus(500);
+              return;
+            }
+
+            console.log(`Dodano użytkownika ${userId} do grupy ${groupId}`);
+          }
+        );
+      } else {
+        console.log(`Nie wybrano grupy dla użytkownika ${userId}`);
+      }
+
+      res.redirect('/users/userlist');
+    }
+  );
+});
+
+
+app.post('/users/UNDOdelete_user/:id', checkAuthenticated, (req, res) => {
+  const userId = req.params.id;
+  const dateArch = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  
+  pool.query(
+    `UPDATE appusers SET status = 'active' WHERE id = $1`,
+    [userId],
+    (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Wystąpił błąd podczas przywracania użytkownika");
+      }
+      
+      res.redirect('/users/userlist');
+    }
+  );
+
+});
+
+app.post('/users/delete_user/:id', checkAuthenticated, (req, res) => {
+  const userId = req.params.id;
+  const dateArch = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  
+  pool.query(
+    `INSERT INTO users_archive_del (id_user_arch_usrarchdel, date_arch_usrarchdel) VALUES ($1, $2)`,
+    [userId, dateArch],
+    (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Wystąpił błąd podczas archiwizowania użytkownika");
+      }
+      
+      pool.query(
+        `UPDATE appusers SET status = 'not_active' WHERE id = $1`,
+        [userId],
+        (err) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send("Wystąpił błąd podczas usuwania użytkownika");
+          }
+          
+          res.redirect('/users/userlist');
+        }
+      );
+    }
+  );
+});
+
+
+app.post("/users/docsend/:id", checkAuthenticated, (req, res) => {
+  const documentId = req.params.id;
   const email = req.body.email;
 
+  // Check if the document exists
   pool.query(
     `SELECT id_file_document FROM documents WHERE id_document = $1`,
     [documentId],
@@ -307,6 +790,7 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
 
       const fileId = result.rows[0].id_file_document;
 
+      // Check if the user exists
       pool.query(
         `SELECT id FROM appusers WHERE email = $1`,
         [email],
@@ -324,6 +808,7 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
 
           const userId = result.rows[0].id;
 
+          // Assign the document to the user
           pool.query(
             `INSERT INTO document_owner (id_document_docown, id_user_docown) VALUES ($1, $2)`,
             [documentId, userId],
@@ -334,6 +819,7 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
                 return;
               }
 
+              // Assign the file to the user
               pool.query( 
                 `INSERT INTO file_owner (id_user_filown, id_file_filown) VALUES ($1, $2)`,
                 [userId, fileId],
@@ -344,6 +830,8 @@ app.post("/users/docsend", checkAuthenticated, (req, res) => {
                     return;
                   }
 
+                  // Redirect to the document list page
+                  req.flash('success_msg', 'Plik został przesłany');
                   res.redirect("/users/doclists");
                 }
               );
@@ -418,10 +906,10 @@ app.post('/documents', checkAuthenticated, (req, res) => {
 
   pool.query(
 
-    `INSERT INTO documents (id_user_document, title_document, note_document, date_document, id_file_document)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO documents (title_document, note_document, date_document, id_file_document)
+     VALUES ($1, $2, $3, $4)
      RETURNING id_document`,
-    [req.user.id, document_title, note, date, file_id],
+    [document_title, note, date, file_id],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -439,7 +927,7 @@ app.post('/documents', checkAuthenticated, (req, res) => {
             console.log(err);
             return res.status(500).send("Wystąpił błąd podczas dodawania dokumentu");
           }
-          res.redirect("users/userPanel");
+          res.redirect("/users/doclists");
         }
       );
     }
@@ -465,7 +953,7 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
   if (err) {
   console.log(err);
   req.flash('error_msg', 'Błąd bazy danych');
-  return res.redirect("/users/userPanel");
+  return res.redirect("/users/filelist");
   }
   // Zapisanie oryginalnej nazwy pliku do zmiennej
   const fileName = req.file.originalname;
@@ -485,7 +973,7 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
         done(); // zwolnienie klienta
         console.log(err);
         req.flash('error_msg', 'Błąd bazy danych');
-        return res.redirect("/users/userPanel");
+        return res.redirect("/users/filelist");
       } else {
         const fileId = result.rows[0].id_file;
         // Dodanie rekordu do tabeli file_owner, uwzględniając id użytkownika i id przesłanego pliku
@@ -502,7 +990,7 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
               req.flash('success_msg', 'Plik został przesłany do systemu');
             }
             // Przekierowanie użytkownika do panelu użytkownika po przesłaniu pliku
-            res.redirect("/users/userPanel");
+            res.redirect("/users/filelist");
           }
         );
       }
@@ -570,9 +1058,9 @@ app.post('/users/rejestracja', async (req, res) => {
                   throw err;
                 }
                 console.log(results.rows);
-                console.log("nowy uzytkownik w bazie") 
-                req.flash("success_msg", "Zostałeś zarejestrowany");
-                res.redirect("/users/logowanie");
+                console.log("Nowy uzytkownik w bazie") 
+                req.flash("success_msg", "Został dodany nowy użytkowwnik!");
+                res.redirect("/users/userlist");
               })
           }}
       )}
@@ -599,11 +1087,22 @@ passport.authenticate("local",{
 // a jeśli nie, przekazuje żądanie dalej za pomocą funkcji next().
 
 function checkAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-      return next();
-    } 
+  if (req.isAuthenticated()) {
+    const userId = req.user.id;
+    pool.query('SELECT status FROM appusers WHERE id = $1', [req.user.id], (error, results) => {
+      if (error) throw error;
+      const userStatus = results.rows[0].status;
+      if (userStatus === 'active') {
+        return next();
+      }
+      req.flash('error_msg', 'Konto nie jest aktywne');
+      res.redirect("/users/logowanie");
+    });
+  } else {
+    req.flash('error_msg', 'Błąd bazy danych');
     res.redirect("/users/logowanie");
   }
+}
 
 
 // Jest to funkcja pośrednicząca, która sprawdza, czy użytkownik 

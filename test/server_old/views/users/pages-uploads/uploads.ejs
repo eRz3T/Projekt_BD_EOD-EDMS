@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/stylesheets/master.css">
+    <title>eObieg - Pliki</title>
+</head>
+
+<body>
+  <tytul>eObieg</tytul><br>
+
+<tablenav>
+  <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="color: white;">Wyloguj użytkownika</button>
+        </form>   
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+    </tbody>
+</tablenav>
+
+<srodek>
+  <div style="margin-bottom: 20px;" >
+    <h2 style="text-align: center;">Proszę wybierz plik który chcesz przesłać <br>
+    Obsługiwane formaty plików to .docx oraz .pdf <br>
+    Maksymalny rozmiar pliku to 10Mb</h2>
+  </div>
+  
+
+    <table></form>
+      <tbody>
+        <tr>           
+          <form method="POST" action="/users/uploads" enctype="multipart/form-data">
+              <td><input type="file" name="image"></td>
+              <td><input type="submit" value="Prześlij plik"></td>
+            </form>        
+         </tr>  
+      </tbody>
+    </table>
+
+  </srodek>
+</body>
+</html>

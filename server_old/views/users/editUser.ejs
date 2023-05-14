@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/stylesheets/master.css">
+    <title>eObieg - Edycja użytkownika</title>
+  </head>
+
+  <body>
+    <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+  
+    <tablenav>
+      <tbody>
+          <tr>
+            <form action="/wylogowanie" method="POST">
+              <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+            </form> 
+          <a href="/users/userlist">Powrót do listy użytkowników</a> 
+          <a href="/users/userPanel">Powrót do panelu użytkownika</a> 
+         </tr> 
+         <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
+      </tbody>
+  </tablenav>
+  
+  <srodek>
+
+
+
+    <table>
+      <h3>Wprowadź nowe dane tego użytkownika</h3>
+      <thead>
+        <tr>
+          <th>Imię</th>
+          <th>Nazwisko</th>
+          <th>Email</th>
+          <th>Hasło</th>
+          <th>Grupa</th>
+          <th>Uprawnienia</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <form action="/users/edit_user/<%= userId %>" method="POST">
+              <td><input type="text" name="name" value="<%= userData.name %>" required></td>
+              <td><input type="text" name="surname" value="<%= userData.surname %>" required></td>
+              <td><input type="email" name="email" value="<%= userData.email %>" required></td>
+              <td><input type="password" name="password" value="<%= userData.password %>" required></td>
+              <td><select name="groupId">
+                <% groups.forEach((group) => { %>
+                  <option value="<%= group.id_group %>"><%= group.name_group %></option>
+                <% }); %>
+              </select></td>
+              <td><select name="userClass" required>
+                <option value="user" <%= userData.class === "user" ? "selected" : "" %>>Użytkownik</option>
+                <option value="admin" <%= userData.class === "admin" ? "selected" : "" %>>Administrator</option>
+              </select></td>           
+              <td><button type="submit">Zapisz zmiany</button></td> 
+            </form>        
+         </tr>  
+        </tr>
+      </tbody>
+    </table>
+
+  </srodek>
+
+  </body>
+</html>
+
+
+
+

@@ -7,32 +7,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="/stylesheets/master.css">
-    <title>eObieg - Pliki</title>
+    <title>eObieg - Przesłane pliki</title>
 </head>
 
 <body>
-  <tytul>eObieg</tytul><br>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+  <tablenav>
+    <tbody>
+        <tr>
+          <form action="/wylogowanie" method="POST">
+            <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+          </form>   
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+       <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
+    </tbody>
+</tablenav>
+
 <srodek>
   <div style="margin-bottom: 20px;" >
-
-    <div>Proszę wybierz plik który chcesz przesłać</div>
-
-    <div>Obsługiwane formaty plików to .docx oraz .pdf</div>
-
-    <div>Maksymalny rozmiar pliku to 10Mb</div>
-  
+    <h2 style="text-align: center;">Proszę wybierz plik który chcesz przesłać <br>
+    Obsługiwane formaty plików to .docx oraz .pdf <br>
+    Maksymalny rozmiar pliku to 10Mb</h2>
   </div>
-  <form method="POST" action="/users/uploads" enctype="multipart/form-data">
-    
-    <div>
-      <input type="file" name="image">
-    </div>
-    
-    <div>
-        <input type="submit" value="Prześlij plik" style="color: white;">
-    </div>
-    
-  </form>
+  
+
+    <table></form>
+      <tbody>
+        <tr>           
+          <form method="POST" action="/users/uploads" enctype="multipart/form-data">
+              <td><input type="file" name="image"></td>
+              <td><input type="submit" value="Prześlij plik"></td>
+            </form>        
+         </tr>  
+      </tbody>
+    </table>
+
   </srodek>
 </body>
 </html>

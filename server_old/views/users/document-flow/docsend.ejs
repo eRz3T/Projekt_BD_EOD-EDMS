@@ -6,27 +6,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="/stylesheets/master.css">
-  <title>eObieg - Dokumenty</title>
+  <title>eObieg - Przesył dokumentu</title>
 </head>
 
 <body>
-  <tytul>eObieg</tytul>
-  <srodek>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
 
-   <form method="POST" action="/users/docsend">
-      <input type="hidden" name="document_id" value="<%= documentId %>">
-      <label for="email">Wybierz adres email:</label>
-      <select name="email" id="email">
-        <% emails.forEach((email) => { %>
-          <option value="<%= email %>"><%= email %></option>
-        <% }); %>
-      </select>
-      <button type="submit">Wyślij</button>
+  <tablenav>
+    <tbody>
+        <tr>
+          <form action="/wylogowanie" method="POST">
+            <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+          </form>   
+        <td><a href="/users/doclists">Lista dokumentów</a></td>
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+       <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
+    </tbody>
+</tablenav>
+
+  
+
+  
+    <srodek>
+      <form method="POST" action="/users/docsend/<%= documentId %>">
+      <table>
+        <thead>
+          <tr>
+            <th>Wybierz adres email:</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+                <td><select name="email" id="email">
+                  <% emails.forEach((email) => { %>
+                    <option value="<%= email %>"><%= email %></option>
+                  <% }); %>
+                </select></td>
+                <td><button type="submit">Wyślij</button></td>        
+           </tr>  
+        </tbody>
+      </table>
     </form>
     
-    
-    
-
-  </srodek>
+      </srodek>
 </body>
 </html>
