@@ -71,6 +71,16 @@
                
           </tbody>
         </table>
+
+
+        <ul style="margin-top: 30px;">
+          <% if(messages.success_msg) { %> 
+            <li><%= messages.success_msg %></li> 
+          <% } else if (messages.error_msg) { %>
+            <li><%= messages.error_msg %></li> 
+          <% } %> 
+        </ul>
+        
     </srodek>
   </body>
 </html>

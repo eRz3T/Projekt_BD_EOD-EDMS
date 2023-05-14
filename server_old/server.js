@@ -553,6 +553,9 @@ console.log(userId, groupId);
 });
 
 
+
+
+
 app.post('/groupUpdateName/:id', checkAuthenticated, (req, res) => {
   const groupId = req.params.id;
   const groupName = req.body.groupName;
@@ -567,6 +570,7 @@ app.post('/groupUpdateName/:id', checkAuthenticated, (req, res) => {
         res.status(500).send("Wystąpił błąd przy aktualizacji nazwy grupy.");
         return;
       } else {
+        req.flash('success_msg', 'Zmieniono nazwę grupy');
         res.redirect(`/groupedit/${groupId}`);
       }
     }
@@ -596,28 +600,7 @@ app.post('/groups/create', (req, res) => {
   );
 });
 
-app.post("/dodaj-do-sprawy/:caseId", checkAuthenticated, (req, res) => {
-  const caseId = req.params.caseId;
-  const selectedDocuments = req.body.documents;
 
-  // Insert the selected documents into the case_documents table
-  selectedDocuments.forEach(documentId => {
-    pool.query(
-      `INSERT INTO case_documents (id_case_casdoc, id_document_casdoc) VALUES ($1, $2)`,
-      [caseId, documentId],
-      (err, result) => {
-        if (err) {
-          console.error(err);
-          if (res.headersSent) { return; }
-          res.status(500).send("Wystąpił błąd przy dodawaniu dokumentów do sprawy.");
-          return;
-        }
-      }
-    );
-  });
-
-  res.redirect("/users/caselist");
-});
 
 app.post("/dodaj-do-sprawy/:caseId", checkAuthenticated, (req, res) => {
   const caseId = req.params.caseId;
@@ -641,6 +624,38 @@ app.post("/dodaj-do-sprawy/:caseId", checkAuthenticated, (req, res) => {
 
   res.redirect("/users/caselist");
 });
+
+app.post("/dodaj-do-grupy/:groupId", checkAuthenticated, (req, res) => {
+  const groupId = req.params.groupId;
+  let selectedUsers = req.body.user_id;
+
+  if (!Array.isArray(selectedUsers)) {
+    selectedUsers = [selectedUsers];
+  }
+
+  selectedUsers.forEach(user_Id => {
+    pool.query(
+      `INSERT INTO group_users (id_user_grpusr, id_group_grpusr) VALUES ($1, $2)`,
+      [user_Id, groupId],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          if (res.headersSent) { return; }
+          res.status(500).send("Wystąpił błąd przy dodawaniu użytkowników do grupy.");
+          return;
+        }
+      }
+    );
+  });
+
+  // Add delay and then redirect
+  setTimeout(() => {
+    req.flash('success_msg', 'Dodano nowych użytkowników !!');
+    res.redirect(`/groupedit/${groupId}`);
+  }, 500);
+});
+
+
 
 
 app.post("/users/caseform", checkAuthenticated, (req, res) => {
