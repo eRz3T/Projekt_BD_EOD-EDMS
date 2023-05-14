@@ -30,10 +30,12 @@
 
   <srodek>
   <table>
+    <h3>Twoje sprawy</h3>
     <thead>
       <tr>
-        <th>Nr sprawy</th>
+        <th>Id</th>
         <th>Tytuł</th>
+        <th>Udostepnianie</th>
         <th> </th>
       </tr>
     </thead>
@@ -42,8 +44,17 @@
         <tr>
           <td><%= cases[i].id_case %></td>
           <td><%= cases[i].title_case %></td>
-          <td><a href="/users/docselect/<%= cases[i].id_case %>"><button style="color: white;">Dodaj dokument do sprawy</button>
-          <a href="/users/caseView/<%= cases[i].id_case %>"><button style="color: white;">Podgląd</button></td>
+
+          <td>
+            <a href="/users/share/caseshareGROUP/<%= cases[i].id_case %>"><button style="color: white;">Grupie</button></a>
+            <a href="/users/share/caseshareUSER/<%= cases[i].id_case %>"><button style="color: white;">Użytkownikowi</button></a>
+          </td>
+
+          <td>
+            <a href="/users/docselect/<%= cases[i].id_case %>"><button style="color: white;">Załącz dokument</button></a>
+          <a href="/users/caseView/<%= cases[i].id_case %>"><button style="color: white;">Podgląd</button></a>
+        </td>
+
         </tr>
       <% } %>
     </tbody>

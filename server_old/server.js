@@ -90,11 +90,20 @@ app.get("/users/logowanie", (req, res) =>{
 });
 
 
+
+
+
+
 // Obsługa żądania GET na adres "/users/rejestracja"
 // Renderowanie szablonu "rejestracja.ejs"
 app.get("/users/rejestracja", (req, res) => {
     res.render("users/pages-access/rejestracja");
 });
+
+
+
+
+
 
 
 app.get("/users/nowiczlonkowie/:id", (req, res) => {
@@ -277,14 +286,50 @@ app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
 //   );
 // });
 
-app.get("/users/caseView/:id", checkAuthenticated, (req, res) => {
-  res.render("users/cases/caseView");
-  console.log("Podgląd sprawy") 
+
+
+
+app.get("/users/share/caseshareGROUP/:id", checkAuthenticated, (req, res) => {
+  pool.query(
+    `SELECT id_group, name_group FROM groups`,
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Wystąpił błąd przy pobieraniu grup.");
+        return;
+      }
+
+      const groups = result.rows;
+      console.log("Przesył sprawy grupie") 
+      res.render("users/cases/share/caseshareGROUP", { groups, id: req.params.id });
+    }
+  );
+});
+
+app.get("/users/share/caseshareUSER/:id", checkAuthenticated, (req, res) => {
+  pool.query(
+    `SELECT email, id FROM appusers`,
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Wystąpił błąd przy pobieraniu użytkowników.");
+        return;
+      }
+
+      const emails = result.rows;
+      console.log("Przesył sprawy użytkownikowi");
+      res.render("users/cases/share/caseshareUSER", { emails, id: req.params.id });
+    }
+  );
 });
 
 
 
 
+app.get("/users/caseView/:id", checkAuthenticated, (req, res) => {
+  res.render("users/cases/caseView");
+  console.log("Podgląd sprawy") 
+});
 
 
 //checkNotAuthenticated
@@ -526,6 +571,47 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
           });
         });
       });
+    }
+  );
+});
+
+app.post('/users/share/caseshareGROUP/:id', checkAuthenticated, (req, res) => {
+  const id_case_casgrup = req.params.id;
+  const id_group_casgrup = req.body.group;
+
+  pool.query(
+    `INSERT INTO case_group (id_case_casgrup, id_group_casgrup) VALUES ($1, $2)`,
+    [id_case_casgrup, id_group_casgrup],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Wystąpił błąd podczas udostępniania sprawy.");
+        return;
+      }
+
+      console.log("Sprawa udostępniona grupie.");
+      res.redirect('/users/caselist');
+    }
+  );
+});
+
+
+app.post('/users/share/caseshareUSER/:id', checkAuthenticated, (req, res) => {
+  const id_case_casusr = req.params.id;
+  const id_user_casusr = req.body.email;
+
+  pool.query(
+    `INSERT INTO case_user (id_case_casusr, id_user_casusr) VALUES ($1, $2)`,
+    [id_case_casusr, id_user_casusr],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Wystąpił błąd podczas udostępniania sprawy.");
+        return;
+      }
+
+      console.log("Sprawa udostępniona użytkownikowi.");
+      res.redirect('/users/caselist');
     }
   );
 });
