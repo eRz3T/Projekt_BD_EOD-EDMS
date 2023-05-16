@@ -27,9 +27,4 @@ export const navItems: INavItem[] = [
     title: 'Kontakty',
     destinationRoute: '/contacts',
   },
-  {
-    id: 5,
-    title: 'Admin',
-    destinationRoute: '/admin',
-  },
 ]

@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { useQuill } from 'react-quilljs'
+import { ITextEditorProps } from './TextEditor.types'
 import 'quill/dist/quill.snow.css'
 
-const TextEditor = () => {
+const TextEditor = ({ setText }: ITextEditorProps) => {
   const modules = {
     toolbar: ['bold', 'italic', 'underline'],
   }
@@ -12,7 +13,7 @@ const TextEditor = () => {
   useEffect(() => {
     if (quill) {
       quill.on('text-change', (delta, oldDelta, source) => {
-        console.log(quill.getText())
+        setText(quill.getText())
       })
     }
   }, [quill])

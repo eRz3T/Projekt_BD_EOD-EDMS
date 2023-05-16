@@ -2,9 +2,14 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 const { xss } = require('express-xss-sanitizer')
+
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/user')
-const caseRoutes = require('./routes/case')
+const casesRoutes = require('./routes/cases')
+const caseTransitionsRoutes = require('./routes/caseTransitions')
+const commentsRoutes = require('./routes/comments')
+const filesRoutes = require('./routes/files')
+
 require('dotenv').config()
 
 const corsOptions = {
@@ -23,7 +28,10 @@ app.get('/', (req, res) => {
 // Zarządzanie ścieżkami API (do nich odwołuje się frontend kiedy potrzebuje zapytać o dane lub je wysłać na server)
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
-// app.use('/api/cases', caseRoutes)
+app.use('/api/cases', casesRoutes)
+app.use('/api/caseTransitions', caseTransitionsRoutes)
+app.use('/api/comments', commentsRoutes)
+app.use('/api/files', filesRoutes)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

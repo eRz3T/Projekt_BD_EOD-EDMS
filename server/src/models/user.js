@@ -9,14 +9,14 @@ const db = knex(config)
 module.exports = {
   // Poniżej przykład zapytania do bazy z użyciem zwykłego SQL (raw sql)
   // pytajniki w values to wartości wrzucone przez użytkownika
-  createUser: async (email, password, first_name, last_name) => {
+  createUser: async (uuid, email, password, first_name, last_name) => {
     const sqlQuery = `
-      INSERT INTO appusers (email, password, first_name, last_name)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO appusers (id, email, password, first_name, last_name)
+      VALUES (?, ?, ?, ?, ?)
       RETURNING *;
     `
-    const [user] = await db.raw(sqlQuery, [email, password, first_name, last_name])
-    return user
+    const user = await db.raw(sqlQuery, [uuid, email, password, first_name, last_name])
+    return user.rows[0]
   },
   // Przykład z użyciem ORM, wg założeń możemy max 50% zapytań do bazy zrobić w ORM
   findByEmail: async (email) => {
@@ -24,8 +24,25 @@ module.exports = {
     return user
   },
   getAllUsers: async () => {
-    const users = await db('appusers').select('id', 'email', 'first_name', 'last_name')
+    const users = await db('appusers').select(
+      'id',
+      'email',
+      'first_name',
+      'last_name',
+      'created_at',
+      'role'
+    )
     return users
+  },
+  deleteUser: async (userId) => {
+    const sqlQuery = `
+      DELETE FROM appusers
+      WHERE id = ?
+    `
+    return await db.raw(sqlQuery, [userId])
+  },
+  updateUser: async (id, updateData) => {
+    return db('appusers').where({ id }).update(updateData)
   },
   // jak widać na dole zamiast `$1` używamy `?` w celu wprowadzenia parametrów, np.: `userId`
   getUsersDoclists: async (userId) => {

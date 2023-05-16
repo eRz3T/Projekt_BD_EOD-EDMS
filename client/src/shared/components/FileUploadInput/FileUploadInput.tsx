@@ -1,15 +1,15 @@
 import { enqueueSnackbar } from 'notistack'
-import React, { useRef, useState, ChangeEvent, DragEvent } from 'react'
+import { useRef, useState, ChangeEvent, DragEvent, useEffect } from 'react'
+import { IFileUploadInputProps } from './FileUploadInput.types'
+import File from '../File/File'
 
-interface Props {}
-
-const FileUploadInput: React.FC<Props> = () => {
+const FileUploadInput = ({ setFile }: IFileUploadInputProps) => {
   const [dragActive, setDragActive] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
 
   const handleFiles = (files: FileList) => {
-    const maxFiles = 3
+    const maxFiles = 1
     if (uploadedFiles.length < maxFiles) {
       const newFiles: File[] = Array.from(files).slice(0, maxFiles - uploadedFiles.length)
       setUploadedFiles((prevFiles) => [...prevFiles, ...newFiles])
@@ -17,8 +17,6 @@ const FileUploadInput: React.FC<Props> = () => {
       enqueueSnackbar(`Można przesłać maksymalnie: ${maxFiles} pliki`, { variant: 'error' })
     }
   }
-
-  console.log(uploadedFiles)
 
   const handleDrag = (e: DragEvent<HTMLLabelElement>) => {
     e.preventDefault()
@@ -45,6 +43,12 @@ const FileUploadInput: React.FC<Props> = () => {
       handleFiles(e.target.files)
     }
   }
+
+  useEffect(() => {
+    if (uploadedFiles.length > 0) {
+      setFile(uploadedFiles[0])
+    }
+  }, [uploadedFiles])
 
   return (
     <div className='flex flex-col items-center justify-center w-full'>
@@ -91,13 +95,7 @@ const FileUploadInput: React.FC<Props> = () => {
         />
       </label>
       <div className='mt-4 flex flex-col gap-2'>
-        {uploadedFiles &&
-          uploadedFiles.map((file) => (
-            <div className='flex items-center gap-4  border-2 p-2 rounded-md'>
-              {/* <img src={docImg} alt='Doc document file' width={32} /> */}
-              <p className='text-secondary'>{file.name}</p>
-            </div>
-          ))}
+        {uploadedFiles && uploadedFiles.map((file) => <File filename={file.name} />)}
       </div>
     </div>
   )

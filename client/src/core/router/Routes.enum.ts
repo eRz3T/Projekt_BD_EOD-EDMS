@@ -6,4 +6,5 @@ export enum ClientRoutes {
   CONTACTS = '/contacts',
   DOCUMENTS = '/documents',
   CASE = '/case/:id',
+  ADMIN = '/admin',
 }
