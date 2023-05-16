@@ -4,15 +4,16 @@
 
 exports.up = async function (knex) {
   await knex.schema.createTable('appusers', (table) => {
-    table.increments('id').primary()
+    table.uuid('id').primary()
     table.string('email').notNullable().unique()
     table.string('password').notNullable()
     table.string('first_name').notNullable()
     table.string('last_name').notNullable()
+    table.string('role').defaultTo('user')
     table.timestamps(true, true)
   })
 }
 
 exports.down = async function (knex) {
-  await knex.schema.dropTableIfExists('users')
+  await knex.schema.dropTableIfExists('appusers')
 }

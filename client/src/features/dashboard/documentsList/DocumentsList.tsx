@@ -2,34 +2,26 @@ import moment from 'moment'
 import { enqueueSnackbar } from 'notistack'
 import { useNavigate } from 'react-router-dom'
 
-import { documents } from './dummyData'
 import { trimText } from '@/shared/utilities/textTrimmer'
 import Tooltip from '@/shared/components/Tooltip/Tooltip'
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/useStore'
-import { setObservedDocuments } from '@/core/store/documents/documentsSlice'
-import { selectObservedDocuments } from '@/core/store/documents/documentsSelectors'
+import { setObservedCases } from '@/core/store/cases/casesSlice'
+import { selectObservedCases } from '@/core/store/cases/casesSelectors'
+import { ICases } from '@/shared/types/cases'
 
-interface IDocument {
-  id: number
-  name: string
-  receiveDate: Date
-  expiryDate: Date
-  createdBy: string
-}
-
-const DocumentsList = ({ data }: { data: IDocument[] }) => {
+const DocumentsList = ({ data }: { data: ICases[] }) => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const observedDocuments = useAppSelector(selectObservedDocuments)
+  const observedCases = useAppSelector(selectObservedCases)
 
   const handleObserveDocument = (index: number) => {
-    const pickedDocument = documents[index]
-    !observedDocuments.includes(pickedDocument)
-      ? dispatch(setObservedDocuments(pickedDocument))
+    const pickedDocument = data[index]
+    !observedCases.includes(pickedDocument)
+      ? dispatch(setObservedCases(pickedDocument))
       : enqueueSnackbar('Już obserwujesz ten dokument', { variant: 'error' })
   }
 
-  const handleGoToCase = (caseId: number) => {
+  const handleGoToCase = (caseId: string) => {
     navigate(`/case/${caseId}`)
   }
 
@@ -61,28 +53,29 @@ const DocumentsList = ({ data }: { data: IDocument[] }) => {
           </tr>
         </thead>
         <tbody className='bg-white divide-y divide-gray-200 text-secondary'>
-          {data.map((item, index) => (
-            <tr key={item.id} className=' hover:opacity-80 cursor-pointer'>
-              <td className='px-6 py-4 whitespace-nowrap'>{item.id}</td>
-              <td className='px-6 py-4 whitespace-nowrap' onClick={() => handleGoToCase(item.id)}>
-                {' '}
-                <Tooltip label={trimText(item.name, 20)} tooltipContent={item.name} />{' '}
-              </td>
-              <td className='px-6 py-4 whitespace-nowrap'>
-                {moment(item.receiveDate).format('YYYY-MM-DD')}
-              </td>
-              <td className='px-6 py-4 whitespace-nowrap'>
-                {moment(item.expiryDate).format('YYYY-MM-DD')}
-              </td>
-              <td className='px-6 py-4 whitespace-nowrap'>{item.createdBy}</td>
-              <td
-                className='px-6 py-4 whitespace-nowrap cursor-pointer'
-                onClick={() => handleObserveDocument(index)}
-              >
-                <i className='bx bx-bookmark-plus'></i>
-              </td>
-            </tr>
-          ))}
+          {data.length > 0 &&
+            data.map((item, index) => (
+              <tr key={item.id} className=' hover:opacity-80 cursor-pointer'>
+                <td className='px-6 py-4 whitespace-nowrap'>{index + 1}</td>
+                <td className='px-6 py-4 whitespace-nowrap' onClick={() => handleGoToCase(item.id)}>
+                  {' '}
+                  <Tooltip label={trimText(item.title, 20)} tooltipContent={item.title} />{' '}
+                </td>
+                <td className='px-6 py-4 whitespace-nowrap'>
+                  {moment(item.updated_at).format('YYYY-MM-DD')}
+                </td>
+                <td className='px-6 py-4 whitespace-nowrap'>
+                  {moment(item.expires_at).format('YYYY-MM-DD')}
+                </td>
+                <td className='px-6 py-4 whitespace-nowrap'>{item.created_by_details}</td>
+                <td
+                  className='px-6 py-4 whitespace-nowrap cursor-pointer'
+                  onClick={() => handleObserveDocument(index)}
+                >
+                  <i className='bx bx-bookmark-plus'></i>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

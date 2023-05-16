@@ -3,19 +3,61 @@ import TextEditor from '@/shared/components/TextEditor/TextEditor'
 import FileUploadInput from '@/shared/components/FileUploadInput/FileUploadInput'
 import CasePost from './casePost/CasePost'
 import { IMainSectionProps } from './MainSection.types'
+import { FormEvent, useState } from 'react'
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/useStore'
+import { createNewComment, getCaseComments } from '@/core/store/comments/commentsSlice'
+import { selectUser } from '@/core/store/auth/authSelectors'
+import { enqueueSnackbar } from 'notistack'
 
-const MainSection = ({ setIsNewPost, isNewPost }: IMainSectionProps) => {
+const MainSection = ({ setIsNewPost, isNewPost, caseDetails, comments }: IMainSectionProps) => {
+  const dispatch = useAppDispatch()
+  const userId = useAppSelector(selectUser)?.id
+  const [commentText, setCommentText] = useState<string>('')
+  const [commentFile, setCommentFile] = useState<File>()
+
+  const handleNewComment = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (userId && commentText && caseDetails?.id) {
+      dispatch(
+        createNewComment({
+          caseId: caseDetails?.id,
+          userId: userId,
+          content: commentText,
+          file: commentFile,
+        })
+      ).then(() => dispatch(getCaseComments(caseDetails?.id)))
+      setCommentText('')
+      setCommentFile(undefined)
+      setIsNewPost(false)
+    } else {
+      enqueueSnackbar('Błąd w trakcie dodawania komentarza', { variant: 'error' })
+    }
+  }
+
   return (
     <div className='overflow-x-auto bg-white p-4 rounded-md m-4 h-full'>
       <Header
         icon='bx-file'
-        title='Wniosek o przyznanie dofinansowania'
-        addon='ID Sprawy: 0c9aded5f2fe318492be4bff869cbdf'
+        title={String(caseDetails?.title)}
+        addon={`ID Sprawy: ${String(caseDetails?.id)}`}
       />
-      <CasePost />
-      <CasePost />
-      <CasePost />
-      <CasePost />
+      <CasePost
+        username={caseDetails?.created_by_details}
+        createdAt={caseDetails?.created_at}
+        description={caseDetails?.description}
+      />
+
+      {comments.length > 0 &&
+        comments.map((comment) => (
+          <CasePost
+            key={comment.id}
+            username={comment.created_by_details}
+            createdAt={comment.created_at}
+            description={comment.content}
+            filename={comment.filename}
+            fileId={comment.file_id}
+          />
+        ))}
 
       {isNewPost && (
         <div className='flex flex-col w-full'>
@@ -33,13 +75,18 @@ const MainSection = ({ setIsNewPost, isNewPost }: IMainSectionProps) => {
             </div>
           </div>
 
-          <TextEditor />
+          <form className='flex flex-col w-full' onSubmit={(e) => handleNewComment(e)}>
+            <TextEditor setText={setCommentText} />
 
-          <FileUploadInput />
+            <FileUploadInput setFile={setCommentFile} />
 
-          <button className='bg-blueish text-white text-sm px-4 py-2 mt-4 rounded-md font-medium'>
-            Wyślij
-          </button>
+            <button
+              className='bg-blueish text-white text-sm px-4 py-2 mt-4 rounded-md font-medium'
+              type='submit'
+            >
+              Wyślij
+            </button>
+          </form>
         </div>
       )}
     </div>

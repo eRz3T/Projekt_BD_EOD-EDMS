@@ -1,5 +1,6 @@
 {
   "email": "Email",
+  "cancel": "Anuluj",
   "login.dontHaveAnAccount": "Nie masz konta? Skontaktuj się z administratorem",
   "login.emailIsRequired": "Wprowadź adres email",
   "login.incorrectCredentials": "Nieprawidłowy email lub hasło",
@@ -29,5 +30,25 @@
   "dashboard.name": "Nazwa dokumentu",
   "dashboard.receiveDate": "Data otrzymania",
   "dashboard.expiryDate": "Data wygaśnięcia",
-  "dashboard.createdBy": "Stworzony przez"
+  "dashboard.createdBy": "Stworzony przez",
+
+  "admin.adminPanel": "Panel Administracyjny",
+  "admin.selectAction": "Wybierz działanie",
+  "admin.workflowPaths": "Ścieżki obiegu dokumentów",
+  "admin.manage": "Zarządzaj",
+  "admin.createEditManage": "Twórz/Edytuj/Zarządzaj",
+  "admin.users": "Użytkownicy",
+  "admin.groups": "Grupy",
+  "admin.archive": "Archiwum",
+  "admin.documentCategories": "Kategorie dokumentów",
+
+  "users.firstName": "Imię",
+  "users.lastName": "Nazwisko",
+  "users.provideFirstName": "Podaj imię użytkownika",
+  "users.provideLastName": "Podaj nazwisko użytkownika",
+  "users.provideEmail": "Podaj adres e-mail",
+  "users.providePassword": "Podaj tymczasowe hasło",
+  "users.role": "Rola",
+  "users.createUser": "Dodaj uyżtkownika",
+  "users.editUser": "Edytuj uyżtkownika"
 }

@@ -6,13 +6,17 @@ import IconWithBadge from './IconWithBadge'
 import NavLinks from './NavLinks'
 import { useAuth } from '@/providers/AuthProvider.js'
 import { logout } from '@/core/store/auth/authSlice.js'
-import { useAppDispatch } from '@/shared/hooks/useStore.js'
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/useStore.js'
+import { selectUser } from '@/core/store/auth/authSelectors.js'
+import { Link } from 'react-router-dom'
+import { ClientRoutes } from '@/core/router/Routes.enum.js'
 
 const Navbar = () => {
   const location = useLocation()
   const dispatch = useAppDispatch()
   const { isAuthenticated } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const user = useAppSelector(selectUser)
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
@@ -31,6 +35,18 @@ const Navbar = () => {
               {isAuthenticated && (
                 <nav className='hidden lg:flex space-x-6 pl-8 text-xl'>
                   <NavLinks navItems={navItems} pathname={location.pathname} />
+                  {user?.role === 'admin' && (
+                    <Link
+                      to={ClientRoutes.ADMIN}
+                      className={`${
+                        location.pathname === ClientRoutes.ADMIN
+                          ? 'text-slate-900'
+                          : 'text-slate-500'
+                      } font-medium hover:text-slate-400 transition-colors`}
+                    >
+                      Admin
+                    </Link>
+                  )}
                 </nav>
               )}
             </div>
@@ -55,7 +71,7 @@ const Navbar = () => {
                   <div className='flex items-center space-x-2 pl-2'>
                     <div className='relative'>
                       <img
-                        src='https://boredhumans.b-cdn.net/faces2/766.jpg'
+                        src='https://boredhumans.b-cdn.net/faces2/1.jpg'
                         alt='User'
                         className='h-12 w-12 rounded-full'
                       />
@@ -63,7 +79,7 @@ const Navbar = () => {
                     </div>
                     <div className='pl-2'>
                       <span className='block font-semibold text-lg text-slate-900'>
-                        Olga Kornelska
+                        {user?.username}
                       </span>
                       <span className='text-sm text-slate-600'>Dział prawny</span>
                     </div>

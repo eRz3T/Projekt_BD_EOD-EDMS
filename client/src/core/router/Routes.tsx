@@ -4,12 +4,15 @@ import TwoFactorAuth from '@/pages/TwoFactorAuth'
 import Navbar from '../../shared/layout/Navbar/Navbar'
 import { useAuth } from '@/providers/AuthProvider'
 import { ClientRoutes } from './Routes.enum'
+import { AdminPaths } from '@/features/admin/adminTile/AdminTile.types'
 
 import NotFound from '@/pages/NotFound'
 import Dashboard from '@/pages/Dashboard'
 import Login from '@/pages/Login'
 import Documents from '@/pages/Documents'
 import Case from '@/pages/Case'
+import Admin from '@/pages/Admin'
+import Users from '@/pages/admin/Users'
 
 const Router = () => {
   const { isAuthenticated } = useAuth()
@@ -23,6 +26,8 @@ const Router = () => {
           <Route element={<Dashboard />} path={ClientRoutes.DASHBOARD} />
           <Route element={<Documents />} path={ClientRoutes.DOCUMENTS} />
           <Route element={<Case />} path={ClientRoutes.CASE} />
+          <Route element={<Admin />} path={ClientRoutes.ADMIN} />
+          <Route element={<Users />} path={AdminPaths.USERS} />
         </Route>
         <Route
           element={isAuthenticated ? <Navigate to={ClientRoutes.DASHBOARD} /> : <Login />}
