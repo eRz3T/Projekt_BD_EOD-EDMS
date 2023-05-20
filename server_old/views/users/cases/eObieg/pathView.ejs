@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Podgląd ścieżki</title>
+</head>
+
+<body>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+  <tablenav>
+    <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+        </form>    
+        <a href="/users/pathList">Lista ścieżek</a> 
+        <a href="/users/userPanel">Panel użytkownika</a>  
+      </tr>
+      <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr> 
+    </tbody>
+  </tablenav>
+
+  <srodek>
+    <h2>Podgląd ścieżki</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nazwa ścieżki</th>
+          <th>Opis ścieżki</th>
+          <th>Twórca ścieżki</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><%= path.name_path %></td>
+          <td><%= path.opis_path %></td>
+          <td><%= path.email %></td>
+          <td><button><a href="/users/pathPrefixEdit/<%= path.id_path %>">Edytuj ścieżkę</a></button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+      <h3>Ścieżka sprawy</h3>
+      <thead>
+        <tr>
+          <th>Etap</th>
+          <th>Grupa operująca</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% let counter = 1; %>
+        <% groups.forEach(group => { %>
+          <tr>
+            <td><%= counter %></td>
+            <td><%= group.name_group %></td>
+          </tr>
+          <% counter++; %>
+        <% }) %>
+      </tbody>
+    </table>
+    
+    
+
+  </srodek>
+</body>
+</html>
+

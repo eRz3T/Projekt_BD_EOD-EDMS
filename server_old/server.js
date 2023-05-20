@@ -22,7 +22,6 @@ process.env.NLS_LANG = 'POLISH_POLAND.UTF8';
 
 initializePassport(passport);
 
-
 //Pliki wykonujące
 // Import kodu z uploads.js
 const uploadModule = require("./uploads");
@@ -31,15 +30,12 @@ const upload = uploadModule.upload;
 // PORT: zmienna środowiskowa przechowująca numer portu aplikacji lub 4000, jeśli nie jest określona
 const PORT = process.env.PORT || 4000;
 
-
 //ustawienie silnika szablonów ejs dla aplikacji.
 app.set("view engine", "ejs");
 //umożliwienie parsowania danych przesłanych za pomocą metody POST z formularzy
 app.use(express.urlencoded({ extended: true }));
 //możliwienie parsowania danych przesłanych za pomocą metody POST z nagłówkiem application/json.
 app.use(express.json());
-
-
 
 //konfiguracja mechanizmu sesji dla aplikacji, gdzie:
 app.use(session({
@@ -76,6 +72,8 @@ app.use(passport.session());
 
 app.use(flash());
 
+/////////////////////////POSTY////////////////////////////
+
 
 // Obsługa żądania GET na adres główny "/"
 // Renderowanie szablonu "welcome.ejs"
@@ -89,24 +87,75 @@ app.get("/users/logowanie", (req, res) =>{
     res.render("users/pages-access/logowanie");
 });
 
-
-
-
-
-
 // Obsługa żądania GET na adres "/users/rejestracja"
 // Renderowanie szablonu "rejestracja.ejs"
-app.get("/users/rejestracja", (req, res) => {
+app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
     res.render("users/pages-access/rejestracja");
 });
 
+    app.get("/users/createPath", checkAuthenticated, (req, res) =>{
+      res.render("users/cases/eObieg/createPath");
+    });
+
+    app.get("/users/pathList", checkAuthenticated, (req, res) => {
+      pool.query('SELECT * FROM path', (error, results) => {
+        if (error) {
+          throw error;
+        }
+
+        const paths = results.rows;
+
+        res.render("users/cases/eObieg/pathList", { paths });
+      });
+    });
+
+    app.get("/users/pathView/:id", checkAuthenticated, (req, res) => {
+      const pathId = req.params.id;
+    
+      pool.query(
+        `SELECT groups.name_group
+         FROM prefix_path
+         JOIN groups ON prefix_path.id_group_patpref = groups.id_group
+         WHERE prefix_path.id_prefix_patpref = $1
+         ORDER BY prefix_path.id_prefix_patpref`,
+        [pathId],
+        (error, results) => {
+          if (error) {
+            throw error;
+          }
+    
+          const groups = results.rows;
+    
+          pool.query('SELECT * FROM path WHERE id_path = $1', [pathId], (error, results) => {
+            if (error) {
+              throw error;
+            }
+    
+            const path = results.rows[0];
+    
+            res.render("users/cases/eObieg/pathView", { path, groups });
+          });
+        }
+      );
+    });
+    
+
+    app.get("/users/pathPrefixEdit/:id", checkAuthenticated, (req, res) => {
+      const pathId = req.params.id;
+    
+      pool.query('SELECT * FROM groups', (error, results) => {
+        if (error) {
+          throw error;
+        }
+    
+        const groups = results.rows;
+    
+        res.render("users/cases/eObieg/pathPrefixEdit", { groups, path: { id_path: pathId } });
+      });
+    });
 
 
-
-
-
-
-app.get("/users/nowiczlonkowie/:id", (req, res) => {
+app.get("/users/nowiczlonkowie/:id", checkAuthenticated, (req, res) => {
   const groupId = req.params.id;
   
   pool.query('SELECT * FROM appusers WHERE status = $1', ['active'], (error, activeResults) => {
@@ -189,7 +238,7 @@ app.get('/groups/grouplist', checkAuthenticated, (req, res) => {
   });
 });
 
-app.get("/users/grupy", (req, res) =>{
+app.get("/users/grupy", checkAuthenticated, (req, res) =>{
   res.render("users/groups/groupcreate");
 });
 
@@ -297,37 +346,6 @@ app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
   );
 });
 
-
-
-// app.get("/users/docselect/:id", checkAuthenticated, (req, res) => {
-//   const userId = req.user.id;
-  
-//   pool.query(
-//     `SELECT documents.id_document, documents.title_document, documents.note_document
-//      FROM documents
-//      INNER JOIN document_owner ON documents.id_document = document_owner.id_document_docown 
-//      WHERE document_owner.id_user_docown = $1  `,
-//     [userId],
-//     (err, result) => {
-//       if (err) {
-//         console.error(err);
-//         if (res.headersSent) { return; }
-//         res.status(500).send("Wystąpił błąd przy pobieraniu dokumentów.");
-//         return;
-//       }
-
-//       if (result.rows.length === 0) {
-//         res.render("users/cases/docselect", { documents: [] });
-//         return;
-//       }
-//       res.render("users/cases/docselect", { documents: result.rows, caseId: req.params.id });
-//     }
-//   );
-// });
-
-
-
-
 app.get("/users/share/caseshareGROUP/:id", checkAuthenticated, (req, res) => {
   pool.query(
     `SELECT id_group, name_group FROM groups`,
@@ -362,14 +380,10 @@ app.get("/users/share/caseshareUSER/:id", checkAuthenticated, (req, res) => {
   );
 });
 
-
-
-
 app.get("/users/caseView/:id", checkAuthenticated, (req, res) => {
   res.render("users/cases/caseView");
   console.log("Podgląd sprawy") 
 });
-
 
 //checkNotAuthenticated
 // Obsługa żądania GET na adres "/users/userPanel"
@@ -456,8 +470,6 @@ app.get("/users/userlist", checkAuthenticated, (req, res) => {
   });
 });
 
-
-
 app.get("/users/docsend/:id", checkAuthenticated, (req, res) => {
   const documentId = req.params.id;
   
@@ -502,7 +514,6 @@ app.get("/users/doclists", checkAuthenticated, (req, res) => {
   );
 });
 
-
 app.get("/users/document/:id", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
   const documentId = req.params.id;
@@ -542,7 +553,6 @@ app.get("/users/docform", checkAuthenticated, (req, res) => {
     }
   );
 });
-
 
 // Route do wyświetlenia listy plików użytkownika
 app.get("/users/filelist", checkAuthenticated, (req, res) => {
@@ -614,6 +624,55 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
   );
 });
 
+
+
+
+
+/////////////////////////POSTY////////////////////////////
+
+app.post("/users/savePathPrefix/:id", checkAuthenticated, (req, res) => {
+  const pathId = req.params.id;
+  const groupId = req.body.id_group_patpref;
+
+  pool.query(
+    `INSERT INTO prefix_path (id_prefix_patpref, id_group_patpref)
+     VALUES ($1, $2)`,
+    [pathId, groupId],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+
+      console.log(`Utworzono nowe przejście dla ścieżki ${pathId}`);
+      req.flash('success_msg', 'Nowe przejście zostało utworzone.');
+      res.redirect("/users/pathView/" + pathId);
+    }
+  );
+});
+
+app.post('/paths/create', (req, res) => {
+  const { name_path, opis_path } = req.body;
+  const creator_path = req.user.id; 
+
+  pool.query(
+    `INSERT INTO path (name_path, creator_path, opis_path)
+     VALUES ($1, $2, $3)`,
+    [name_path, creator_path, opis_path],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+
+      console.log(`Utworzono nową ścieżkę o nazwie ${name_path}`);
+
+      req.flash('success_msg', 'Nowa ścieżka została utworzona.');
+      res.redirect('/users/pathList');
+    }
+  );
+});
+
+
+
 app.post('/users/share/caseshareGROUP/:id', checkAuthenticated, (req, res) => {
   const id_case_casgrup = req.params.id;
   const id_group_casgrup = req.body.group;
@@ -634,7 +693,6 @@ app.post('/users/share/caseshareGROUP/:id', checkAuthenticated, (req, res) => {
   );
 });
 
-
 app.post('/users/share/caseshareUSER/:id', checkAuthenticated, (req, res) => {
   const id_case_casusr = req.params.id;
   const id_user_casusr = req.body.email;
@@ -654,7 +712,6 @@ app.post('/users/share/caseshareUSER/:id', checkAuthenticated, (req, res) => {
     }
   );
 });
-
 
 app.post('/groupUSRdelete/:id', checkAuthenticated, (req, res) => {
   const userId = req.params.id;
@@ -677,10 +734,6 @@ console.log(userId, groupId);
   );
 });
 
-
-
-
-
 app.post('/groupUpdateName/:id', checkAuthenticated, (req, res) => {
   const groupId = req.params.id;
   const groupName = req.body.groupName;
@@ -701,7 +754,6 @@ app.post('/groupUpdateName/:id', checkAuthenticated, (req, res) => {
     }
   );
 });
-
 
 // Dodanie nowej grupy do bazy danych
 app.post('/groups/create', (req, res) => {
@@ -724,8 +776,6 @@ app.post('/groups/create', (req, res) => {
     },
   );
 });
-
-
 
 app.post("/dodaj-do-sprawy/:caseId", checkAuthenticated, (req, res) => {
   const caseId = req.params.caseId;
@@ -779,9 +829,6 @@ app.post("/dodaj-do-grupy/:groupId", checkAuthenticated, (req, res) => {
     res.redirect(`/groupedit/${groupId}`);
   }, 500);
 });
-
-
-
 
 app.post("/users/caseform", checkAuthenticated, (req, res) => {
   const title = req.body.nazwaSprawy;
@@ -843,6 +890,41 @@ app.post('/users/edit_user/:id', checkAuthenticated, (req, res) => {
   );
 });
 
+app.post('/case/UNDOdelete_case/:id', checkAuthenticated, (req, res) => {
+  const CaseId = req.params.id;
+  
+  pool.query(
+    `UPDATE casefile SET status_case = 'active' WHERE id_case = $1`,
+    [CaseId],
+    (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Wystąpił błąd podczas przywracania sprawy");
+      }
+      
+      res.redirect('');
+    }
+  );
+
+});
+
+app.post('/case/delete_case/:id', checkAuthenticated, (req, res) => {
+  const CaseId = req.params.id;
+  
+      
+      pool.query(
+        `UPDATE casefile SET status_case = 'not_active' WHERE id_case = $1`,
+        [CaseId],
+        (err) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send("Wystąpił błąd podczas usuwania sprawy");
+          }
+          
+          res.redirect('');
+        }
+     );
+});
 
 app.post('/users/UNDOdelete_user/:id', checkAuthenticated, (req, res) => {
   const userId = req.params.id;
@@ -943,8 +1025,6 @@ app.post("/users/docsend/:id", checkAuthenticated, (req, res) => {
                 res.status(500).send("Wystąpił błąd przy przypisywaniu dokumentu do użytkownika.");
                 return;
               }
-
-              
 
                   // Redirect to the document list page
                   req.flash('success_msg', 'Plik został przesłany');
@@ -1122,8 +1202,6 @@ app.post("/users/uploads", upload.single('image'), (req, res) => {
 }
 });
 
-
-
 // Tworzymy nowego użytkownika i dodajemy go do bazy danych
 app.post('/users/rejestracja', async (req, res) => {
     let { name, surname, email, password } = req.body;
@@ -1181,7 +1259,6 @@ app.post('/users/rejestracja', async (req, res) => {
       )}
   });
 
-  
 
 // Jest to funkcja obsługująca żądanie POST na adres "/users/logowanie", 
 // która korzysta z funkcjonalności autentykacji paszportowej Passport.js.
@@ -1195,7 +1272,6 @@ passport.authenticate("local",{
     failureRedirect: "/users/logowanie",
     failureFlash:true
 }));
-
 
 // Jest to funkcja pośrednicząca, która sprawdza, czy użytkownik jest 
 // uwierzytelniony. Jeśli tak, przekierowuje go na stronę "/users/userPanel",
@@ -1232,14 +1308,12 @@ function checkNotAuthenticated (req,res,next) {
     res.redirect("/users/logowanie");
 }
 
-
 // Jest to funkcja, która nasłuchuje żądań HTTP na określonym porcie
 // i wyświetla komunikat w konsoli po uruchomieniu aplikacji.
 
 app.listen(PORT, ()=>{
     console.log(`Serwer na porcie ${PORT}`);
 });
-
 
 // Jest to funkcja, która umożliwia dostęp do plików statycznych 
 // z folderu "public", które są przechowywane na serwerze i są 

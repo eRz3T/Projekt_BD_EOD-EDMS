@@ -26,15 +26,37 @@
 
   <srodek>
 
+
         <table>
-          <h2>Twoje materiały</h2>
+          <thead>
+            <tr>
+              <th>Pliki</th>
+              <th>Dokumenty</th>
+              <th>Sprawy</th>
+              <th>Ścieżki</th>
+            </tr>
+          </thead>
             <tbody>
             <tr>
-                  <td>Pliki<a href="/users/filelist"><button>Wyświetl</button></a></td>
-                    <td>Dokumenty<a href="/users/doclists"><button>Wyświetl</button></a></td>
-                      <td>Użytkownicy<a href="/users/userlist"><button>Wyświetl</button></a></td>
-                        <td>Sprawy<a href="/users/caselist"><button>Wyświetl</button></a></td>
-                        <td>Grupy<a href="/groups/grouplist"><button>Wyświetl</button></a></td>                   
+                  <td><a href="/users/filelist"><button>Wyświetl</button></a></td>
+                    <td><a href="/users/doclists"><button>Wyświetl</button></a></td>
+                        <td><a href="/users/caselist"><button>Wyświetl</button></a></td> 
+                          <td><a href="/users/pathList"><button>Wyświetl</button></a></td>                 
+            </tr>  
+          </tbody>
+        </table>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Użytkownicy</th>
+              <th>Grupy</th>
+            </tr>
+          </thead>
+            <tbody>
+            <tr>
+                      <td><a href="/users/userlist"><button>Wyświetl</button></a></td>
+                        <td><a href="/groups/grouplist"><button>Wyświetl</button></a></td>                   
             </tr>  
           </tbody>
         </table>

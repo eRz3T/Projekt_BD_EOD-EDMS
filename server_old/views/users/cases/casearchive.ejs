@@ -36,7 +36,7 @@
       <tr>
         <th>Id</th>
         <th>Tytuł</th>
-        <th> </th>
+        <th>Udostepnianie</th>
         <th> </th>
       </tr>
     </thead>
@@ -47,22 +47,13 @@
           <td><%= cases[i].title_case %></td>
 
           <td>
-            <a href="/users/share/caseshareGROUP/<%= cases[i].id_case %>"><button style="color: white;">Udostepnij Grupie</button></a>
-          </td>
-          <td>
-            <a href="/users/share/caseshareUSER/<%= cases[i].id_case %>"><button style="color: white;">Udostepnij Użytkownikowi</button></a>
+            <a href="/users/share/caseshareGROUP/<%= cases[i].id_case %>"><button style="color: white;">Grupie</button></a>
+            <a href="/users/share/caseshareUSER/<%= cases[i].id_case %>"><button style="color: white;">Użytkownikowi</button></a>
           </td>
 
           <td>
             <a href="/users/docselect/<%= cases[i].id_case %>"><button style="color: white;">Załącz dokument</button></a>
-          </td>
-          <td>
-            <a href="/users/caseView/<%= cases[i].id_case %>"><button style="color: white;">Podgląd Sprawy</button></a>
-        </td>
-        <td>
-          <a><form action="/case/delete_case/<%= cases[i].id_case %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz zarchiwizować sprawę?')">
-          <button type="submit" style="color: white;">Archiwizuj Sprawę</button>
-          </form></a>
+          <a href="/users/caseView/<%= cases[i].id_case %>"><button style="color: white;">Podgląd</button></a>
         </td>
 
         </tr>
@@ -72,7 +63,7 @@
 
 
 
-  <h3>Lista udostępnionych spraw przez użytkowników</h3>
+  <h3>Lista udostępnionych spraw tobie przez użytkowników</h3>
 <table>
   <thead>
     <tr>
@@ -96,7 +87,7 @@
   </tbody>
 </table>
 
-<h3>Lista udostępnionych spraw po przez twoje grupy</h3>
+<h3>Lista udostępnionych spraw tobie po przez twoje grupy</h3>
 <table>
   <thead>
     <tr>
@@ -119,10 +110,6 @@
     <% }); %>
   </tbody>
 </table>
- 
-
-
-app.post('/case/delete_case/:id', checkAuthenticated, (req, res) =>
 
 </srodek>
 </body>
