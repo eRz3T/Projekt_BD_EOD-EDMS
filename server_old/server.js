@@ -394,8 +394,12 @@ app.get("/users/caseVieweObieg/:id", checkAuthenticated, (req, res) => {
         const userId = req.user.id;
         const active = 'active';
 
+        console.log(userId);
+        console.log(active);
+        console.log(caseId);
+
         pool.query(
-          `SELECT casefile.id_case, casefile.id_group_case, casefile.title_case, path.id_path, prefix_path.step_number_patpref
+          `SELECT casefile.id_case, casefile.id_group_case, casefile.title_case, path.id_path, jump_path.id_jump_jumpath, jump_path.id_jumpath
           FROM casefile 
           INNER JOIN case_path ON case_path.id_case_caspat = casefile.id_case
           INNER JOIN path ON path.id_path = case_path.id_path_caspat 
@@ -735,65 +739,58 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
 /////////////////////////POSTY////////////////////////////
 
 
-
-
-app.post('/users/processEObiegSelection/:id_case', checkAuthenticated, (req, res) => {
-  const selectedPathId = req.body.selectedPath;
-  const caseId = req.params.id_case;
-
+app.post('/eObieg/forward/:id_jump_jumpath/:id_path/:id_jumpath', checkAuthenticated, (req, res) => {
+  const idJumpPath = req.params.id_jump_jumpath;
+  const idPath = req.params.id_path;
+  const idJumpath = req.params.id_jumpath;
+  const nextjump = parseInt(idJumpPath) + 1;
 
   pool.query(
-    `SELECT name_path
-     FROM path
-     WHERE id_path = $1`,
-    [selectedPathId],
-    (error, results) => {
-      if (error) {
-        throw error;
+    `SELECT id_group_patpref FROM prefix_path WHERE id_prefix_patpref = $1 AND step_number_patpref = $2`,
+    [idPath, nextjump],
+    (err, results) => {
+      if (err) {
+        throw err;
       }
 
-      const selectedPathName = results.rows[0].name_path;
+      if (results.rows.length === 0) {
+        return res.status(400).json({ message: 'Nieprawidłowe dane' });
+      }
 
-   
+      const idGroupPatpref = results.rows[0].id_group_patpref;
+
       pool.query(
-        `SELECT prefix_path.id_group_patpref
-         FROM prefix_path
-         INNER JOIN path ON path.id_path = prefix_path.id_prefix_patpref
-         WHERE prefix_path.step_number_patpref = 1 AND path.name_path LIKE $1`,
-        [selectedPathName],
-        (error, results) => {
-          if (error) {
-            throw error;
+        `SELECT id_child_jumpath FROM jump_path WHERE id_jumpath = $1 AND id_jump_jumpath = $2`,
+        [idJumpath, idJumpPath],
+        (err, results) => {
+          if (err) {
+            throw err;
           }
 
-          const prefixPathId = results.rows[0].id_group_patpref;
+          if (results.rows.length === 0) {
+            return res.status(400).json({ message: 'Nieprawidłowe dane' });
+          }
 
-        
+          const idPrefixPatpref = results.rows[0].id_child_jumpath;
+          const nextStepNumber = nextjump;
+
           pool.query(
-            `INSERT INTO jump_path (id_way_jumpath, id_child_jumpath, id_parent_jumpath, is_active_jumpath)
-             VALUES ($1, $2, NULL, 'active')`,
-            [selectedPathId, prefixPathId],
-            (error, results) => {
-              if (error) {
-                throw error;
+            `INSERT INTO jump_path (id_way_jumpath, id_child_jumpath, id_parent_jumpath, is_active_jumpath, id_jump_jumpath) VALUES ($1, $2, $3, $4, $5)`,
+            [idPath, idGroupPatpref, idPrefixPatpref, 'active', nextStepNumber],
+            (err, results) => {
+              if (err) {
+                throw err;
               }
 
-              console.log('Data inserted into jump_path table');
-
-           
               pool.query(
-                `INSERT INTO case_path (id_case_caspat, id_path_caspat)
-                 VALUES ($1, $2)`,
-                [caseId, selectedPathId],
-                (error, results) => {
-                  if (error) {
-                    throw error;
+                `UPDATE jump_path SET is_active_jumpath = 'not_active' WHERE id_jumpath = $1`,
+                [idJumpath],
+                (err, results) => {
+                  if (err) {
+                    throw err;
                   }
 
-                  console.log('Data inserted into case_path table');
-
-              
-                  res.redirect(`/users/caselist`);
+                  res.redirect('/your/next/page');
                 }
               );
             }
