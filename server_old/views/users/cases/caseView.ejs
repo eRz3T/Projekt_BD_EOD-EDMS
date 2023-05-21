@@ -26,11 +26,38 @@
 </tablenav>
 
 <srodek>
-  <h1>
-    <a href="/users"><button style="color: lightmagenta; font-weight: bolder; font-size: large;"> eObieg sprawy</button></a>
-</h1>
+  
+  <table>
+    <h3>Dostępne operacje</h3>
+    <thead>
+      <tr>
+        
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+
+        <td>
+          <a href="/users/share/caseshareGROUP/<%= caseData[0].id_case %>"><button style="color: white;">Udostepnij Grupie</button></a>
+        </td>
+        <td>
+          <a href="/users/share/caseshareUSER/<%= caseData[0].id_case %>"><button style="color: white;">Udostepnij Użytkownikowi</button></a>
+        </td>
+
+        <td>
+          <a href="/users/docselect/<%= caseData[0].id_case %>"><button style="color: white;">Załącz dokument</button></a>
+        </td>
+
+        <td>
+          <a href="/users/eObiegSelection/<%= caseData[0].id_case %>"><button style="color: white;">Rozpocznij obieg</button></a>
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
 
   <table>
+    <h3>Dane sprawy</h3>
     <thead>
       <tr>
         <th>ID</th>
@@ -43,15 +70,18 @@
         <td><%= caseData[0].id_case %></td>
         <td><%= caseData[0].title_case %></td>
         <td><%= caseData[0].opis_case %></td>
+
+
       </tr>
     </tbody>
   </table>
 
   <table>
+    <h3>Załączone dokumenty do sprawy</h3>
     <thead>
       <tr>
 
-        <th>Dokumenty</th>
+        <th>Tytuł dokumentu</th>
       </tr>
     </thead>
     <tbody>
@@ -60,7 +90,7 @@
         
         <td><%= document.title_document %></td>
         <td><a href="/users/document/<%= document.id_document %>"><button style="color: white;">Podgląd</button></a>
-          
+    
       </tr>
       <% }); %>
     </tbody>

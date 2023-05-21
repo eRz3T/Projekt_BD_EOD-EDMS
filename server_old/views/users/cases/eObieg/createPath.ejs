@@ -26,16 +26,46 @@
   </tablenav>
 
   <srodek>
-    <h2>Tworzenie nowej ścieżki sprawy</h2>
     <form action="/paths/create" method="POST">
-      <label for="name_path">Nazwa ścieżki:</label>
-      <input type="text" id="name_path" name="name_path" required><br><br>
-
-      <label for="opis_path">Opis ścieżki:</label>
-      <textarea id="opis_path" name="opis_path" required></textarea><br><br>
-
-      <button type="submit">Stwórz</button>
-    </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Nazwa ścieżki</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+                <td><input type="text" id="name_path" name="name_path" required></td>                         
+          </tr>  
+          </tbody>
+                <thead3>
+                    <tr>
+                      <th>Opis ścieżki</th>
+                    </tr>
+                </thead3>
+                <tbody3>
+                      <tr>
+                        <td><textarea id="opis_path" name="opis_path " style="height: 200px; width: 500px;"></textarea></td>
+                      </tr>
+                </tbody3>
+              </tbody>
+              <thead3>
+               
+            </thead3>
+            <tbody3>
+                  <tr>
+                    <td><button type="submit">Stwórz ścieżkę</button></td>
+                  </tr>
+            </tbody3>
+          </tbody>
+              
+      </table> 
+      
+      </form>      
   </srodek>
 </body>
 </html>
+
+
+
+ 

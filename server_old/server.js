@@ -126,7 +126,9 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
     
           const groups = results.rows;
     
-          pool.query('SELECT * FROM path WHERE id_path = $1', [pathId], (error, results) => {
+          pool.query(`SELECT name_path, opis_path, email FROM path
+          INNER JOIN appusers ON appusers.id = path.creator_path
+           WHERE id_path = $1`, [pathId], (error, results) => {
             if (error) {
               throw error;
             }
@@ -151,6 +153,18 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
         const groups = results.rows;
     
         res.render("users/cases/eObieg/pathPrefixEdit", { groups, path: { id_path: pathId } });
+      });
+    });
+
+    app.get("/users/eObiegSelection/:id_case", checkAuthenticated, (req, res) => {
+      const id_case = req.params.id_case;
+
+      pool.query("SELECT * FROM path", (error, results) => {
+        if (error) {
+          throw error;
+        }
+        const paths = results.rows;
+        res.render("users/cases/eObieg/eObiegSelection", { paths, id_case });
       });
     });
 
@@ -242,12 +256,37 @@ app.get("/users/grupy", checkAuthenticated, (req, res) =>{
   res.render("users/groups/groupcreate");
 });
 
+app.get("/users/caselistarchive", checkAuthenticated, (req, res) => {
+  const userId = req.user.id;
+  const not_active = 'not_active';
+
+  pool.query(
+    'SELECT id_case, opis_case, id_group_case, title_case FROM casefile WHERE id_user_case = $1 AND status_case = $2',
+    [userId, not_active],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send("Wystąpił błąd podczas pobierania listy spraw.");
+        return;
+      }
+
+      const cases = results.rows;
+
+      console.log("listaSprawArchiwalnych");
+    res.render("users/cases/caselistArch", { user: req.user.name, cases });
+
+    }
+  );
+});
+
 app.get("/users/caselist", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
 
+  const active = 'active';
+
   pool.query(
-    'SELECT id_case, opis_case, id_group_case, title_case FROM casefile WHERE id_user_case = $1',
-    [userId],
+    'SELECT id_case, opis_case, id_group_case, title_case FROM casefile WHERE id_user_case = $1 AND status_case = $2',
+    [userId, active],
     (error, results) => {
       if (error) {
         console.error(error);
@@ -630,25 +669,108 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
 
 /////////////////////////POSTY////////////////////////////
 
-app.post("/users/savePathPrefix/:id", checkAuthenticated, (req, res) => {
-  const pathId = req.params.id;
-  const groupId = req.body.id_group_patpref;
+
+app.post('/users/processEObiegSelection/:id_case', checkAuthenticated, (req, res) => {
+  const selectedPathId = req.body.selectedPath;
+  const caseId = req.params.id_case;
+
 
   pool.query(
-    `INSERT INTO prefix_path (id_prefix_patpref, id_group_patpref)
-     VALUES ($1, $2)`,
-    [pathId, groupId],
+    `SELECT name_path
+     FROM path
+     WHERE id_path = $1`,
+    [selectedPathId],
     (error, results) => {
       if (error) {
         throw error;
       }
 
-      console.log(`Utworzono nowe przejście dla ścieżki ${pathId}`);
-      req.flash('success_msg', 'Nowe przejście zostało utworzone.');
-      res.redirect("/users/pathView/" + pathId);
+      const selectedPathName = results.rows[0].name_path;
+
+   
+      pool.query(
+        `SELECT prefix_path.id_group_patpref
+         FROM prefix_path
+         INNER JOIN path ON path.id_path = prefix_path.id_prefix_patpref
+         WHERE prefix_path.step_number_patpref = 1 AND path.name_path LIKE $1`,
+        [selectedPathName],
+        (error, results) => {
+          if (error) {
+            throw error;
+          }
+
+          const prefixPathId = results.rows[0].id_group_patpref;
+
+        
+          pool.query(
+            `INSERT INTO jump_path (id_way_jumpath, id_child_jumpath, id_parent_jumpath, is_active_jumpath)
+             VALUES ($1, $2, NULL, 'active')`,
+            [selectedPathId, prefixPathId],
+            (error, results) => {
+              if (error) {
+                throw error;
+              }
+
+              console.log('Data inserted into jump_path table');
+
+           
+              pool.query(
+                `INSERT INTO case_path (id_case_caspat, id_path_caspat)
+                 VALUES ($1, $2)`,
+                [caseId, selectedPathId],
+                (error, results) => {
+                  if (error) {
+                    throw error;
+                  }
+
+                  console.log('Data inserted into case_path table');
+
+              
+                  res.redirect(`/users/caselist`);
+                }
+              );
+            }
+          );
+        }
+      );
     }
   );
 });
+
+app.post("/users/savePathPrefix/:id", checkAuthenticated, (req, res) => {
+  const pathId = req.params.id;
+  const groupId = req.body.id_group_patpref;
+
+  pool.query(
+    `SELECT COALESCE(MAX(step_number_patpref), 0) + 1 AS next_step_number
+     FROM prefix_path
+     WHERE id_prefix_patpref = $1`,
+    [pathId],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+
+      const nextStepNumber = results.rows[0].next_step_number;
+
+      pool.query(
+        `INSERT INTO prefix_path (id_prefix_patpref, id_group_patpref, step_number_patpref)
+         VALUES ($1, $2, $3)`,
+        [pathId, groupId, nextStepNumber],
+        (error, results) => {
+          if (error) {
+            throw error;
+          }
+
+          console.log(`Utworzono nowy skok dla ścieżki ${pathId} z numerem ${nextStepNumber}`);
+          req.flash('success_msg', 'Nowy skok został utworzony.');
+          res.redirect("/users/pathView/" + pathId);
+        }
+      );
+    }
+  );
+});
+
 
 app.post('/paths/create', (req, res) => {
   const { name_path, opis_path } = req.body;
@@ -902,7 +1024,7 @@ app.post('/case/UNDOdelete_case/:id', checkAuthenticated, (req, res) => {
         return res.status(500).send("Wystąpił błąd podczas przywracania sprawy");
       }
       
-      res.redirect('');
+      res.redirect('/users/caselist');
     }
   );
 
@@ -921,7 +1043,7 @@ app.post('/case/delete_case/:id', checkAuthenticated, (req, res) => {
             return res.status(500).send("Wystąpił błąd podczas usuwania sprawy");
           }
           
-          res.redirect('');
+          res.redirect('/users/caselist');
         }
      );
 });
@@ -1040,6 +1162,7 @@ app.post("/users/docsend/:id", checkAuthenticated, (req, res) => {
 
 app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
   const fileId = req.params.id;
+
   pool.query(
     `SELECT * FROM files WHERE id_file = $1`,
     [fileId],
@@ -1048,18 +1171,23 @@ app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
         console.log(err);
         return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
       }
+
       if (result.rows.length === 0) {
         return res.status(404).send("Nie znaleziono pliku o podanym identyfikatorze");
       }
+
       const fileName = result.rows[0].hashed_name_file;
       const originalFileName = result.rows[0].name_file;
-      const filePath = path.join(__dirname, 'uploads', fileName);
       const archivePath = path.join(__dirname, 'uploads', 'ARCHIWUM-DEL', fileName);
+      const filePath = path.join(__dirname, 'uploads', fileName); // Dodajemy definicję filePath
+
+      // Skopiowanie pliku do katalogu archiwum
       fs.copyFile(filePath, archivePath, (err) => {
         if (err) {
           console.log(err);
           return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
         }
+
         pool.query( 
           `DELETE FROM file_owner WHERE id_file_filown = $1`,
           [fileId],
@@ -1068,24 +1196,21 @@ app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
               console.log(err);
               return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
             }
+
             const userId = req.user.id_user;
             const dateArch = new Date().toISOString().slice(0, 19).replace('T', ' ');
-            pool.query(
 
-              `INSERT INTO file_archive_del (id_user_arch_filarchdel, date_arch_filarchdel, id_file_filarchdel) VALUES ($1, $2, $3)`,
+            pool.query(
+              `INSERT INTO file_archive_del (id_user_arch_filarchdel, date_arch_filarchdel, id_file_filarchdel) 
+               VALUES ($1, $2, $3)`,
               [req.user.id, dateArch, fileId],
               (err) => {
                 if (err) {
                   console.log(err);
                   return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
                 }
-                fs.unlink(filePath, (err) => {
-                  if (err) {
-                    console.log(err);
-                    return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
-                  }
-                  res.redirect('/users/filelist');
-                });
+
+                res.redirect('/users/filelist');
               }
             );
           }
@@ -1094,6 +1219,8 @@ app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
     }
   );
 });
+
+
 
 app.post('/documents', checkAuthenticated, (req, res) => {
   const { document_title, note, file_id } = req.body;

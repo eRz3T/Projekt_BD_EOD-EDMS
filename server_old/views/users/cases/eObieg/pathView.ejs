@@ -40,13 +40,29 @@
           <td><%= path.name_path %></td>
           <td><%= path.opis_path %></td>
           <td><%= path.email %></td>
-          <td><button><a href="/users/pathPrefixEdit/<%= path.id_path %>">Edytuj ścieżkę</a></button></td>
+          
         </tr>
       </tbody>
     </table>
 
     <table>
+      <thead>
+
+      </thead>
+      <tbody>
+        <tr>
+
+          <td><button><a href="/users/pathEditPrefix/<%= path.id_path %>">Edytuj ścieżkę</a></button></td>
+          <td><button><a href="/users/pathPrefixEdit/<%= path.id_path %>">Dodaj kolejny etap</a></button></td>
+          
+        </tr>
+      </tbody>
+    </table>
+
+
+    <table>
       <h3>Ścieżka sprawy</h3>
+      
       <thead>
         <tr>
           <th>Etap</th>
