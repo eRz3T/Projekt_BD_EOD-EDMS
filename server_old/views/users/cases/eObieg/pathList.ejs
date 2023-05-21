@@ -47,6 +47,42 @@
         <% }) %>
       </tbody>
     </table>
+
+
+
+  <table>
+    <h3>Sprawy w obiegu</h3>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Tytuł</th>
+        <th>Ścieżka</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (let i = 0; i < cases.length; i++) { %>
+        <tr>
+          <td><%= cases[i].id_case %></td>
+          <td><%= cases[i].title_case %></td>
+          <td><%= cases[i].name_path %></td>
+
+                    
+          <td>
+            <a href="/users/caseVieweObieg/<%= cases[i].id_case %>"><button style="color: white;">Podgląd Sprawy</button></a>
+        </td>
+        
+
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+
   </srodek>
+
 </body>
 </html>
+
+
+
+  

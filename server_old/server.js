@@ -98,16 +98,36 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
     });
 
     app.get("/users/pathList", checkAuthenticated, (req, res) => {
+      const userId = req.user.id;
+      const active = 'active';
+
       pool.query('SELECT * FROM path', (error, results) => {
         if (error) {
           throw error;
         }
-
         const paths = results.rows;
 
-        res.render("users/cases/eObieg/pathList", { paths });
+        pool.query(
+          `SELECT casefile.id_case, casefile.opis_case, casefile.id_group_case, casefile.title_case, path.name_path FROM casefile 
+          INNER JOIN case_path ON case_path.id_case_caspat = casefile.id_case
+          INNER JOIN path ON path.id_path = case_path.id_path_caspat 
+          INNER JOIN jump_path ON jump_path.id_way_jumpath = path.id_path
+          INNER JOIN group_users ON group_users.id_group_grpusr = jump_path.id_child_jumpath
+          WHERE casefile.id_user_case = $1 AND casefile.status_case = $2 AND jump_path.is_active_jumpath = $2 AND group_users.id_user_grpusr = $1`,
+          [userId, active],
+          (error, results) => {
+            if (error) {
+              console.error(error);
+              res.status(500).send("Wystąpił błąd podczas pobierania listy spraw.");
+              return;
+            }
+            const cases = results.rows;
+
+
+        res.render("users/cases/eObieg/pathList", { paths, cases });
       });
     });
+  });
 
     app.get("/users/pathView/:id", checkAuthenticated, (req, res) => {
       const pathId = req.params.id;
@@ -352,6 +372,51 @@ app.get("/users/caseView/:id", checkAuthenticated, (req, res) => {
       res.render("users/cases/caseView", { caseData: result.rows });
     }
   });
+});
+
+app.get("/users/caseVieweObieg/:id", checkAuthenticated, (req, res) => {
+  const caseId = req.params.id;
+
+  pool.query(
+    `SELECT casefile.id_case, casefile.title_case, casefile.opis_case, documents.id_document, documents.title_document 
+    FROM casefile 
+    INNER JOIN case_documents ON casefile.id_case = case_documents.id_case_casdoc
+    INNER JOIN documents ON case_documents.id_document_casdoc = documents.id_document
+    WHERE casefile.id_case = $1`, 
+    [caseId], 
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.redirect('/users/cases');
+      } else {
+        const caseData = result.rows;
+
+        const userId = req.user.id;
+        const active = 'active';
+
+        pool.query(
+          `SELECT casefile.id_case, casefile.id_group_case, casefile.title_case, path.id_path, prefix_path.step_number_patpref
+          FROM casefile 
+          INNER JOIN case_path ON case_path.id_case_caspat = casefile.id_case
+          INNER JOIN path ON path.id_path = case_path.id_path_caspat 
+          INNER JOIN jump_path ON jump_path.id_way_jumpath = path.id_path
+          INNER JOIN group_users ON group_users.id_group_grpusr = jump_path.id_child_jumpath
+          WHERE casefile.id_user_case = $1 AND casefile.status_case = $2 AND jump_path.is_active_jumpath = $2 AND group_users.id_user_grpusr = $1 AND casefile.id_case = $3`,
+          [userId, active, caseId],
+          (error, results) => {
+            if (error) {
+              console.error(error);
+              res.status(500).send("Wystąpił błąd podczas pobierania listy spraw.");
+              return;
+            }
+            const cases = results.rows;
+
+            res.render("users/cases/eObieg/caseVieweObieg", { caseData, cases });
+          }
+        );
+      }
+    }
+  );
 });
 
 app.get("/users/caseform",checkAuthenticated, (req, res)=>{ 
@@ -668,6 +733,8 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
 
 
 /////////////////////////POSTY////////////////////////////
+
+
 
 
 app.post('/users/processEObiegSelection/:id_case', checkAuthenticated, (req, res) => {

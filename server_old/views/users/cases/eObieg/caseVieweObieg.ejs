@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Podgląd sprawy</title>
+</head>
+
+<body>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+  <tablenav>
+    <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+        </form>    
+        <a href="/users/pathList">Lista ścieżek</a> 
+        <a href="/users/userPanel">Panel użytkownika</a>  
+      </tr>
+      <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr> 
+    </tbody>
+  </tablenav>
+
+<srodek>
+  
+  <table>
+    <h3>Dostępne operacje</h3>
+    <thead>
+      <tr>
+        
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+
+        <td>
+          <a href="/users/share/caseshareGROUP/<%= caseData[0].id_case %>"><button style="color: white;">Udostepnij Grupie</button></a>
+        </td>
+        <td>
+          <a href="/users/share/caseshareUSER/<%= caseData[0].id_case %>"><button style="color: white;">Udostepnij Użytkownikowi</button></a>
+        </td>
+
+        <td>
+          <a href="/users/docselect/<%= caseData[0].id_case %>"><button style="color: white;">Załącz dokument</button></a>
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <h3>Dane sprawy</h3>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tytuł</th>
+        <th>Opis</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= caseData[0].id_case %></td>
+        <td><%= caseData[0].title_case %></td>
+        <td><%= caseData[0].opis_case %></td>
+
+
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <h3>Załączone dokumenty do sprawy</h3>
+    <thead>
+      <tr>
+
+        <th>Tytuł dokumentu</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% caseData.forEach(document => { %>
+      <tr>
+        
+        <td><%= document.title_document %></td>
+        <td><a href="/users/document/<%= document.id_document %>"><button style="color: white;">Podgląd</button></a>
+    
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <table>
+    <h3>Dostępne operacje - eObieg</h3>
+    <thead>
+      <tr>
+        
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        
+        <td>
+          <form action="/eObieg/back/<%= cases[0].step_number_patpref %>/<%= cases[0].id_path %>" method="POST">
+            <button type="submit" style="font-weight: bolder;">Cofnij sprawę</button>
+          </form> 
+        </td>
+
+        <td>
+          <form action="/eObieg/reject/<%= cases[0].step_number_patpref %>/<%= cases[0].id_path %>" method="POST">
+            <button type="submit" style="font-weight: bolder;">Odrzuć sprawę</button>
+          </form> 
+        </td>
+
+        <td>
+          <form action="/eObieg/forward/<%= cases[0].step_number_patpref %>/<%= cases[0].id_path %>/" method="POST">
+            <button type="submit" style="font-weight: bolder;">Przekaż dalej</button>
+          </form> 
+        </td>
+
+
+      </tr>
+    </tbody>
+  </table>
+
+</srodek>
+</body>
+</html>
