@@ -126,7 +126,7 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
     
           const groups = results.rows;
     
-          pool.query(`SELECT name_path, opis_path, email FROM path
+          pool.query(`SELECT id_path, name_path, opis_path, email FROM path
           INNER JOIN appusers ON appusers.id = path.creator_path
            WHERE id_path = $1`, [pathId], (error, results) => {
             if (error) {
@@ -598,7 +598,7 @@ app.get("/users/filelist", checkAuthenticated, (req, res) => {
   const userId = req.user.id;
   // Pobranie plików użytkownika z bazy danych
   pool.query(
-    `SELECT files.id_file, files.name_file 
+    `SELECT files.id_file, files.name_file , files.hashed_name_file
      FROM files
      INNER JOIN file_owner ON files.id_file = file_owner.id_file_filown
      INNER JOIN appusers ON file_owner.id_user_filown = appusers.id
@@ -618,7 +618,7 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
   const fileId = req.params.id;
   // Pobranie informacji o pliku z bazy danych
   pool.query(
-    `SELECT * FROM files WHERE id_file = $1`,
+    `SELECT * FROM files WHERE hashed_name_file = $1`,
     [fileId],
     (err, result) => {
       // Obsługa błędów zapytania
@@ -1161,61 +1161,75 @@ app.post("/users/docsend/:id", checkAuthenticated, (req, res) => {
 });
 
 app.post('/users/delete/:id', checkAuthenticated, (req, res) => {
-  const fileId = req.params.id;
+  const hashedfilename = req.params.id;
 
   pool.query(
-    `SELECT * FROM files WHERE id_file = $1`,
-    [fileId],
+    `SELECT id_file FROM files WHERE hashed_name_file = $1`,
+    [hashedfilename],
     (err, result) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
+        return res.status(500).send("Wystąpił błąd podczas pobierania id pliku");
       }
+      
+      const fileId = result.rows[0].id_file;
+      console.log(fileId);
+  
+      pool.query(
+        `SELECT * FROM files WHERE id_file = $1`,
+        [fileId],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
+          }
 
-      if (result.rows.length === 0) {
-        return res.status(404).send("Nie znaleziono pliku o podanym identyfikatorze");
-      }
+          if (result.rows.length === 0) {
+            return res.status(404).send("Nie znaleziono pliku o podanym identyfikatorze");
+          }
 
-      const fileName = result.rows[0].hashed_name_file;
-      const originalFileName = result.rows[0].name_file;
-      const archivePath = path.join(__dirname, 'uploads', 'ARCHIWUM-DEL', fileName);
-      const filePath = path.join(__dirname, 'uploads', fileName); // Dodajemy definicję filePath
+          const fileName = result.rows[0].hashed_name_file;
+          const originalFileName = result.rows[0].name_file;
+          const archivePath = path.join(__dirname, 'uploads', 'ARCHIWUM-DEL', fileName);
+          const filePath = path.join(__dirname, 'uploads', fileName); // Dodajemy definicję filePath
 
-      // Skopiowanie pliku do katalogu archiwum
-      fs.copyFile(filePath, archivePath, (err) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
-        }
-
-        pool.query( 
-          `DELETE FROM file_owner WHERE id_file_filown = $1`,
-          [fileId],
-          (err) => {
+          // Skopiowanie pliku do katalogu archiwum
+          fs.copyFile(filePath, archivePath, (err) => {
             if (err) {
               console.log(err);
               return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
             }
 
-            const userId = req.user.id_user;
-            const dateArch = new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-            pool.query(
-              `INSERT INTO file_archive_del (id_user_arch_filarchdel, date_arch_filarchdel, id_file_filarchdel) 
-               VALUES ($1, $2, $3)`,
-              [req.user.id, dateArch, fileId],
+            pool.query( 
+              `DELETE FROM file_owner WHERE id_file_filown = $1`,
+              [fileId],
               (err) => {
                 if (err) {
                   console.log(err);
                   return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
                 }
 
-                res.redirect('/users/filelist');
+                const userId = req.user.id_user;
+                const dateArch = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+                pool.query(
+                  `INSERT INTO file_archive_del (id_user_arch_filarchdel, date_arch_filarchdel, id_file_filarchdel) 
+                   VALUES ($1, $2, $3)`,
+                  [req.user.id, dateArch, fileId],
+                  (err) => {
+                    if (err) {
+                      console.log(err);
+                      return res.status(500).send("Wystąpił błąd podczas usuwania pliku");
+                    }
+
+                    res.redirect('/users/filelist');
+                  }
+                );
               }
             );
-          }
-        );
-      });
+          });
+        }
+      );
     }
   );
 });
