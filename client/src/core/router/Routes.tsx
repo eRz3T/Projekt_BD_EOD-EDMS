@@ -13,6 +13,7 @@ import Documents from '@/pages/Documents'
 import Case from '@/pages/Case'
 import Admin from '@/pages/Admin'
 import Users from '@/pages/admin/Users'
+import Workflows from '@/pages/admin/Workflows'
 
 const Router = () => {
   const { isAuthenticated } = useAuth()
@@ -28,6 +29,7 @@ const Router = () => {
           <Route element={<Case />} path={ClientRoutes.CASE} />
           <Route element={<Admin />} path={ClientRoutes.ADMIN} />
           <Route element={<Users />} path={AdminPaths.USERS} />
+          <Route element={<Workflows />} path={AdminPaths.WORKFLOWS} />
         </Route>
         <Route
           element={isAuthenticated ? <Navigate to={ClientRoutes.DASHBOARD} /> : <Login />}
