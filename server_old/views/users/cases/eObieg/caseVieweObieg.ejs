@@ -104,13 +104,13 @@
         
         <td>
           <form action="/eObieg/back/<%= cases[0].step_number_patpref %>/<%= cases[0].id_path %>" method="POST">
-            <button type="submit" style="font-weight: bolder;">Cofnij sprawę</button>
+            <button type="submit" style="font-weight: bolder; color: red; ">Cofnij sprawę</button>
           </form> 
         </td>
 
         <td>
           <form action="/eObieg/reject/<%= cases[0].step_number_patpref %>/<%= cases[0].id_path %>" method="POST">
-            <button type="submit" style="font-weight: bolder;">Odrzuć sprawę</button>
+            <button type="submit" style="font-weight: bolder; color: red; "">Odrzuć sprawę</button>
           </form> 
         </td>
         

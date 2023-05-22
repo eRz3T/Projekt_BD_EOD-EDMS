@@ -108,7 +108,8 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
         const paths = results.rows;
 
         pool.query(
-          `SELECT casefile.id_case, casefile.opis_case, casefile.id_group_case, casefile.title_case, path.name_path FROM casefile 
+          `SELECT casefile.id_case, casefile.opis_case, casefile.id_group_case, casefile.title_case, path.name_path, jump_path.id_jump_jumpath
+          FROM casefile 
           INNER JOIN case_path ON case_path.id_case_caspat = casefile.id_case
           INNER JOIN path ON path.id_path = case_path.id_path_caspat 
           INNER JOIN jump_path ON jump_path.id_way_jumpath = path.id_path
@@ -790,7 +791,7 @@ app.post('/eObieg/forward/:id_jump_jumpath/:id_path/:id_jumpath', checkAuthentic
                     throw err;
                   }
 
-                  res.redirect('/your/next/page');
+                  res.redirect('/users/pathList');
                 }
               );
             }
