@@ -29,15 +29,28 @@
   </tablenav>
 
   <srodek>
-    <h2>Wybierz ścieżkę</h2>
     <form action="/users/processEObiegSelection/<%= id_case%>" method="POST">
-        <select name="selectedPath">
-          <% for (let i = 0; i < paths.length; i++) { %>
-            <option value="<%= paths[i].id_path %>"><%= paths[i].name_path %></option>
-          <% } %>
-        </select>
-        <button type="submit">Wybierz</button>
-      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Wybierz ścieżkę:</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+                <td><select name="selectedPath">
+                  <% for (let i = 0; i < paths.length; i++) { %>
+                    <option value="<%= paths[i].id_path %>"><%= paths[i].name_path %></option>
+                  <% } %>
+                </select></td>
+                <td><button type="submit">Wybierz</button></td>        
+           </tr>  
+        </tbody>
+      </table>
+    </form>
   </srodek>
 </body>
 </html>
+
+

@@ -72,7 +72,7 @@ app.use(passport.session());
 
 app.use(flash());
 
-/////////////////////////POSTY////////////////////////////
+/////////////////////////GETY////////////////////////////
 
 
 // Obsługa żądania GET na adres główny "/"
@@ -108,13 +108,11 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
         const paths = results.rows;
 
         pool.query(
-          `SELECT casefile.id_case, casefile.opis_case, casefile.id_group_case, casefile.title_case, path.name_path, jump_path.id_jump_jumpath
-          FROM casefile 
-          INNER JOIN case_path ON case_path.id_case_caspat = casefile.id_case
-          INNER JOIN path ON path.id_path = case_path.id_path_caspat 
-          INNER JOIN jump_path ON jump_path.id_way_jumpath = path.id_path
-          INNER JOIN group_users ON group_users.id_group_grpusr = jump_path.id_child_jumpath
-          WHERE casefile.id_user_case = $1 AND casefile.status_case = $2 AND jump_path.is_active_jumpath = $2 AND group_users.id_user_grpusr = $1`,
+          `SELECT casefile.title_case, jump_path.id_jump_jumpath, jump_path.id_case_jumpath
+          FROM jump_path
+          INNER JOIN casefile ON casefile.id_case = jump_path.id_case_jumpath
+          INNER JOIN group_users ON id_group_grpusr = jump_path.id_child_jumpath
+          WHERE id_user_grpusr = $1 AND is_active_jumpath = $2`,
           [userId, active],
           (error, results) => {
             if (error) {
@@ -358,19 +356,33 @@ app.get("/users/caselist", checkAuthenticated, (req, res) => {
 });
 
 app.get("/users/caseView/:id", checkAuthenticated, (req, res) => {
-  const caseId = req.params.id;
-  // Fetch the case data and the documents assigned to it from the database based on its ID
-  pool.query(`SELECT casefile.id_case, casefile.title_case, casefile.opis_case, documents.id_document, documents.title_document 
-  FROM casefile 
-  INNER JOIN case_documents ON casefile.id_case = case_documents.id_case_casdoc
-  INNER JOIN documents ON case_documents.id_document_casdoc = documents.id_document
-  WHERE casefile.id_case = $1`, [caseId], (err, result) => {
-    if (err) {
-      console.log(err);
-      res.redirect('/users/cases');
-    } else {
-      // Render the caseView.ejs template and pass the fetched case data and documents to it
-      res.render("users/cases/caseView", { caseData: result.rows });
+      const caseId = req.params.id;
+        // Fetch the case data and the documents assigned to it from the database based on its ID
+        pool.query(`SELECT casefile.id_case, casefile.title_case, casefile.opis_case
+        FROM casefile 
+        WHERE casefile.id_case = $1`, [caseId], (err, result) => {
+          if (err) {
+            console.log(err);
+            res.redirect('/users/cases');
+          } else {
+            const caseData = result.rows;
+
+
+        pool.query(`SELECT casefile.id_case, casefile.title_case, casefile.opis_case, documents.id_document, documents.title_document 
+        FROM casefile 
+        INNER JOIN case_documents ON casefile.id_case = case_documents.id_case_casdoc
+        INNER JOIN documents ON case_documents.id_document_casdoc = documents.id_document
+        WHERE casefile.id_case = $1`, [caseId], (err, result) => {
+          if (err) {
+            console.log(err);
+            res.redirect('/users/cases');
+          } else {
+            const caseDataDocs = result.rows;
+            console.log(caseData)
+            console.log(caseDataDocs)
+            res.render("users/cases/caseView", { caseData, caseDataDocs });
+          }
+        });
     }
   });
 });
@@ -740,10 +752,11 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
 /////////////////////////POSTY////////////////////////////
 
 
-app.post('/eObieg/forward/:id_jump_jumpath/:id_path/:id_jumpath', checkAuthenticated, (req, res) => {
+app.post('/eObieg/forward/:id_jump_jumpath/:id_path/:id_jumpath/:id_case', checkAuthenticated, (req, res) => {
   const idJumpPath = req.params.id_jump_jumpath;
   const idPath = req.params.id_path;
   const idJumpath = req.params.id_jumpath;
+  const idCase = req.params.id_case;
   const nextjump = parseInt(idJumpPath) + 1;
 
   pool.query(
@@ -776,8 +789,8 @@ app.post('/eObieg/forward/:id_jump_jumpath/:id_path/:id_jumpath', checkAuthentic
           const nextStepNumber = nextjump;
 
           pool.query(
-            `INSERT INTO jump_path (id_way_jumpath, id_child_jumpath, id_parent_jumpath, is_active_jumpath, id_jump_jumpath) VALUES ($1, $2, $3, $4, $5)`,
-            [idPath, idGroupPatpref, idPrefixPatpref, 'active', nextStepNumber],
+            `INSERT INTO jump_path (id_way_jumpath, id_child_jumpath, id_parent_jumpath, is_active_jumpath, id_jump_jumpath, id_case_jumpath) VALUES ($1, $2, $3, $4, $5, $6)`,
+            [idPath, idGroupPatpref, idPrefixPatpref, 'active', nextStepNumber, idCase],
             (err, results) => {
               if (err) {
                 throw err;
@@ -792,6 +805,74 @@ app.post('/eObieg/forward/:id_jump_jumpath/:id_path/:id_jumpath', checkAuthentic
                   }
 
                   res.redirect('/users/pathList');
+                }
+              );
+            }
+          );
+        }
+      );
+    }
+  );
+});
+
+
+app.post('/users/processEObiegSelection/:id_case', checkAuthenticated, (req, res) => {
+  const selectedPathId = req.body.selectedPath;
+  const caseId = req.params.id_case;
+
+
+  pool.query(
+    `SELECT name_path
+     FROM path
+     WHERE id_path = $1`,
+    [selectedPathId],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+
+      const selectedPathName = results.rows[0].name_path;
+
+   
+      pool.query(
+        `SELECT prefix_path.id_group_patpref
+         FROM prefix_path
+         INNER JOIN path ON path.id_path = prefix_path.id_prefix_patpref
+         WHERE prefix_path.step_number_patpref = 1 AND path.name_path LIKE $1`,
+        [selectedPathName],
+        (error, results) => {
+          if (error) {
+            throw error;
+          }
+
+          const prefixPathId = results.rows[0].id_group_patpref;
+
+        
+          pool.query(
+            `INSERT INTO jump_path (id_way_jumpath, id_child_jumpath, id_parent_jumpath, is_active_jumpath, id_jump_jumpath, id_case_jumpath )
+             VALUES ($1, $2, NULL, 'active', 1, $3)`,
+            [selectedPathId, prefixPathId, caseId],
+            (error, results) => {
+              if (error) {
+                throw error;
+              }
+
+              console.log('Data inserted into jump_path table');
+
+           
+              pool.query(
+                `INSERT INTO case_path (id_case_caspat, id_path_caspat)
+                 VALUES ($1, $2)`,
+                [caseId, selectedPathId],
+                (error, results) => {
+                  if (error) {
+                    throw error;
+                  }
+
+                  console.log('Data inserted into case_path table');
+
+              
+                  res.redirect(`/users/caselist`);
                 }
               );
             }
