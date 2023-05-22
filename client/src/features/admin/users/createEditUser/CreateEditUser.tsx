@@ -15,6 +15,7 @@ import { createUser } from '@/core/store/auth/authSlice'
 import { updateUser } from '@/core/api/httpApi'
 import { selectAuthToken } from '@/core/store/auth/authSelectors'
 import { serializeEditedData } from './CreateEditUser.utils'
+import { Select } from '@/shared/components/Select/Select'
 
 const CreateEditUser = () => {
   const dispatch = useAppDispatch()
@@ -184,21 +185,13 @@ const CreateEditUser = () => {
             register={register('password')}
             error={errors?.password?.message}
           />
-          <label htmlFor={'roles'} className='mb-2 mt-4 text-lg text-primary font-medium'>
-            {formatMessage({ id: 'users.role' })}{' '}
-            <span className='text-sm text-red-500'>{errors?.role?.message}</span>
-          </label>
-          <select
-            {...register('role')}
+          <Select
+            label={formatMessage({ id: 'users.role' })}
             name='roles'
-            id='roles'
-            className='border-solid border-2 rounded-md px-3 py-2 border-gray-300 '
-          >
-            <option defaultValue={UserRoles.USER} value={UserRoles.USER}>
-              User
-            </option>
-            <option value={UserRoles.ADMIN}>Admin</option>
-          </select>
+            register={register('role')}
+            error={errors?.role?.message}
+            options={[UserRoles.USER, UserRoles.ADMIN]}
+          />
           <button
             type='submit'
             className={

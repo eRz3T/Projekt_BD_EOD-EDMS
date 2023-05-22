@@ -1,6 +1,15 @@
 {
   "email": "Email",
   "cancel": "Anuluj",
+  "password": "Hasło",
+  "phone": "Telefon",
+  "search": "Szukaj",
+  "searchBy": "Szukaj po",
+  "sortBy": "Sortuj po",
+  "provideSearchPhrase": "Wpisz treść...",
+  "category": "Kategoria",
+  "action": "Akcja",
+
   "login.dontHaveAnAccount": "Nie masz konta? Skontaktuj się z administratorem",
   "login.emailIsRequired": "Wprowadź adres email",
   "login.incorrectCredentials": "Nieprawidłowy email lub hasło",
@@ -20,8 +29,6 @@
   "login.successfulyLoggedIn": "Poprawnie zalogowano!",
   "login.userNotFound": "Podany użytkownik nie istnieje",
   "login.welcomeBack": "Witaj ponownie",
-  "password": "Hasło",
-  "phone": "Telefon",
 
   "notFound.backToDashboard": "Powrót do kokpitu",
   "notFound.title": "Taka strona nie istnieje!",
@@ -49,6 +56,20 @@
   "users.provideEmail": "Podaj adres e-mail",
   "users.providePassword": "Podaj tymczasowe hasło",
   "users.role": "Rola",
-  "users.createUser": "Dodaj uyżtkownika",
-  "users.editUser": "Edytuj uyżtkownika"
+  "users.createUser": "Dodaj użytkownika",
+  "users.editUser": "Edytuj użytkownika",
+
+  "workflows.allPaths": "Wszystkie ścieżki",
+  "workflows.dateOfCreation": "Data utworzenia",
+  "workflows.pathIndex": "Indeks ścieżki",
+  "workflows.stepNumber": "Krok numer",
+  "workflows.showCategoriesOnly": "Pokaż tylko kategorie",
+  "workflows.applyFilters": "Zastosuj filtry",
+  "workflows.savePathState": "Zapisz stan ścieżki",
+  "workflows.stepName": "Nazwa kroku",
+  "workflows.provideStepName": "Wpisz nazwę kroku...",
+  "workflows.assignTo": "Przypisz do",
+  "workflows.successNextStep": "Sukces - kolejny krok",
+  "workflows.canceledBackToStep": "Odrzucono - wróć do kroku",
+  "workflows.saveStep": "Zapisz krok"
 }
