@@ -1,14 +1,18 @@
+import { useAutoAnimate } from '@formkit/auto-animate/react'
+import moment from 'moment'
+import { enqueueSnackbar } from 'notistack'
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/useStore'
+
 import { deleteUser } from '@/core/api/httpApi'
 import { selectAuthToken } from '@/core/store/auth/authSelectors'
 import { getAllUsers, setUserToEdit, setUsersAction } from '@/core/store/users/usersSlice'
-import { useAppDispatch, useAppSelector } from '@/shared/hooks/useStore'
 import { IUser } from '@/shared/types/users'
-import moment from 'moment'
-import { enqueueSnackbar } from 'notistack'
+import Header from '@/shared/components/Header/Header'
 
 const UsersList = ({ data }: { data: IUser[] }) => {
   const dispatch = useAppDispatch()
   const token = useAppSelector(selectAuthToken)
+  const [parent] = useAutoAnimate()
 
   const handleEditUser = (
     firstName: string,
@@ -47,12 +51,11 @@ const UsersList = ({ data }: { data: IUser[] }) => {
 
   return (
     <div className='overflow-x-auto bg-white p-4 rounded-md m-4 h-full'>
-      <div className='flex justify-between my-3 items-center'>
-        <h3 className='text-xl'>
-          <i className='bx bx-file mr-2'></i>Aktualne dokumenty
-        </h3>
-        <p className='text-sm text-blueish'>Ilość użytkowników: {data.length}</p>
-      </div>
+      <Header
+        title='Aktualne dokumenty'
+        addon={`Ilość użytkowników: ${data.length}`}
+        icon={'bx-file'}
+      />
       <table className='min-w-full divide-y divide-gray-200 h-2'>
         <thead className='bg-white border-b-[2.5px] border-gray-200'>
           <tr className='text-secondary'>
@@ -66,7 +69,7 @@ const UsersList = ({ data }: { data: IUser[] }) => {
             <th className='px-6 py-5 text-left text-md font-medium tracking-wider'>Akcje</th>
           </tr>
         </thead>
-        <tbody className='bg-white divide-y divide-gray-200 text-secondary'>
+        <tbody className='bg-white divide-y divide-gray-200 text-secondary' ref={parent}>
           {data.length > 0 &&
             data.map((item, index) => (
               <tr key={item.id}>

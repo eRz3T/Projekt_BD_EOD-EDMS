@@ -26,8 +26,8 @@ const WorkflowList = () => {
   }
 
   return (
-    <div className='overflow-x-auto bg-white p-4 rounded-md m-4 min-h-full'>
-      <div className='sticky top-0 right-0'>
+    <div className='overflow-x-auto bg-white p-4 rounded-md m-4 min-h-[86vh] max-h-[86vh]'>
+      <div className='sticky top-4 bg-white z-50'>
         <Header
           title={formatMessage({ id: 'admin.adminPanel' })}
           subtitle={formatMessage({ id: 'admin.workflowPaths' })}
@@ -70,14 +70,36 @@ const WorkflowList = () => {
           />
         </form>
         <div className='border-b-[2.5px] border-gray-200 my-4'></div>
-      </div>
-
-      <div className='flex flex-col'>
         <Tile
           title={'Dodaj nową ścieżkę'}
           adornment={<i className='bx bx-plus'></i>}
           variant='success'
           identifier='bg-green-400'
+        />
+        <div className='border-b-[2.5px] border-gray-200 my-4'></div>
+      </div>
+
+      <div className='flex flex-col z-10'>
+        <Tile
+          title={'Wniosek o wydanie paszportu'}
+          subtitle={`${formatMessage({ id: 'workflows.pathIndex' })}: 1`}
+          adornment={<i className='bx bxs-school'></i>}
+          identifier='bg-blueish'
+          variant='primary'
+        />
+        <Tile
+          title={'Wniosek o wydanie paszportu'}
+          subtitle={`${formatMessage({ id: 'workflows.pathIndex' })}: 1`}
+          adornment={<i className='bx bxs-school'></i>}
+          identifier='bg-blueish'
+          variant='primary'
+        />
+        <Tile
+          title={'Wniosek o wydanie paszportu'}
+          subtitle={`${formatMessage({ id: 'workflows.pathIndex' })}: 1`}
+          adornment={<i className='bx bxs-school'></i>}
+          identifier='bg-blueish'
+          variant='primary'
         />
         <Tile
           title={'Wniosek o wydanie paszportu'}

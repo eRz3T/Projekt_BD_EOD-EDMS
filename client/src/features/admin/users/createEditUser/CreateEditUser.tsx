@@ -131,7 +131,7 @@ const CreateEditUser = () => {
   }
 
   return (
-    <div className='bg-white mt-4 mr-4 h-full rounded-md '>
+    <div className='bg-white m-4 h-full rounded-md '>
       <div
         className={`px-3 py-5 w-full rounded-t-md flex items-center justify-between text-white ${
           actionType === 'create' ? 'bg-blueish' : 'bg-yellow-400'
