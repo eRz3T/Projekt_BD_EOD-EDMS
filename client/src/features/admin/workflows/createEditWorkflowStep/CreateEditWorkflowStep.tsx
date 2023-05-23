@@ -25,7 +25,7 @@ const CreateEditWorkflowStep = () => {
   }
 
   return (
-    <div className='overflow-x-auto bg-white p-4 rounded-md m-4 h-full'>
+    <div className='overflow-x-auto bg-white p-4 rounded-md m-4 min-h-[86vh] max-h-[86vh]'>
       <div className='flex flex-row items-center justify-between'>
         <Header
           title={'Oczekiwanie na wydanie'}

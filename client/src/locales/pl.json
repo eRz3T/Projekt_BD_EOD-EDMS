@@ -71,5 +71,11 @@
   "workflows.assignTo": "Przypisz do",
   "workflows.successNextStep": "Sukces - kolejny krok",
   "workflows.canceledBackToStep": "Odrzucono - wróć do kroku",
-  "workflows.saveStep": "Zapisz krok"
+  "workflows.saveStep": "Zapisz krok",
+
+  "categories.categoryName": "Nazwa kategorii",
+  "categories.provideCategoryName": "Wprowadź nazwę kategorii...",
+  "categories.IDColor": "Kolor identyfikacyjny",
+  "categories.assignedIcon": "Przypisana ikona",
+  "categories.assignIcon": "Przypisz ikonę"
 }

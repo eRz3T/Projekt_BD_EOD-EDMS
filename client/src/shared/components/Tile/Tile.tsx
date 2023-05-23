@@ -6,9 +6,10 @@ interface ITitleProps {
   adornment: ReactNode | string
   identifier?: string
   variant: 'primary-selected' | 'full-selected' | 'primary' | 'success'
+  onClick?: () => void
 }
 
-const Tile = ({ title, subtitle, adornment, identifier, variant }: ITitleProps) => {
+const Tile = ({ title, subtitle, adornment, identifier, variant, onClick }: ITitleProps) => {
   const tileContainerVariantClass =
     variant === 'primary' || variant === 'primary-selected'
       ? 'bg-light text-primary'
@@ -25,7 +26,8 @@ const Tile = ({ title, subtitle, adornment, identifier, variant }: ITitleProps) 
 
   return (
     <div
-      className={`relative flex flex-row items-center mb-2 rounded-md ${tileContainerVariantClass}`}
+      onClick={onClick}
+      className={`relative flex flex-row items-center mb-2 rounded-md transition-all duration-200 hover:opacity-80 cursor-pointer ${tileContainerVariantClass}`}
     >
       <div
         className={`flex items-center justify-center text-4xl text-secondary pt-4 pb-2 px-3 border-r-4 border-white mr-4 rounded-l-md ${tileAdornmentVariantClass}`}
