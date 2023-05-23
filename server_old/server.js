@@ -750,70 +750,80 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
 
 
 /////////////////////////POSTY////////////////////////////
+app.post('/eObieg/forward/:id_jump_jumpath/:id_path/:id_jumpath/:id_case', checkAuthenticated, async (req, res) => {
+ 
+  try {
+
+    const idJumpPrefixPath = req.params.id_jump_jumpath;
+    const idPath = req.params.id_path;
+    const idJumpath = req.params.id_jumpath;
+    const idCase = req.params.id_case;
+    const nextjump = parseInt(idJumpPrefixPath) + 1;
+
+    const groupMAXResult = await pool.query(
+      'SELECT MAX(step_number_patpref) AS max FROM prefix_path WHERE id_prefix_patpref = $1',
+      [idPath]
+    );
+
+    const maxStepNumber = groupMAXResult.rows[0].max;
+
+    if (maxStepNumber < nextjump) {
+      await pool.query(
+        'UPDATE jump_path SET is_active_jumpath = $1 WHERE id_jumpath = $2',
+        ['not_active', idJumpath]
+      );
+      return res.redirect('/users/pathList');
+   
+    }
+     else
+      {
 
 
-app.post('/eObieg/forward/:id_jump_jumpath/:id_path/:id_jumpath/:id_case', checkAuthenticated, (req, res) => {
-  const idJumpPath = req.params.id_jump_jumpath;
-  const idPath = req.params.id_path;
-  const idJumpath = req.params.id_jumpath;
-  const idCase = req.params.id_case;
-  const nextjump = parseInt(idJumpPath) + 1;
+      const groupResult = await pool.query(
+        'SELECT id_group_patpref FROM prefix_path WHERE id_prefix_patpref = $1 AND step_number_patpref = $2',
+        [idPath, nextjump]
+      );
 
-  pool.query(
-    `SELECT id_group_patpref FROM prefix_path WHERE id_prefix_patpref = $1 AND step_number_patpref = $2`,
-    [idPath, nextjump],
-    (err, results) => {
-      if (err) {
-        throw err;
-      }
-
-      if (results.rows.length === 0) {
+      if (groupResult.rows.length === 0) {
         return res.status(400).json({ message: 'Nieprawidłowe dane' });
       }
 
-      const idGroupPatpref = results.rows[0].id_group_patpref;
+      const idGroupPatpref = groupResult.rows[0].id_group_patpref;
 
-      pool.query(
-        `SELECT id_child_jumpath FROM jump_path WHERE id_jumpath = $1 AND id_jump_jumpath = $2`,
-        [idJumpath, idJumpPath],
-        (err, results) => {
-          if (err) {
-            throw err;
-          }
+          const childResult = await pool.query(
+            'SELECT id_child_jumpath FROM jump_path WHERE id_jumpath = $1 AND id_jump_jumpath = $2',
+            [idJumpath, idJumpPrefixPath]
+          );
 
-          if (results.rows.length === 0) {
+          if (childResult.rows.length === 0) {
             return res.status(400).json({ message: 'Nieprawidłowe dane' });
           }
 
-          const idPrefixPatpref = results.rows[0].id_child_jumpath;
+          const idPrefixPatpref = childResult.rows[0].id_child_jumpath;
           const nextStepNumber = nextjump;
 
-          pool.query(
-            `INSERT INTO jump_path (id_way_jumpath, id_child_jumpath, id_parent_jumpath, is_active_jumpath, id_jump_jumpath, id_case_jumpath) VALUES ($1, $2, $3, $4, $5, $6)`,
-            [idPath, idGroupPatpref, idPrefixPatpref, 'active', nextStepNumber, idCase],
-            (err, results) => {
-              if (err) {
-                throw err;
-              }
-
-              pool.query(
-                `UPDATE jump_path SET is_active_jumpath = 'not_active' WHERE id_jumpath = $1`,
-                [idJumpath],
-                (err, results) => {
-                  if (err) {
-                    throw err;
-                  }
-
-                  res.redirect('/users/pathList');
-                }
+              await pool.query(
+                'INSERT INTO jump_path (id_way_jumpath, id_child_jumpath, id_parent_jumpath, is_active_jumpath, id_jump_jumpath, id_case_jumpath) VALUES ($1, $2, $3, $4, $5, $6)',
+                [idPath, idGroupPatpref, idPrefixPatpref, 'active', nextStepNumber, idCase]
               );
-            }
-          );
+
+                  await pool.query(
+                    'UPDATE jump_path SET is_active_jumpath = $1 WHERE id_jumpath = $2',
+                    ['not_active', idJumpath]
+                  );
+
+          res.redirect('/users/pathList');
         }
-      );
+  } 
+    catch (err)
+
+    {
+        console.error(err);
+        res.status(500).json({ message: 'Wystąpił błąd serwera' });
     }
-  );
+
 });
+
 
 
 app.post('/users/processEObiegSelection/:id_case', checkAuthenticated, (req, res) => {
