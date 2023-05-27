@@ -108,10 +108,11 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
         const paths = results.rows;
 
         pool.query(
-          `SELECT jump_path.id_jumpath, casefile.title_case, jump_path.id_jump_jumpath, jump_path.id_case_jumpath
+          `SELECT jump_path.id_jumpath, path.name_path, casefile.title_case, jump_path.id_jump_jumpath, jump_path.id_case_jumpath
           FROM jump_path
           INNER JOIN casefile ON casefile.id_case = jump_path.id_case_jumpath
           INNER JOIN group_users ON id_group_grpusr = jump_path.id_child_jumpath
+          INNER JOIN path ON path.id_path = jump_path.id_way_jumpath
           WHERE id_user_grpusr = $1 AND is_active_jumpath = $2`,
           [userId, active],
           (error, results) => {
@@ -396,8 +397,9 @@ app.get("/users/caseVieweObieg/:caseId/:idjumpath", checkAuthenticated, (req, re
     FROM casefile 
     INNER JOIN case_documents ON casefile.id_case = case_documents.id_case_casdoc
     INNER JOIN documents ON case_documents.id_document_casdoc = documents.id_document
-    WHERE casefile.id_case = $1`, 
-    [caseId], 
+    INNER JOIN jump_path ON casefile.id_case = jump_path.id_case_jumpath
+    WHERE jump_path.id_jumpath = $1`, 
+    [idjumpath], 
     (err, result) => {
       if (err) {
         console.log(err);
