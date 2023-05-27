@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Tworzenie ścieżki</title>
+</head>
+
+<body>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+  <tablenav>
+    <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+        </form>    
+        <a href="/users/pathList">Lista ścieżek</a>  
+        <a href="/users/userPanel">Panel użytkownika</a>  
+      </tr>
+      <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr> 
+    </tbody>
+  </tablenav>
+
+  <srodek>
+    <form action="/paths/create" method="POST">
+      <table>
+        <thead>
+          <tr>
+            <th>Nazwa ścieżki</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+                <td><input type="text" id="name_path" name="name_path" required></td>                         
+          </tr>  
+          </tbody>
+                <thead3>
+                    <tr>
+                      <th>Opis ścieżki</th>
+                    </tr>
+                </thead3>
+                <tbody3>
+                      <tr>
+                        <td><textarea id="opis_path" name="opis_path " style="height: 200px; width: 500px;"></textarea></td>
+                      </tr>
+                </tbody3>
+              </tbody>
+              <thead3>
+               
+            </thead3>
+            <tbody3>
+                  <tr>
+                    <td><button type="submit">Stwórz ścieżkę</button></td>
+                  </tr>
+            </tbody3>
+          </tbody>
+              
+      </table> 
+      
+      </form>      
+  </srodek>
+</body>
+</html>
+
+
+
+ 

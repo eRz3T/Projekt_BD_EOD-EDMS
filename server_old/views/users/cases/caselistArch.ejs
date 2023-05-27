@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Lista spraw</title>
+</head>
+
+<body>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+  <tablenav>
+    <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+        </form>    
+        <td></td>
+        <a href="/users/caseform">Dodaj nową sprawę</a>
+        <a href="/users/userPanel">Panel użytkownika</a>  
+      </tr> 
+      <tr>
+        <td colspan="4"><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></td>
+      </tr>
+    </tbody>
+  </tablenav>
+
+  <srodek>
+
+  <table>
+    <h3>Lista twoich przesłanych spraw</h3>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Tytuł</th>
+        <th> </th>
+        <th> </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (let i = 0; i < cases.length; i++) { %>
+        <tr>
+          <td><%= cases[i].id_case %></td>
+          <td><%= cases[i].title_case %></td>
+
+                    
+          <td>
+            <a href="/users/caseView/<%= cases[i].id_case %>"><button style="color: white;">Podgląd Sprawy</button></a>
+        </td>
+        <td>
+          <a><form action="/case/UNDOdelete_case/<%= cases[i].id_case %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz zarchiwizować sprawę?')">
+          <button type="submit" style="color: white;">Przywróć sprawę</button>
+          </form></a>
+        </td>
+
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+</srodek>
+</body>
+</html>

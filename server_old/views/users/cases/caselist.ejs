@@ -29,12 +29,17 @@
   </tablenav>
 
   <srodek>
+
+    
+
   <table>
+    <h3>Lista twoich przesłanych spraw</h3>
     <thead>
       <tr>
-        <th>Nr sprawy</th>
+        <th>Id</th>
         <th>Tytuł</th>
         <th> </th>
+        <th><button><a href="/users/caselistarchive">Sprawy archiwalne</a></button></th>
       </tr>
     </thead>
     <tbody>
@@ -42,12 +47,75 @@
         <tr>
           <td><%= cases[i].id_case %></td>
           <td><%= cases[i].title_case %></td>
-          <td><a href="/users/docselect/<%= cases[i].id_case %>"><button style="color: white;">Dodaj dokument do sprawy</button>
-          <a href="/users/caseView/<%= cases[i].id_case %>"><button style="color: white;">Podgląd</button></td>
+
+                    
+          <td>
+            <a href="/users/caseView/<%= cases[i].id_case %>"><button style="color: white;">Podgląd Sprawy</button></a>
+        </td>
+        <td>
+          <a><form action="/case/delete_case/<%= cases[i].id_case %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz zarchiwizować sprawę?')">
+          <button type="submit" style="color: white;">Archiwizuj Sprawę</button>
+          </form></a>
+        </td>
+
         </tr>
       <% } %>
     </tbody>
   </table>
+
+
+
+  <h3>Lista udostępnionych spraw przez użytkowników</h3>
+<table>
+  <thead>
+    <tr>
+      <th>ID sprawy</th>
+      <th>Tytuł sprawy</th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <% sharedCasesUSR.forEach(sharedCasesUSR => { %>
+      <tr>
+        <td><%= sharedCasesUSR.id_case_casusr %></td>
+        <td><%= sharedCasesUSR.title_case %></td>
+        <td>
+
+        <a href="/users/caseView/<%= sharedCasesUSR.id_case_casusr %>"><button style="color: white;">Podgląd</button></a>
+      </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<h3>Lista udostępnionych spraw po przez twoje grupy</h3>
+<table>
+  <thead>
+    <tr>
+      <th>ID sprawy</th>
+      <th>Tytuł sprawy</th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <% sharedCasesGROUP.forEach(sharedCasesGROUP => { %>
+      <tr>
+        <td><%= sharedCasesGROUP.id_case_casgrup %></td>
+        <td><%= sharedCasesGROUP.title_case %></td>
+        <td>
+        
+        <a href="/users/caseView/<%= sharedCasesGROUP.id_case_casgrup %>"><button style="color: white;">Podgląd</button></a>
+      </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+ 
+
+
+
 </srodek>
 </body>
 </html>

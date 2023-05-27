@@ -26,13 +26,43 @@
 </tablenav>
 
 <srodek>
+  
   <table>
+    <h3>Dostępne operacje</h3>
+    <thead>
+      <tr>
+        
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+
+        <td>
+          <a href="/users/share/caseshareGROUP/<%= caseData[0].id_case %>"><button style="color: white;">Udostepnij Grupie</button></a>
+        </td>
+        <td>
+          <a href="/users/share/caseshareUSER/<%= caseData[0].id_case %>"><button style="color: white;">Udostepnij Użytkownikowi</button></a>
+        </td>
+
+        <td>
+          <a href="/users/docselect/<%= caseData[0].id_case %>"><button style="color: white;">Załącz dokument</button></a>
+        </td>
+
+        <td>
+          <a href="/users/eObiegSelection/<%= caseData[0].id_case %>"><button style="color: white;">Rozpocznij obieg</button></a>
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <h3>Dane sprawy</h3>
     <thead>
       <tr>
         <th>ID</th>
         <th>Tytuł</th>
         <th>Opis</th>
-        <th>Dokumenty</th>
       </tr>
     </thead>
     <tbody>
@@ -40,16 +70,32 @@
         <td><%= caseData[0].id_case %></td>
         <td><%= caseData[0].title_case %></td>
         <td><%= caseData[0].opis_case %></td>
-        <td>
-          <ul>
-            <% caseData.forEach(document => { %>
-              <li><%= document.title_document %></li>
-            <% }); %>
-          </ul>
-        </td>
+
+
       </tr>
     </tbody>
   </table>
+
+  <table>
+    <h3>Załączone dokumenty do sprawy</h3>
+    <thead>
+      <tr>
+
+        <th>Tytuł dokumentu</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% caseDataDocs.forEach(document => { %>
+      <tr>
+        
+        <td><%= document.title_document %></td>
+        <td><a href="/users/document/<%= document.id_document %>"><button style="color: white;">Podgląd</button></a>
+    
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
 </srodek>
 </body>
 </html>

@@ -37,7 +37,6 @@
           <th>Nazwisko</th>
           <th>Email</th>
           <th>Hasło</th>
-          <th>Grupa</th>
           <th>Uprawnienia</th>
         </tr>
       </thead>
@@ -48,11 +47,6 @@
               <td><input type="text" name="surname" value="<%= userData.surname %>" required></td>
               <td><input type="email" name="email" value="<%= userData.email %>" required></td>
               <td><input type="password" name="password" value="<%= userData.password %>" required></td>
-              <td><select name="groupId">
-                <% groups.forEach((group) => { %>
-                  <option value="<%= group.id_group %>"><%= group.name_group %></option>
-                <% }); %>
-              </select></td>
               <td><select name="userClass" required>
                 <option value="user" <%= userData.class === "user" ? "selected" : "" %>>Użytkownik</option>
                 <option value="admin" <%= userData.class === "admin" ? "selected" : "" %>>Administrator</option>

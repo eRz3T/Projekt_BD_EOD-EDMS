@@ -34,8 +34,8 @@
     <% files.forEach(function(file) { %>
     <tr>
           <td><%= file.name_file %></td>
-          <td><a href="/users/download/<%= file.id_file %>"><button style="color: white;">Pobierz</button></a></td>
-          <td><form action="/users/delete/<%= file.id_file %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć ten plik?')">
+          <td><a href="/users/download/<%= file.hashed_name_file %>"><button style="color: white;">Pobierz</button></a></td>
+          <td><form action="/users/delete/<%= file.hashed_name_file %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć ten plik?')">
             <button type="submit" style="color: white;">Usuń</button></form></td>          
      </tr>  
     <% }); %>

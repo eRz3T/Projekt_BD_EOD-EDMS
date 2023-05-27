@@ -46,7 +46,7 @@
           <thead>
             <tr>
               <th>Członkowie</th>
-              <th><a href="/users/nowiczlonkowie/<%= idgroup %>/"><button style="font-weight: bold; color: darkblue;">Dodaj członka</button></a></th>
+              <th><a href="/users/nowiczlonkowie/<%= idgroup %>/"><button style="font-weight: bold; color: lightblue;">Dodaj członka</button></a></th>
             </tr>
           </thead>
           <tbody>
@@ -57,7 +57,7 @@
                         <td><%= members.email %></td>
                         <td><form action="/groupUSRdelete/<%= members.id %>/" method="POST">
                            <input type="hidden" name="groupId" value="<%= idgroup %>">
-                           <button type="submit" style="font-weight: bold; color: darkmagenta;">Usuń członka</button>
+                           <button type="submit" style="font-weight: bold; color: magenta;">Usuń członka</button>
                          </form>
                          </td>
                         </tr>

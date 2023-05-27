@@ -33,8 +33,6 @@
         <th>Tytuł</th>
         <th>Notatka</th>
         <th>Data dodania</th>
-        <th>ID pliku</th>
-        <th>Nazwa pliku</th>
         <th> </th>
       </tr>
     </thead>
@@ -43,14 +41,29 @@
             <td><%= document.id_document %></td>
             <td><%= document.title_document %></td>
             <td><button onclick="alert('<%= document.note_document %>')">Wyświetl</button></td>
-            <td><button onclick="alert('<%= document.date_document %>')">Wyświetl</button></td>
-            <td><%= document.id_file_document %></td> 
-            <td><button onclick="alert('<%= document.name_file %>')">Wyświetl</button></td>          
+            <td><button onclick="alert('<%= document.date_document %>')">Wyświetl</button></td>      
        </tr>  
       </tr>
     </tbody>
   </table>
 
+  <table>
+    <thead>
+      <tr>
+        <th>ID pliku</th>
+        <th>Nazwa pliku</th>
+        <th> </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+            <td><%= document.id_file_document %></td> 
+            <td><%= document.name_file %></td>  
+            <td><a href="/users/download/<%= document.id_file_document %>"><button style="color: white;">Pobierz</button></a></td>        
+       </tr>  
+      </tr>
+    </tbody>
+  </table>
 
   </srodek>
 </body>

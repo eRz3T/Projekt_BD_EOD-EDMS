@@ -26,15 +26,56 @@
 
   <srodek>
 
+
         <table>
-          <h2>Twoje materiały</h2>
+          <thead>
+            <tr>
+
+              <th>Sprawy</th>
+              <th> </th>
+              <th>Ścieżki</th>
+            </tr>
+          </thead>
             <tbody>
             <tr>
-                  <td>Pliki<button><a href="/users/filelist">Wyświetl</a></button></td>
-                    <td>Dokumenty<button><a href="/users/doclists">Wyświetl</a></button></td>
-                      <td>Użytkownicy<button><a href="/users/userlist">Wyświetl</a></button></td>
-                        <td>Sprawy<button><a href="/users/caselist">Wyświetl</a></button></td>
-                        <td>Grupy<button><a href="/groups/grouplist">Wyświetl</a></button></td>                   
+
+                        <td><a href="/users/caselist"><button>Wyświetl</button></a></td>
+                        <td><img src="/images/folder.png" alt="Folder" style="height: 50px; width: 50px;"></td>  
+                          <td><a href="/users/pathList"><button>Wyświetl</button></a></td>                 
+            </tr>  
+          </tbody>
+        </table>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Pliki</th>
+              <th> </th>
+              <th>Dokumenty</th>
+            </tr>
+          </thead>
+            <tbody>
+            <tr>
+                  <td><a href="/users/filelist"><button>Wyświetl</button></a></td>
+                  <td><img src="/images/file.png" alt="File" style="height: 50px; width: 50px;"></td> 
+                    <td><a href="/users/doclists"><button>Wyświetl</button></a></td>             
+            </tr>  
+          </tbody>
+        </table>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Użytkownicy</th>
+              <th> </th>
+              <th>Grupy</th>
+            </tr>
+          </thead>
+            <tbody>
+            <tr>
+                      <td><a href="/users/userlist"><button>Wyświetl</button></a></td>
+                      <td><img src="/images/group.png" alt="Users" style="height: 50px; width: 50px;"></td> 
+                        <td><a href="/groups/grouplist"><button>Wyświetl</button></a></td>                   
             </tr>  
           </tbody>
         </table>
@@ -45,7 +86,7 @@
             <tr>
               <th>ID</th>
               <th>Imię i nazwisko</th>
-              <th>Data email</th>
+              <th>Email</th>
               <th>Uprawnienia</th>
             </tr>
           </thead>
