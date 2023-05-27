@@ -63,7 +63,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><%= caseData[0].id_case %></td>
+        <td><%= caseData[0].id_case_jumpath %></td>
         <td><%= caseData[0].title_case %></td>
         <td><%= caseData[0].opis_case %></td>
 
@@ -101,21 +101,9 @@
     </thead>
     <tbody>
       <tr>
-        
-        <td>
-          <form action="/eObieg/back/<%= cases[0].step_number_patpref %>/<%= cases[0].id_path %>" method="POST">
-            <button type="submit" style="font-weight: bolder; color: red; ">Cofnij sprawę</button>
-          </form> 
-        </td>
 
         <td>
-          <form action="/eObieg/reject/<%= cases[0].step_number_patpref %>/<%= cases[0].id_path %>" method="POST">
-            <button type="submit" style="font-weight: bolder; color: red; "">Odrzuć sprawę</button>
-          </form> 
-        </td>
-        
-        <td>
-          <form action="/eObieg/forward/<%= cases[0].id_jump_jumpath%>/<%= cases[0].id_path %>/<%= cases[0].id_jumpath %>/<%= cases[0].id_case %>" method="POST">
+          <form action="/eObieg/forward/<%= cases[0].id_jump_jumpath%>/<%= cases[0].id_path %>/<%= cases[0].id_jumpath %>/<%= cases[0].id_case_jumpath %>" method="POST">
             <button type="submit" style="font-weight: bolder;">Przekaż dalej</button>
           </form> 
         </td>
