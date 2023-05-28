@@ -49,9 +49,41 @@
     </table>
 
 
+    <table>
+      <h3>Wolne sprawy w obiegu</h3>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Tytuł</th>
+          <th>Ścieżka</th>
+          <th>Etap</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let i = 0; i < FREEcases.length; i++) { %>
+          <tr>
+            <td><%= FREEcases[i].id_case_jumpath %></td>
+            <td><%= FREEcases[i].title_case %></td>
+            <td><%= FREEcases[i].name_path %></td>
+            <td><%= FREEcases[i].id_jump_jumpath %></td>
+  
+                      
+            <td>
+              <form action="/eObieg/own/<%= FREEcases[0].id_jumpath %>" method="POST">
+                <button type="submit" style="font-weight: bolder;">Przejmij sprawę</button>
+              </form> 
+            </td>
+          
+  
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+
+
 
   <table>
-    <h3>Sprawy w obiegu</h3>
+    <h3>Twoje sprawy w obiegu</h3>
     <thead>
       <tr>
         <th>Id</th>

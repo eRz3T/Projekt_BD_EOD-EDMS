@@ -100,20 +100,22 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
     app.get("/users/pathList", checkAuthenticated, (req, res) => {
       const userId = req.user.id;
       const active = 'active';
-
+    
       pool.query('SELECT * FROM path', (error, results) => {
         if (error) {
-          throw error;
+          console.error(error);
+          res.status(500).send("Wystąpił błąd podczas pobierania listy ścieżek.");
+          return;
         }
         const paths = results.rows;
-
+    
         pool.query(
           `SELECT jump_path.id_jumpath, path.name_path, casefile.title_case, jump_path.id_jump_jumpath, jump_path.id_case_jumpath
           FROM jump_path
           INNER JOIN casefile ON casefile.id_case = jump_path.id_case_jumpath
           INNER JOIN group_users ON id_group_grpusr = jump_path.id_child_jumpath
           INNER JOIN path ON path.id_path = jump_path.id_way_jumpath
-          WHERE id_user_grpusr = $1 AND is_active_jumpath = $2`,
+          WHERE id_user_grpusr = $1 AND is_active_jumpath = $2 AND id_owner_jumpath IS NULL;`,
           [userId, active],
           (error, results) => {
             if (error) {
@@ -121,13 +123,31 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
               res.status(500).send("Wystąpił błąd podczas pobierania listy spraw.");
               return;
             }
-            const cases = results.rows;
-
-
-        res.render("users/cases/eObieg/pathList", { paths, cases });
+            const FREEcases = results.rows;
+    
+            pool.query(
+              `SELECT jump_path.id_jumpath, path.name_path, casefile.title_case, jump_path.id_jump_jumpath, jump_path.id_case_jumpath
+              FROM jump_path
+              INNER JOIN casefile ON casefile.id_case = jump_path.id_case_jumpath
+              INNER JOIN group_users ON id_group_grpusr = jump_path.id_child_jumpath
+              INNER JOIN path ON path.id_path = jump_path.id_way_jumpath
+              WHERE id_user_grpusr = $1 AND is_active_jumpath = $2 AND id_owner_jumpath = $1;`,
+              [userId, active],
+              (error, results) => {
+                if (error) {
+                  console.error(error);
+                  res.status(500).send("Wystąpił błąd podczas pobierania listy spraw.");
+                  return;
+                }
+                const cases = results.rows;
+    
+                res.render("users/cases/eObieg/pathList", { paths, cases, FREEcases });
+              }
+            );
+          }
+        );
       });
     });
-  });
 
     app.get("/users/pathView/:id", checkAuthenticated, (req, res) => {
       const pathId = req.params.id;
@@ -161,6 +181,8 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
       );
     });
     
+
+
 
     app.get("/users/pathPrefixEdit/:id", checkAuthenticated, (req, res) => {
       const pathId = req.params.id;
@@ -755,6 +777,27 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
 
 /////////////////////////POSTY////////////////////////////
 
+app.post("/eObieg/own/:id_jumpath", checkAuthenticated, (req, res) => {
+  const jumpathId = req.params.id_jumpath;
+  const userId = req.user.id;
+
+  pool.query(
+    'UPDATE jump_path SET id_owner_jumpath = $2 WHERE id_jumpath = $1',
+    [jumpathId, userId],
+    (error) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send("Wystąpił błąd podczas przypisywania właściciela.");
+        return;
+      }
+
+      res.redirect("/users/pathList");
+    }
+  );
+});
+
+
+
 app.post('/eObieg/reject/:id_jump_jumpath/:id_path/:id_jumpath/:id_case', checkAuthenticated, async (req, res) => {
   try {
     const idJumpPrefixPath = req.params.id_jump_jumpath;
@@ -772,6 +815,11 @@ app.post('/eObieg/reject/:id_jump_jumpath/:id_path/:id_jumpath/:id_case', checkA
       'UPDATE jump_path SET is_active_jumpath = $1 WHERE id_jumpath = $2',
       ['not_active', idJumpath]
     );
+
+    await pool.query(
+      'INSERT INTO caseflow_end (id_case_casfend, id_jumpath_casfend, status_casfend) VALUES ($1, $2, $3)',
+      [idCase, idJumpath , 'Odrzucono' ]      
+    );
     
     return res.redirect('/users/pathList');
   } catch (error) {
@@ -779,6 +827,10 @@ app.post('/eObieg/reject/:id_jump_jumpath/:id_path/:id_jumpath/:id_case', checkA
     return res.status(500).send('An error occurred');
   }
 });
+
+
+
+
 
 app.post('/eObieg/forward/:id_jump_jumpath/:id_path/:id_jumpath/:id_case', checkAuthenticated, async (req, res) => {
  
@@ -828,8 +880,14 @@ console.log("ETAP A");
         if (maxStepNumber < nextjump) {
           await pool.query(
             'UPDATE jump_path SET is_active_jumpath = $1 WHERE id_jumpath = $2',
-            ['not_active', idJumpath]
+            ['not_active', idJumpath] 
           );
+
+          await pool.query(
+            'INSERT INTO caseflow_end (id_case_casfend, id_jumpath_casfend, status_casfend) VALUES ($1, $2, $3)',
+            [idCase, idJumpath , 'Zaakceptowano' ]      
+          );
+
           return res.redirect('/users/pathList');
   
     }     else      {
@@ -847,6 +905,7 @@ console.log("ETAP B");
             if (groupResult.rows.length === 0) {
               return res.status(400).json({ message: 'Nieprawidłowe dane' });
             }
+
 
             const idGroupPatpref = groupResult.rows[0].id_group_patpref;
             console.log("ID NASTĘPNEJ GRUPY: " + idGroupPatpref);
@@ -916,6 +975,9 @@ console.log("wPISYWANE WARTOĆICI DO W RAMACH NASTĘPNEGO KROKU DO KOLUMNY - id_
 
 
 
+
+
+
 app.post('/eObieg/backward/:id_jump_jumpath/:id_path/:id_jumpath/:id_case', checkAuthenticated, async (req, res) => {
  
   try {
@@ -965,6 +1027,13 @@ console.log("ETAP A");
             'UPDATE jump_path SET is_active_jumpath = $1 WHERE id_jumpath = $2',
             ['not_active', idJumpath]
           );
+
+
+          await pool.query(
+            'INSERT INTO caseflow_end (id_case_casfend, id_jumpath_casfend, status_casfend) VALUES ($1, $2, $3)',
+            [idCase, idJumpath , 'Odrzucono' ]      
+          );
+
           return res.redirect('/users/pathList');
   
     }     else      {
