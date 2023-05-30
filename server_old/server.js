@@ -100,20 +100,22 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
     app.get("/users/pathList", checkAuthenticated, (req, res) => {
       const userId = req.user.id;
       const active = 'active';
-
+    
       pool.query('SELECT * FROM path', (error, results) => {
         if (error) {
-          throw error;
+          console.error(error);
+          res.status(500).send("Wystąpił błąd podczas pobierania listy ścieżek.");
+          return;
         }
         const paths = results.rows;
-
+    
         pool.query(
           `SELECT jump_path.id_jumpath, path.name_path, casefile.title_case, jump_path.id_jump_jumpath, jump_path.id_case_jumpath
           FROM jump_path
           INNER JOIN casefile ON casefile.id_case = jump_path.id_case_jumpath
           INNER JOIN group_users ON id_group_grpusr = jump_path.id_child_jumpath
           INNER JOIN path ON path.id_path = jump_path.id_way_jumpath
-          WHERE id_user_grpusr = $1 AND is_active_jumpath = $2`,
+          WHERE id_user_grpusr = $1 AND is_active_jumpath = $2 AND id_owner_jumpath IS NULL;`,
           [userId, active],
           (error, results) => {
             if (error) {
@@ -121,13 +123,31 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
               res.status(500).send("Wystąpił błąd podczas pobierania listy spraw.");
               return;
             }
-            const cases = results.rows;
-
-
-        res.render("users/cases/eObieg/pathList", { paths, cases });
+            const FREEcases = results.rows;
+    
+            pool.query(
+              `SELECT jump_path.id_jumpath, path.name_path, casefile.title_case, jump_path.id_jump_jumpath, jump_path.id_case_jumpath
+              FROM jump_path
+              INNER JOIN casefile ON casefile.id_case = jump_path.id_case_jumpath
+              INNER JOIN group_users ON id_group_grpusr = jump_path.id_child_jumpath
+              INNER JOIN path ON path.id_path = jump_path.id_way_jumpath
+              WHERE id_user_grpusr = $1 AND is_active_jumpath = $2 AND id_owner_jumpath = $1;`,
+              [userId, active],
+              (error, results) => {
+                if (error) {
+                  console.error(error);
+                  res.status(500).send("Wystąpił błąd podczas pobierania listy spraw.");
+                  return;
+                }
+                const cases = results.rows;
+    
+                res.render("users/cases/eObieg/pathList", { paths, cases, FREEcases });
+              }
+            );
+          }
+        );
       });
     });
-  });
 
     app.get("/users/pathView/:id", checkAuthenticated, (req, res) => {
       const pathId = req.params.id;
@@ -161,6 +181,8 @@ app.get("/users/rejestracja", checkAuthenticated, (req, res) => {
       );
     });
     
+
+
 
     app.get("/users/pathPrefixEdit/:id", checkAuthenticated, (req, res) => {
       const pathId = req.params.id;
@@ -754,6 +776,62 @@ app.get('/users/download/:id', checkAuthenticated, (req, res) => {
 
 
 /////////////////////////POSTY////////////////////////////
+
+app.post("/eObieg/own/:id_jumpath", checkAuthenticated, (req, res) => {
+  const jumpathId = req.params.id_jumpath;
+  const userId = req.user.id;
+
+  pool.query(
+    'UPDATE jump_path SET id_owner_jumpath = $2 WHERE id_jumpath = $1',
+    [jumpathId, userId],
+    (error) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send("Wystąpił błąd podczas przypisywania właściciela.");
+        return;
+      }
+
+      res.redirect("/users/pathList");
+    }
+  );
+});
+
+
+
+app.post('/eObieg/reject/:id_jump_jumpath/:id_path/:id_jumpath/:id_case', checkAuthenticated, async (req, res) => {
+  try {
+    const idJumpPrefixPath = req.params.id_jump_jumpath;
+    const idPath = req.params.id_path;
+    const idJumpath = req.params.id_jumpath;
+    const idCase = req.params.id_case;
+    
+    console.log("WARTOŚCI Z URL");
+    console.log("OBECNY NR KROKU: " + idJumpPrefixPath);
+    console.log("ID KONKRETNEJ ŚCIEŻKI Z TABELI PATH: " + idPath);
+    console.log("ID KONKRETNEGO REKORDU Z TABELI JUMP_PATH: " + idJumpath);
+    console.log("ID SPRAWY: " + idCase);
+
+    await pool.query(
+      'UPDATE jump_path SET is_active_jumpath = $1 WHERE id_jumpath = $2',
+      ['not_active', idJumpath]
+    );
+
+    await pool.query(
+      'INSERT INTO caseflow_end (id_case_casfend, id_jumpath_casfend, status_casfend) VALUES ($1, $2, $3)',
+      [idCase, idJumpath , 'Odrzucono' ]      
+    );
+    
+    return res.redirect('/users/pathList');
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('An error occurred');
+  }
+});
+
+
+
+
+
 app.post('/eObieg/forward/:id_jump_jumpath/:id_path/:id_jumpath/:id_case', checkAuthenticated, async (req, res) => {
  
   try {
@@ -802,8 +880,14 @@ console.log("ETAP A");
         if (maxStepNumber < nextjump) {
           await pool.query(
             'UPDATE jump_path SET is_active_jumpath = $1 WHERE id_jumpath = $2',
-            ['not_active', idJumpath]
+            ['not_active', idJumpath] 
           );
+
+          await pool.query(
+            'INSERT INTO caseflow_end (id_case_casfend, id_jumpath_casfend, status_casfend) VALUES ($1, $2, $3)',
+            [idCase, idJumpath , 'Zaakceptowano' ]      
+          );
+
           return res.redirect('/users/pathList');
   
     }     else      {
@@ -821,6 +905,7 @@ console.log("ETAP B");
             if (groupResult.rows.length === 0) {
               return res.status(400).json({ message: 'Nieprawidłowe dane' });
             }
+
 
             const idGroupPatpref = groupResult.rows[0].id_group_patpref;
             console.log("ID NASTĘPNEJ GRUPY: " + idGroupPatpref);
@@ -878,8 +963,6 @@ console.log("wPISYWANE WARTOĆICI DO W RAMACH NASTĘPNEGO KROKU DO KOLUMNY - id_
 
           res.redirect('/users/pathList');
         }
-
-
   } 
     catch (err)
 
@@ -890,6 +973,150 @@ console.log("wPISYWANE WARTOĆICI DO W RAMACH NASTĘPNEGO KROKU DO KOLUMNY - id_
 
 });
 
+
+
+
+
+
+app.post('/eObieg/backward/:id_jump_jumpath/:id_path/:id_jumpath/:id_case', checkAuthenticated, async (req, res) => {
+ 
+  try {
+
+// ID Z TABELI JUMP_PATH KTÓRE ODNOSI SIĘ DO TABELI PREFIX_PATH
+// SĄ TU PRZETRZYMYWANE WARTOŚCI OBECNEGO KROKU 
+    const idJumpPrefixPath = req.params.id_jump_jumpath; 
+
+
+          // ID KONKRETNEJ ŚCIEŻKI Z TABELI PATH
+              const idPath = req.params.id_path; 
+
+
+                  // ID KONKRETNEGO SKOKU Z TABELI JUMP_PATH
+                      const idJumpath = req.params.id_jumpath; 
+
+
+                              // ID SPRAWY Z TABELI CASEFILE
+                                  const idCase = req.params.id_case; 
+                                  console.log("WARTOŚCI Z URL");
+                                  console.log("OBECNY NR KROKU: " + idJumpPrefixPath);
+                                  console.log("ID KONKRETNEJ ŚCIEŻKI Z TABELI PATH: " + idPath);
+                                  console.log("ID KONKRETNEGO REKORDU Z TABELI JUMP_PATH: " + idJumpath);
+                                  console.log("ID SPRAWY: " + idCase);
+
+// WYLICZENIE NASTĘNEGO KROKU W ODNIESIENIU DO TABELI PREFIX PATH
+// KONKRETNIE DO KOLUMNY STEP_NUMBER_PATPREF KTÓRA INFORMUJE W KTORYM KROKU DANEJ ŚCIEZKI JESTEŚMY
+// WYLICZENIE NASTĘPNEJ WARTOŚCI POZWOLI NA PRZYDZIELENIE NASTĘNEJ GR KTÓREJ ZOSTANIE PRZYDZIELONA SPRAWA
+    const prevjump = parseInt(idJumpPrefixPath) - 1;  
+    console.log("INASTĘPNY KROK: " + prevjump);
+
+console.log("ETAP A");
+///BEGIN A
+   // SPRAWDZENIE MAX ILOŚCI KROKÓW W DANEJ ŚCIEŻCE
+   // JESLI  nextjump JEST WIĘKSZY NIŻ maxStepNumber
+   // TO SPRAWA TRAFIA DO ARCHIWIZACJI
+   // else >> OBLICZANY JEST KOLEJNY KROK + POZOSTAŁE OPERACJE
+    const groupMINResult = await pool.query(
+      'SELECT MIN(step_number_patpref) AS max FROM prefix_path WHERE id_prefix_patpref = $1',
+      [idPath]
+    );
+
+      const minStepNumber = groupMINResult.rows[0].max;
+
+        if (minStepNumber > prevjump) {
+          await pool.query(
+            'UPDATE jump_path SET is_active_jumpath = $1 WHERE id_jumpath = $2',
+            ['not_active', idJumpath]
+          );
+
+
+          await pool.query(
+            'INSERT INTO caseflow_end (id_case_casfend, id_jumpath_casfend, status_casfend) VALUES ($1, $2, $3)',
+            [idCase, idJumpath , 'Odrzucono' ]      
+          );
+
+          return res.redirect('/users/pathList');
+  
+    }     else      {
+      //END A
+
+
+console.log("ETAP B");
+//BEGIN B
+      // POBRANIE INFORMACJI NA TEMAT NASTĘPNEJ GR KTÓREJ MA BYĆ PRZYDZIELONA SPRAWA
+      const groupResult = await pool.query(
+        'SELECT id_group_patpref FROM prefix_path WHERE id_prefix_patpref = $1 AND step_number_patpref = $2',
+        [idPath, prevjump]
+      );
+
+            if (groupResult.rows.length === 0) {
+              return res.status(400).json({ message: 'Nieprawidłowe dane' });
+            }
+
+            const idGroupPatpref = groupResult.rows[0].id_group_patpref;
+            console.log("ID NASTĘPNEJ GRUPY: " + idGroupPatpref);
+//END B
+
+
+console.log("ETAP C");
+//BEGIN C
+// POBRANIE WARTOŚCI Z TABELI JUMP PATH
+// INFORMACJA NA TEMAT AKTUALNEJ GRUPY KTÓREJ W POPRZEDNIM KROKU JEST JEST PRZYDZIELANA SPRAWA W POPRZEDNIM KROKU
+// OPERACJA TA JEST WYKONYWANA W CELU PRZYDZIELENIA TEJ WARTOŚCI KOLUMNIE PARENT
+// WARTOŚĆ CHILD STAJE SIĘ RODZICEM NASTĘPNEGO KROKU A NOWYM DZIECKIEM JEST GRUPA KTÓRA AKTUALNIE MA PRZYDZIELONĄ SPRAWĘ
+          const childResult = await pool.query(
+            'SELECT id_child_jumpath FROM jump_path WHERE id_jumpath = $1 AND id_jump_jumpath = $2',
+            [idJumpath, idJumpPrefixPath]
+          );
+                  if (childResult.rows.length === 0) {
+                    return res.status(400).json({ message: 'Nieprawidłowe dane' });
+                  }
+              const idPrefixPatpref = childResult.rows[0].id_child_jumpath;
+              console.log("ID PARENTA (CHILD Z POPRZEDNIEGO KROKU): " + idGroupPatpref);
+//END C
+
+console.log("ETAP D");
+//BEGIN D
+// WPISYWANIE DO TABELI JUMP_PATH INFORMACJI O NOWYM KROKU / ETAPIE OBIEGU SPRAWY
+// id_way_jumpath < tu jest wpisywana informacja na temat danej ścieżki wokół której wykonywany jest obieg sprawy (ID_PATH z tabeli PATH)
+//                  dla każdego kolejnego przeskoku w tej sprawie będzie wpisywana ta sama wartość do końca obiegu (jedna sprawa ta jest w jednej ścieżce)
+// id_child_jumpath <  wartość z tabeli prefix_path (kolumna id_group_patpref) kprzekazująca informacje której grupie aktualnie jest przydzialana dana sprawa
+// id_parent_jumpath < wartość z poprzedniego kroku z tabeli prefix_path (kolumna id_group_patpref), oznacza jaki był child w poprzednim kroku
+// is_active_jumpath < flaga która w obeznym kroku wskazuje 'active', w przypadku przejścia do następnego kroku jest zmieniana na 'not_active' (na jej podstawie są wyświetlane sprawy)
+// id_jump_jumpath < nr krku w którym jest dana sprawa (przykładowo jeśli jesteśmy na 3 etapie z 8 w danej ścieżce będzie tu wartość 3)
+// id_case_jumpath < id sprawy która jest w obiegu
+console.log("wPISYWANE WARTOĆICI DO W RAMACH NASTĘPNEGO KROKU DO KOLUMNY - id_way_jumpath - idPath - " + idPath);
+console.log("wPISYWANE WARTOĆICI DO W RAMACH NASTĘPNEGO KROKU DO KOLUMNY - id_child_jumpath - idGroupPatpref - " + idGroupPatpref);
+console.log("wPISYWANE WARTOĆICI DO W RAMACH NASTĘPNEGO KROKU DO KOLUMNY - id_parent_jumpath - idPrefixPatpref - " + idPrefixPatpref);
+console.log("wPISYWANE WARTOĆICI DO W RAMACH NASTĘPNEGO KROKU DO KOLUMNY - is_active_jumpath - ACTIVE");
+console.log("wPISYWANE WARTOĆICI DO W RAMACH NASTĘPNEGO KROKU DO KOLUMNY - id_jump_jumpath - nextjump - " + prevjump);
+console.log("wPISYWANE WARTOĆICI DO W RAMACH NASTĘPNEGO KROKU DO KOLUMNY - id_case_jumpath - idCase - " + idCase);
+              await pool.query(
+                'INSERT INTO jump_path (id_way_jumpath, id_child_jumpath, id_parent_jumpath, is_active_jumpath, id_jump_jumpath, id_case_jumpath) VALUES ($1, $2, $3, $4, $5, $6)',
+                [idPath, idGroupPatpref, idPrefixPatpref, 'active', prevjump, idCase]
+              );
+              //END D
+
+              console.log("ZAMIANA NA NOT_ACTIVE W KROKU Z ID: idJumpath -" + idJumpath);
+                  // zmiana w poprzednim kroku statusu na not active 
+                  // jeśli sprawa przechodzi do następnego kroku grupa z poprzedniego etapu nie powinna mieć dostępu do tej sprawy
+                  await pool.query(
+                    'UPDATE jump_path SET is_active_jumpath = $1 WHERE id_jumpath = $2',
+                    ['not_active', idJumpath]
+                  );
+
+
+
+          res.redirect('/users/pathList');
+        }
+  } 
+    catch (err)
+
+    {
+        console.error(err);
+        res.status(500).json({ message: 'Wystąpił błąd serwera' });
+    }
+
+});
 
 
 app.post('/users/processEObiegSelection/:id_case', checkAuthenticated, (req, res) => {
