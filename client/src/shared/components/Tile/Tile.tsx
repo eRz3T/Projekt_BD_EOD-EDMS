@@ -39,7 +39,10 @@ const Tile = ({ title, subtitle, adornment, identifier, variant, onClick }: ITit
         <p className='text-sm'>{subtitle}</p>
       </div>
       {identifier && variant !== 'full-selected' && (
-        <div className={`absolute min-h-full px-[5px] right-0 rounded-r-md ${identifier}`}></div>
+        <div
+          className={`absolute min-h-full px-[5px] right-0 rounded-r-md`}
+          style={{ backgroundColor: identifier }}
+        ></div>
       )}
     </div>
   )

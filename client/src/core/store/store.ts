@@ -4,6 +4,8 @@ import casesSlice from './cases/casesSlice'
 import commentsSlice from './comments/commentsSlice'
 import filesSlice from './files/filesSlice'
 import usersSlice from './users/usersSlice'
+import workflowCategoriesSlice from './workflowCategories/workflowCategoriesSlice'
+import workflowSlice from './workflow/workflowSlice'
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ export const store = configureStore({
     comments: commentsSlice,
     files: filesSlice,
     users: usersSlice,
+    workflowCategories: workflowCategoriesSlice,
+    workflow: workflowSlice,
   },
 })
 

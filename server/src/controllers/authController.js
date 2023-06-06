@@ -1,4 +1,4 @@
-const User = require('../models/user')
+const UserModel = require('../models/user')
 const jwt = require('jsonwebtoken')
 const { validationResult } = require('express-validator')
 const bcrypt = require('bcryptjs')
@@ -13,7 +13,7 @@ exports.register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    const user = await User.createUser(
+    const user = await UserModel.createUser(
       uuidv4(),
       req.body.email,
       hashedPassword,
@@ -36,7 +36,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const user = await User.findByEmail(req.body.email)
+    const user = await UserModel.findByEmail(req.body.email)
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }

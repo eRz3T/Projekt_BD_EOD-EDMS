@@ -187,10 +187,13 @@ const CreateEditUser = () => {
           />
           <Select
             label={formatMessage({ id: 'users.role' })}
-            name='roles'
-            register={register('role')}
+            name='role'
+            register={register}
             error={errors?.role?.message}
-            options={[UserRoles.USER, UserRoles.ADMIN]}
+            options={[
+              { name: UserRoles.USER, value: UserRoles.USER },
+              { name: UserRoles.ADMIN, value: UserRoles.ADMIN },
+            ]}
           />
           <button
             type='submit'

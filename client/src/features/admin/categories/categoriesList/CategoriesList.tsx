@@ -1,12 +1,20 @@
-import { ICategory } from '@/pages/admin/Categories'
 import Header from '@/shared/components/Header/Header'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { ICategory } from '@/shared/types/workflows'
+import { useAppDispatch } from '@/shared/hooks/useStore'
+import {
+  setWorkflowCategoryAction,
+  setWorkflowCategoryToEdit,
+} from '@/core/store/workflowCategories/workflowCategoriesSlice'
 
 const CategoriesList = ({ data }: { data: ICategory[] }) => {
+  const dispatch = useAppDispatch()
   const [parent] = useAutoAnimate()
 
-  const handleEditCategory = () => {}
-  const handleDeleteCategory = () => {}
+  const handleEditCategory = ({ id, name, color, icon }: ICategory) => {
+    dispatch(setWorkflowCategoryAction('edit'))
+    dispatch(setWorkflowCategoryToEdit({ id, name, color, icon }))
+  }
 
   return (
     <div className='overflow-x-auto bg-white p-4 rounded-md m-4 h-full'>
@@ -40,7 +48,7 @@ const CategoriesList = ({ data }: { data: ICategory[] }) => {
                 <td className='px-6 py-4 whitespace-nowrap'>
                   <div
                     className={`ml-4 p-1 w-5 h-5 rounded-xl`}
-                    style={{ backgroundColor: item.IDColor }}
+                    style={{ backgroundColor: item.color }}
                   ></div>
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap text-xl'>
@@ -49,15 +57,9 @@ const CategoriesList = ({ data }: { data: ICategory[] }) => {
                 <td className='pl-6 pr-1 py-4 whitespace-nowrap'>
                   <span
                     className='px-2 py-1 cursor-pointer hover:text-blue-400'
-                    onClick={handleEditCategory}
+                    onClick={() => handleEditCategory({ ...item })}
                   >
                     <i className='bx bxs-edit'></i>
-                  </span>
-                  <span
-                    className='px-2 py-1 ml-2 cursor-pointer hover:text-red-400'
-                    onClick={handleDeleteCategory}
-                  >
-                    <i className='bx bx-trash'></i>
                   </span>
                 </td>
               </tr>

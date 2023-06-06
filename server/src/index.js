@@ -9,6 +9,9 @@ const casesRoutes = require('./routes/cases')
 const caseTransitionsRoutes = require('./routes/caseTransitions')
 const commentsRoutes = require('./routes/comments')
 const filesRoutes = require('./routes/files')
+const workflowRoutes = require('./routes/workflow')
+const workflowStepRoutes = require('./routes/workflowStep')
+const workflowCategoryRoutes = require('./routes/workflowCategory')
 
 require('dotenv').config()
 
@@ -32,6 +35,9 @@ app.use('/api/cases', casesRoutes)
 app.use('/api/caseTransitions', caseTransitionsRoutes)
 app.use('/api/comments', commentsRoutes)
 app.use('/api/files', filesRoutes)
+app.use('/api/workflows', workflowRoutes)
+app.use('/api/workflow-step', workflowStepRoutes)
+app.use('/api/workflow-categories', workflowCategoryRoutes)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

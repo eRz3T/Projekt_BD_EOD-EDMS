@@ -9,7 +9,12 @@ import { setObservedCases } from '@/core/store/cases/casesSlice'
 import { selectObservedCases } from '@/core/store/cases/casesSelectors'
 import { ICases } from '@/shared/types/cases'
 
-const DocumentsList = ({ data }: { data: ICases[] }) => {
+interface IDocumentsListProps {
+  data: ICases[]
+  refreshCasesList: () => void
+}
+
+const DocumentsList = ({ data, refreshCasesList }: IDocumentsListProps) => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const observedCases = useAppSelector(selectObservedCases)
@@ -31,7 +36,15 @@ const DocumentsList = ({ data }: { data: ICases[] }) => {
         <h3 className='text-xl'>
           <i className='bx bx-file mr-2'></i>Aktualne dokumenty
         </h3>
-        <p className='text-sm text-blueish'>Ilość wpisów: {data.length}</p>
+        <div className='flex flex-row gap-6 items-center'>
+          <p className='text-sm text-blueish'>Ilość wpisów: {data.length}</p>
+          <button
+            className='bg-blueish text-white text-sm px-4 py-1 rounded-md font-medium flex items-center justify-center'
+            onClick={refreshCasesList}
+          >
+            <i className='bx bx-refresh text-2xl mr-1'></i> <p>Zaaktualizuj</p>
+          </button>
+        </div>
       </div>
       <table className='min-w-full divide-y divide-gray-200 h-2'>
         <thead className='bg-white border-b-[2.5px] border-gray-200'>

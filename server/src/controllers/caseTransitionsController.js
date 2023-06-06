@@ -1,10 +1,10 @@
-const CaseTransition = require('../models/caseTransition')
+const CaseTransitionModel = require('../models/caseTransition')
 const Case = require('../models/case')
 const { v4: uuidv4 } = require('uuid')
 
 exports.createTransition = async (req, res) => {
   try {
-    const newTransition = await CaseTransition.createTransition(
+    const newTransition = await CaseTransitionModel.createTransition(
       uuidv4(),
       req.body.caseId,
       req.body.fromUserId,

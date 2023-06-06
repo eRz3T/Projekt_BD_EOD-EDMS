@@ -1,7 +1,7 @@
 export enum AdminPaths {
   WORKFLOWS = '/admin/workflows',
   USERS = '/admin/users',
-  GROUPS = '/admin/groups',
+  CASES = '/admin/cases',
   ARCHIVE = '/admin/archive',
   CATEGORIES = '/admin/categories',
 }

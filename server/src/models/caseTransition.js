@@ -12,5 +12,4 @@ module.exports = {
     const caseTransitionResult = await db.raw(sqlQuery, [uuid, caseId, fromUserId, toUserId])
     return caseTransitionResult.rows[0]
   },
-  // Pozostałe metody modelu...
 }

@@ -1,9 +1,9 @@
-const Case = require('../models/case')
+const CaseModel = require('../models/case')
 const { v4: uuidv4 } = require('uuid')
 
 exports.createCase = async (req, res) => {
   try {
-    const newCase = await Case.createCase(
+    const newCase = await CaseModel.createCase(
       uuidv4(),
       req.body.assignedUserId,
       req.body.createdBy,
@@ -18,14 +18,50 @@ exports.createCase = async (req, res) => {
   }
 }
 
-exports.getAllAssignedCases = async (req, res) => {
+exports.createCaseAndWorkflowSteps = async (req, res) => {
   try {
-    const usersCases = await Case.getAllUserCases(req.params.userId)
-    if (!usersCases) {
-      res.status(400).json({ message: 'You have no assigned cases' })
-    }
+    await CaseModel.createCaseAndWorkflowSteps(
+      uuidv4(),
+      req.body.assignedUserId,
+      req.body.createdBy,
+      req.body.title,
+      req.body.description,
+      req.body.expiresAt,
+      req.body.workflowId
+    )
+    res.status(201).json({ message: 'Case and workflow steps created successfully.' })
+  } catch (err) {
+    res.status(400).json({ error: err.message })
+    console.log(err)
+  }
+}
 
-    res.status(200).json(usersCases)
+exports.assignWorkflowStepsToCase = async (req, res) => {
+  try {
+    await CaseModel.assignWorkflowStepsToCase(req.body.caseId, req.body.workflowId)
+    res.status(200).json({ message: 'Workflow steps assigned to case successfully.' })
+  } catch (err) {
+    res.status(400).json({ error: err.message })
+    console.log(err)
+  }
+}
+
+exports.getAllCases = async (req, res) => {
+  try {
+    const cases = await CaseModel.getAllCases()
+
+    res.status(200).json(cases)
+  } catch (err) {
+    res.status(400).json({ error: err.message })
+    console.log(err)
+  }
+}
+
+exports.getAllArchivedCases = async (req, res) => {
+  try {
+    const cases = await CaseModel.getAllArchivedCases()
+
+    res.status(200).json(cases)
   } catch (err) {
     res.status(400).json({ error: err.message })
     console.log(err)

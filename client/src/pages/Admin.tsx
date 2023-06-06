@@ -27,10 +27,10 @@ const Admin = () => {
             path={AdminPaths.USERS}
           />
           <AdminTile
-            title={formatMessage({ id: 'admin.groups' })}
+            title={formatMessage({ id: 'admin.cases' })}
             subtitle={formatMessage({ id: 'admin.createEditManage' })}
-            icon={'bx-group'}
-            path={AdminPaths.GROUPS}
+            icon={'bx-file'}
+            path={AdminPaths.CASES}
           />
           <AdminTile
             title={formatMessage({ id: 'admin.archive' })}

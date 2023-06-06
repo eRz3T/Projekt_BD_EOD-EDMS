@@ -1,42 +1,27 @@
+import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/useStore'
 import { selectAuthToken } from '@/core/store/auth/authSelectors'
 
 import CreateEditCategory from '@/features/admin/categories/createEditCategory/CreateEditCategory'
 import CategoriesList from '@/features/admin/categories/categoriesList/CategoriesList'
-
-export interface ICategory {
-  name: string
-  IDColor: string
-  icon: string
-}
+import { getAllWorkflowCategories } from '@/core/store/workflowCategories/workflowCategoriesSlice'
+import {
+  selectAllWorkflowCategories,
+  selectWorkflowCategoriesStatus,
+} from '@/core/store/workflowCategories/workflowCategoriesSeclectors'
 
 const Categories = () => {
   const dispatch = useAppDispatch()
 
   const token = useAppSelector(selectAuthToken)
+  const categoryStatus = useAppSelector(selectWorkflowCategoriesStatus)
+  const categories = useAppSelector(selectAllWorkflowCategories)
 
-  const categories: ICategory[] = [
-    {
-      name: 'Wnioski',
-      IDColor: '#e67e22',
-      icon: 'bxs-school',
-    },
-    {
-      name: 'Plany',
-      IDColor: '#2980b9',
-      icon: 'bxs-save',
-    },
-    {
-      name: 'Instrukcje',
-      IDColor: '#27ae60',
-      icon: 'bx-list-ul',
-    },
-    {
-      name: 'Podania',
-      IDColor: '#9b59b6',
-      icon: 'bx-box',
-    },
-  ]
+  useEffect(() => {
+    if (!!token && categoryStatus === 'idle') {
+      dispatch(getAllWorkflowCategories(token))
+    }
+  }, [dispatch, token, categoryStatus])
 
   return (
     <main className='bg-light min-h-[calc(100vh-76px)]'>

@@ -1,10 +1,10 @@
-const File = require('../models/file')
+const FileModel = require('../models/file')
 const path = require('path')
 const { v4: uuidv4 } = require('uuid')
 
 exports.uploadFile = async (req, res) => {
   try {
-    const newFile = await File.createFile(
+    const newFile = await FileModel.createFile(
       uuidv4(),
       req.body.caseId,
       req.body.userId,
@@ -21,7 +21,7 @@ exports.downloadFile = async (req, res) => {
   try {
     const uploadDir = path.join(__dirname, '..', 'uploads')
     const fileId = req.params.fileId
-    const file = await File.getFileById(fileId)
+    const file = await FileModel.getFileById(fileId)
 
     if (!file) {
       return res.status(404).json({ message: 'File not found' })
@@ -42,7 +42,7 @@ exports.downloadFile = async (req, res) => {
 exports.getFilesByCaseId = async (req, res) => {
   try {
     const caseId = req.params.caseId
-    const files = await File.getFilesByCaseId(caseId)
+    const files = await FileModel.getFilesByCaseId(caseId)
 
     if (!files) {
       return res.status(404).json({ message: 'No files found for this case' })
