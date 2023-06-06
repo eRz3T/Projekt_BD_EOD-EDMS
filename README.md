@@ -2,7 +2,7 @@
 
 ## main - production branch
 
-### :rocket: Presentation video (youtube)
+### :movie_camera: Presentation video (youtube)
 [![eOBIEG - presentation](./prezentacja.png)](https://youtu.be/BURz2i5YcvI)
 
 ### :rocket: Installation steps
