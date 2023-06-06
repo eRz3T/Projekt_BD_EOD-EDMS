@@ -1,0 +1,14 @@
+# Użyj oficjalnego obrazu Node.js jako bazowego obrazu
+
+
+# Utwórz katalog w kontenerze, w którym znajdą się pliki aplikacji
+WORKDIR /app
+
+# Skopiuj pliki z katalogu lokalnego do katalogu w kontenerze
+COPY . /app
+
+# Zainstaluj zależności aplikacji
+RUN npm install
+
+# Uruchom aplikację
+CMD ["npm", "start"]

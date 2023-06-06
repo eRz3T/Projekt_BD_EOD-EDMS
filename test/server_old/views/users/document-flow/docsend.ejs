@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Dokumenty</title>
+</head>
+
+<body>
+  <tytul>eObieg</tytul><br>
+
+<tablenav>
+  <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="color: white;">Wyloguj użytkownika</button>
+        </form>   
+        <td><a href="/users/doclists">Lista dokumentów</a></td>
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+    </tbody>
+</tablenav>
+
+  
+
+  
+    <srodek>
+      <form method="POST" action="/users/docsend">
+      <table>
+        <thead>
+          <tr>
+            <th>Wybierz adres email:</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+                <td><select name="email" id="email">
+                  <% emails.forEach((email) => { %>
+                    <option value="<%= email %>"><%= email %></option>
+                  <% }); %>
+                </select></td>
+                <td><button type="submit">Wyślij</button></td>        
+           </tr>  
+        </tbody>
+      </table>
+    </form>
+    
+      </srodek>
+</body>
+</html>

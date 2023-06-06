@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Dokument</title>
+</head>
+
+<body>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+  <tablenav>
+    <tbody>
+        <tr>
+          <form action="/wylogowanie" method="POST">
+            <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+          </form>   
+        <td><a href="/users/doclists">Lista dokumentów</a></td>
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+       <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
+    </tbody>
+</tablenav>
+
+<srodek>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tytuł</th>
+        <th>Notatka</th>
+        <th>Data dodania</th>
+        <th> </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+            <td><%= document.id_document %></td>
+            <td><%= document.title_document %></td>
+            <td><button onclick="alert('<%= document.note_document %>')">Wyświetl</button></td>
+            <td><button onclick="alert('<%= document.date_document %>')">Wyświetl</button></td>      
+       </tr>  
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID pliku</th>
+        <th>Nazwa pliku</th>
+        <th> </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+            <td><%= document.id_file_document %></td> 
+            <td><%= document.name_file %></td>  
+            <td><a href="/users/download/<%= document.id_file_document %>"><button style="color: white;">Pobierz</button></a></td>        
+       </tr>  
+      </tr>
+    </tbody>
+  </table>
+
+  </srodek>
+</body>
+</html>

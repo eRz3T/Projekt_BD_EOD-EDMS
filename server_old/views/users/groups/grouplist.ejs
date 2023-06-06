@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/stylesheets/master.css">
+    <title>eObieg - Dodawanie użytkownika</title>
+  </head>
+
+  <body>
+    <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+    <tablenav>
+      <tbody>
+        <tr>
+          <form action="/wylogowanie" method="POST">
+            <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+          </form>    
+          <a href="/users/grupy">Stwórz grupę</a>  
+          <a href="/users/userPanel">Panel użytkownika</a>  
+        </tr>
+        <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr> 
+      </tbody>
+    </tablenav>
+
+    <srodek>
+      <h2>Twoje grupy</h2>
+      <% if (groups.length > 0) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Nazwa grupy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% groups.forEach(group => { %>
+              <tr>
+                  <td><%= group.name_group %></td>
+                  <td><button><a href="/groupedit/<%= group.id_group %>">Edytuj</a></button></td> 
+              </tr>
+              <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>Nie masz własnych grup.</p>
+      <% } %>
+
+      <h2>Grupy, do których należysz</h2>
+      <% if (userGroups.length > 0) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Nazwa grupy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% userGroups.forEach(group => { %>
+              <tr>
+                <td><%= group.name_group %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>Nie należysz do żadnych grup.</p>
+      <% } %>
+
+    </srodek>
+  </body>
+</html>

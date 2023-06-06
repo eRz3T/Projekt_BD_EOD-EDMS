@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/stylesheets/master.css">
+    <title>eObieg - Panel Użytkownika</title>
+</head>
+
+<body>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+<tablenav>
+  <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+        </form>     
+      </tr> 
+      <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
+    </tbody>
+</tablenav>
+
+  <srodek>
+
+
+        <table>
+          <thead>
+            <tr>
+
+              <th>Sprawy</th>
+              <th> </th>
+              <th>Ścieżki</th>
+            </tr>
+          </thead>
+            <tbody>
+            <tr>
+
+                        <td><a href="/users/caselist"><button>Wyświetl</button></a></td>
+                        <td><img src="/images/folder.png" alt="Folder" style="height: 50px; width: 50px;"></td>  
+                          <td><a href="/users/pathList"><button>Wyświetl</button></a></td>                 
+            </tr>  
+          </tbody>
+        </table>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Pliki</th>
+              <th> </th>
+              <th>Dokumenty</th>
+            </tr>
+          </thead>
+            <tbody>
+            <tr>
+                  <td><a href="/users/filelist"><button>Wyświetl</button></a></td>
+                  <td><img src="/images/file.png" alt="File" style="height: 50px; width: 50px;"></td> 
+                    <td><a href="/users/doclists"><button>Wyświetl</button></a></td>             
+            </tr>  
+          </tbody>
+        </table>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Użytkownicy</th>
+              <th> </th>
+              <th>Grupy</th>
+            </tr>
+          </thead>
+            <tbody>
+            <tr>
+                      <td><a href="/users/userlist"><button>Wyświetl</button></a></td>
+                      <td><img src="/images/group.png" alt="Users" style="height: 50px; width: 50px;"></td> 
+                        <td><a href="/groups/grouplist"><button>Wyświetl</button></a></td>                   
+            </tr>  
+          </tbody>
+        </table>
+
+        <table>
+          <h3>Twoje dane</h3>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Imię i nazwisko</th>
+              <th>Email</th>
+              <th>Uprawnienia</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <td><%= users.id %></td> 
+                <td><%= users.name %> <%= users.surname %></td>
+                <td><%= users.email %></td>
+                <td><%= users.class %></td> 
+                <td><img src="/images/user.png" alt="Logo" style="height: 50px; width: 50px;"></td>               
+              </tr> 
+               
+          </tbody>
+        </table>
+        
+
+
+        <ul style="margin-top: 30px;">
+          <% if(messages.success_msg) { %> 
+            <li><%= messages.success_msg %></li> 
+          <% } else if (messages.error_msg) { %>
+            <li><%= messages.error_msg %></li> 
+          <% } %> 
+        </ul>
+
+  </srodek>
+</body>
+</html>

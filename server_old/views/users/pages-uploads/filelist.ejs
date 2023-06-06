@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Lista plików</title>
+</head>
+
+<body>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+  <tablenav>
+    <tbody>
+        <tr>
+          <form action="/wylogowanie" method="POST">
+            <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+          </form>   
+        <a href="/users/uploads">Prześlij plik</a>
+        <a href="/users/userPanel">Panel użytkownika</a>  
+       </tr> 
+       <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr>
+    </tbody>
+</tablenav>
+
+  <srodek>
+
+
+<table>
+  <h3>Pliki przypisane do twego konta</h3>
+  <tbody>
+    <% files.forEach(function(file) { %>
+    <tr>
+          <td><%= file.name_file %></td>
+          <td><a href="/users/download/<%= file.hashed_name_file %>"><button style="color: white;">Pobierz</button></a></td>
+          <td><form action="/users/delete/<%= file.hashed_name_file %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć ten plik?')">
+            <button type="submit" style="color: white;">Usuń</button></form></td>          
+     </tr>  
+    <% }); %>
+  </tbody>
+</table>
+
+
+</srodek>
+</body>
+</html>

@@ -1,22 +1,30 @@
 import { useState } from 'react'
 import logo from '@/assets/images/eobieg_logo_x64.png'
+import avatarPlaceholder from '@/assets/images/avatar_placeholder.jpg'
 import { navItems } from './Navbar.utils.js'
 import { useLocation } from 'react-router-dom'
 import IconWithBadge from './IconWithBadge'
 import NavLinks from './NavLinks'
 import { useAuth } from '@/providers/AuthProvider.js'
+import { logout } from '@/core/store/auth/authSlice.js'
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/useStore.js'
+import { selectUser } from '@/core/store/auth/authSelectors.js'
+import { Link } from 'react-router-dom'
+import { ClientRoutes } from '@/core/router/Routes.enum.js'
 
 const Navbar = () => {
   const location = useLocation()
+  const dispatch = useAppDispatch()
   const { isAuthenticated } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const user = useAppSelector(selectUser)
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
   }
 
   return (
-    <menu className='sticky top-0 left-0 bg-white'>
+    <menu className='sticky top-0 left-0 bg-white z-50 shadow-md'>
       <div className='py-3 px-2'>
         <div className='container mx-auto'>
           <div className='flex justify-between items-center'>
@@ -28,6 +36,18 @@ const Navbar = () => {
               {isAuthenticated && (
                 <nav className='hidden lg:flex space-x-6 pl-8 text-xl'>
                   <NavLinks navItems={navItems} pathname={location.pathname} />
+                  {user?.role === 'admin' && (
+                    <Link
+                      to={ClientRoutes.ADMIN}
+                      className={`${
+                        location.pathname === ClientRoutes.ADMIN
+                          ? 'text-slate-900'
+                          : 'text-slate-500'
+                      } font-medium hover:text-slate-400 transition-colors`}
+                    >
+                      Admin
+                    </Link>
+                  )}
                 </nav>
               )}
             </div>
@@ -44,20 +64,19 @@ const Navbar = () => {
             {isAuthenticated && (
               <div className='hidden lg:flex items-center space-x-4'>
                 <div className='flex items-center space-x-4'>
-                  <IconWithBadge iconClass='chat' number={9} />
-                  <IconWithBadge iconClass='bell' number={5} />
+                  {/* <IconWithBadge iconClass='chat' number={9} />
+                  <IconWithBadge iconClass='bell' number={5} /> */}
+                  <button onClick={() => dispatch(logout())}>
+                    <IconWithBadge iconClass='log-out' />
+                  </button>
                   <div className='flex items-center space-x-2 pl-2'>
                     <div className='relative'>
-                      <img
-                        src='https://boredhumans.b-cdn.net/faces2/766.jpg'
-                        alt='User'
-                        className='h-12 w-12 rounded-full'
-                      />
+                      <img src={avatarPlaceholder} alt='User' className='h-12 w-12 rounded-full' />
                       <span className='absolute right-0 bottom-0 rounded-full w-3 h-3 bg-green-500 border-solid border border-white'></span>
                     </div>
                     <div className='pl-2'>
                       <span className='block font-semibold text-lg text-slate-900'>
-                        Olga Kornelska
+                        {user?.username}
                       </span>
                       <span className='text-sm text-slate-600'>Dział prawny</span>
                     </div>

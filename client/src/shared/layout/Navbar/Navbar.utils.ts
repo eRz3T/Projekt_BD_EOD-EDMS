@@ -17,19 +17,4 @@ export const navItems: INavItem[] = [
     title: 'Zadania',
     destinationRoute: '/tasks',
   },
-  {
-    id: 3,
-    title: 'Dokumenty',
-    destinationRoute: '/documents',
-  },
-  {
-    id: 4,
-    title: 'Kontakty',
-    destinationRoute: '/contacts',
-  },
-  {
-    id: 5,
-    title: 'Admin',
-    destinationRoute: '/admin',
-  },
 ]

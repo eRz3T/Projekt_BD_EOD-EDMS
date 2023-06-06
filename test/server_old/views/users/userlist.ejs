@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/stylesheets/master.css">
+    <title>eObieg - Panel Użytkownika</title>
+</head>
+
+<body>
+  <tytul>eObieg</tytul><br>
+
+<tablenav>
+  <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="color: white;">Wyloguj użytkownika</button>
+        </form>
+        <a href="rejestracja">Dodaj nowego użytkownika</a> 
+        <a href="/users/userPanel">Powrót do panelu użytkownika</a> 
+       </tr> 
+    </tbody>
+</tablenav>
+
+<srodek>
+
+
+   <ul>
+      <% if(messages.success_msg) { %> 
+          <li><%= messages.success_msg %></li> 
+     <% }  %> 
+    </ul>
+
+    <ul>
+      <% if(messages.error) { %> 
+          <li><%= messages.success_msg %></li> 
+     <% }  %> 
+    </ul>
+
+   <table>
+      <h3>Aktywni użytkownicy znajdujący się w systemie</h3>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Imię i nazwisko</th>
+          <th>Data email</th>
+          <th>Uprawnienia</th>
+          <th> </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(users => { %>
+        <tr>
+              <td><%= index = index + 1 %></td>
+              <td><%= users.name %> <%= users.surname %></td>
+              <td><%= users.email %></td>
+              <td><%= users.class %></td>           
+              <td>
+               <form action="/users/delete_user/<%= users.id %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz zarchiwizować użytkownika?')">
+                 <button type="submit" style="color: white;">Archiwizuj</button>
+               </form>
+             </td>          
+         </tr>  
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <% if (not_users.length === 0) { %>
+      <p></p>
+    <% } else { %>
+    <table>
+      <h3>Nieaktywni użytkownicy znajdujący się w systemie</h3>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Imię i nazwisko</th>
+          <th>Data email</th>
+          <th>Uprawnienia</th>
+          <th> </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% not_users.forEach(not_users => { %>
+        <tr>
+              <td><%= indexB = indexB + 1 %></td>
+              <td><%= not_users.name %> <%= not_users.surname %></td>
+              <td><%= not_users.email %></td>
+              <td><%= not_users.class %></td>           
+              <td>
+               <form action="/users/UNDOdelete_user/<%= not_users.id %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz przywrócić użytkownika?')">
+                 <button type="submit" style="color: white;">Przywróć</button>
+               </form>
+             </td>          
+         </tr>  
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <% } %>
+</srodek>
+
+</body>
+</html>

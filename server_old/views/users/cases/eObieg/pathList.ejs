@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Lista ścieżek</title>
+</head>
+
+<body>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+  <tablenav>
+    <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+        </form>    
+        <a href="/users/createPath">Stwórz ścieżkę sprawy</a> 
+        <a href="/users/userPanel">Panel użytkownika</a>  
+      </tr>
+      <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr> 
+    </tbody>
+  </tablenav>
+
+  <srodek>
+    <h2>Lista ścieżek</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nazwa ścieżki</th>
+          <th>Opis ścieżki</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <% paths.forEach(path => { %>
+          <tr>
+            <td><%= path.name_path %></td>
+            <td><%= path.opis_path %></td>
+            <td>
+                <a href="/users/pathView/<%= path.id_path %>"><button style="color: white;">Podgląd</button></a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+
+    <table>
+      <h3>Wolne sprawy w obiegu</h3>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Tytuł</th>
+          <th>Ścieżka</th>
+          <th>Etap</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let i = 0; i < FREEcases.length; i++) { %>
+          <tr>
+            <td><%= FREEcases[i].id_case_jumpath %></td>
+            <td><%= FREEcases[i].title_case %></td>
+            <td><%= FREEcases[i].name_path %></td>
+            <td><%= FREEcases[i].id_jump_jumpath %></td>
+  
+                      
+            <td>
+              <form action="/eObieg/own/<%= FREEcases[0].id_jumpath %>" method="POST">
+                <button type="submit" style="font-weight: bolder;">Przejmij sprawę</button>
+              </form> 
+            </td>
+          
+  
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+
+
+
+  <table>
+    <h3>Twoje sprawy w obiegu</h3>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Tytuł</th>
+        <th>Ścieżka</th>
+        <th>Etap</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (let i = 0; i < cases.length; i++) { %>
+        <tr>
+          <td><%= cases[i].id_case_jumpath %></td>
+          <td><%= cases[i].title_case %></td>
+          <td><%= cases[i].name_path %></td>
+          <td><%= cases[i].id_jump_jumpath %></td>
+
+                    
+          <td>
+            <a href="/users/caseVieweObieg/<%= cases[i].id_case_jumpath %>/<%= cases[i].id_jumpath %>"><button style="color: white;">Podgląd Sprawy</button></a>
+        </td>
+        
+
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+
+  </srodek>
+
+</body>
+</html>
+
+
+
+

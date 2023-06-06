@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/stylesheets/master.css">
+  <title>eObieg - Wybór ścieżki</title>
+</head>
+
+<body>
+  <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+  <tablenav>
+    <tbody>
+      <tr>
+        <form action="/wylogowanie" method="POST">
+          <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+        </form>    
+        <td></td>
+        <a href="/users/caseform">Dodaj nową sprawę</a>
+        <a href="/users/userPanel">Panel użytkownika</a>  
+      </tr> 
+      <tr>
+        <td colspan="4"><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></td>
+      </tr>
+    </tbody>
+  </tablenav>
+
+  <srodek>
+    <form action="/users/processEObiegSelection/<%= id_case%>" method="POST">
+      <table>
+        <thead>
+          <tr>
+            <th>Wybierz ścieżkę:</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+                <td><select name="selectedPath">
+                  <% for (let i = 0; i < paths.length; i++) { %>
+                    <option value="<%= paths[i].id_path %>"><%= paths[i].name_path %></option>
+                  <% } %>
+                </select></td>
+                <td><button type="submit">Wybierz</button></td>        
+           </tr>  
+        </tbody>
+      </table>
+    </form>
+  </srodek>
+</body>
+</html>
+
+

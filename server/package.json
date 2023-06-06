@@ -6,7 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "knex migrate:latest && node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "rollback": "npx knex migrate:rollback",
+    "migrations": "npx knex migrate:latest",
+    "seeders": "npx knex seed:run",
+    "seeder:users": "npx knex seed:run --specific=01_insert_users.js"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +23,8 @@
     "express-xss-sanitizer": "^1.1.6",
     "jsonwebtoken": "^9.0.0",
     "knex": "^2.4.2",
-    "pg": "^8.10.0"
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.10.0",
+    "uuid": "^9.0.0"
   }
 }

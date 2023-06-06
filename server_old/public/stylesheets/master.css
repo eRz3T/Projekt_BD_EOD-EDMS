@@ -1,99 +1,178 @@
+
+
+
+
+  /* Style dla całej strony */
 body {
-    background-image: url('/images/tlo.jpg');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-    color: white;
+    margin: 0;
+    padding: 0;
     font-family: 'Poppins', sans-serif;
-
-
-  }
-
-  srodek{
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-  }
-
-content{
-    color: white;
-    animation: transitionIN 0.8s;
-    }
-
-@keyframes transitionIN {
-    from {
-        opacity: 0;
-        transform: rotateX('-10deg');
-    }
-
-    to {
-        opacity: 1;
-        transform: rotateX('0');
-    }
-    
-}
-
-a{color: white;}
-
-button,input[type="submit"] {
-    background-color: transparent;
-    border: 2px solid white;
-    padding: 5px 5px;
+    font-weight: 400;
     font-size: 16px;
-    font-weight: bold;
-    border-radius: 10px;
-    margin-right: 10px;
-    margin-top: 10px;
-    margin-left: 10px;
-    margin-bottom: 10px;
+    color: #333;
+    background-color: #D4D4D4;
+  }
+
+  input,select {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease-in-out;
   }
   
+ input,select:focus {
+    outline: none;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.4);
+  }
 
-linki{
-    font-size: x-large;
-    color: white;
-    width: 30%;
-}
 
-tytul{
-    margin-top: 40px;
-    font-size: 48px;
-    color: white;
-}
+  textarea {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease-in-out;
+  }
 
-nawigacja {
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-
-}
-
-info{
+  textarea:focus {
+    outline: none;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Style dla tytułu strony */
+  tytul {
     display: block;
-    width: 900px;
-}
-
-p{
+    margin: 20px;
+    font-size: 36px;
+    font-weight: 600;
     text-align: center;
+  }
+  
+  /* Style dla nawigacji */
+  tablenav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Style dla komórki zalogowanego użytkownika */
+  tablenav tr:first-child {
+    font-weight: 600;
+  }
+  
+  /* Style dla przycisku wylogowania */
+  tablenav button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  tablenav button:hover {
+    background-color: #555;
+  }
+  
+  /* Style dla sekcji środkowej */
+  srodek {
+    display: flex;
     justify-content: center;
     align-items: center;
-}
+    flex-direction: column;
+    padding: 50px;
+  }
+  
+  /* Style dla listy komunikatów */
+  srodek ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  /* Style dla komunikatu sukcesu */
+  ul li:nth-child(1) {
+    color: black;
+  }
+  
+  
+  
+  /* Style dla logo */
+  .logo-img {
+    margin-top: 20px;
+    margin-bottom: 50px;
+  }
+  
+  /* Style dla tabeli */
+  table {
+    margin-top: 10px;
+    width: 100%;
+    max-width: 800px;
+    background-color: #fff;
+    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.2);
+    border-collapse: collapse;
+    border-radius: 15px;
+  }
+  
+  /* Style dla nagłówka tabeli */
+  table h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  
+  
+  
+  /* Style dla komórek tabeli */
+  table td {
+    padding: 20px;
+    text-align: center;
+  }
 
-input[type="text"],
-input[type="name"],
-input[type="surname"],
-input[type="email"],
-input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 5px;
-  border: none;
-  color: purple;
-  font-size: large;
-  font-weight: bold;
-  background-color: white;}
+ 
+  table th {
+    padding-top: 20px;
+    padding-bottom: 10px;
+    text-align: center;
+  }
+  
+  
+  /* Style dla przycisków tabeli */
+  table button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  table button:hover {
+    background-color: #555;
+  }
+  
+  /* Style dla odnośników tabeli */
+  table a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  button{
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }

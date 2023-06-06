@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/stylesheets/master.css">
+    <title>eObieg - Edycja grupy</title>
+  </head>
+
+  <body>
+    <tytul>eObieg <span style="font-family: 'Times New Roman', Times, serif; font-style: italic; color: darkmagenta; font-weight: lighter;">alfa</span></tytul>
+
+    <tablenav>
+      <tbody>
+        <tr>
+          <form action="/wylogowanie" method="POST">
+            <button type="submit" style="font-weight: bolder;">Wyloguj użytkownika</button>
+          </form>    
+          <a href="/groups/grouplist">Grupy</a>  
+          <a href="/users/userPanel">Panel użytkownika</a>  
+        </tr>
+        <tr><img src="/images/logo.png" alt="Logo" style="height: 50px; width: 50px;"></tr> 
+      </tbody>
+    </tablenav>
+
+
+    <srodek>
+      
+        <table>
+          <thead>
+            <tr>
+              <th>Nazwa grupy</th>
+              <th> </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+               <form action="/groupUpdateName/<%= idgroup %>/" method="POST">
+              <td><input type="text" name="groupName" value="<%= groupName %>" required></td>
+              <td><button type="submit">Zmień nazwę</button></td>
+               </form>
+            </tr>
+          </tbody>
+          <thead>
+            <tr>
+              <th>Członkowie</th>
+              <th><a href="/users/nowiczlonkowie/<%= idgroup %>/"><button style="font-weight: bold; color: lightblue;">Dodaj członka</button></a></th>
+            </tr>
+          </thead>
+          <tbody>
+                  <% if (members.length > 0) { %>
+                    
+                      <% members.forEach(members => { %>
+                        <tr>
+                        <td><%= members.email %></td>
+                        <td><form action="/groupUSRdelete/<%= members.id %>/" method="POST">
+                           <input type="hidden" name="groupId" value="<%= idgroup %>">
+                           <button type="submit" style="font-weight: bold; color: magenta;">Usuń członka</button>
+                         </form>
+                         </td>
+                        </tr>
+                      <% }) %>
+                     
+                  <% } else { %>
+                     <tr>
+                     <td>Brak członków grupy.</td>
+                     </tr>
+                  <% } %>
+               
+          </tbody>
+        </table>
+
+
+        <ul style="margin-top: 30px;">
+          <% if(messages.success_msg) { %> 
+            <li><%= messages.success_msg %></li> 
+          <% } else if (messages.error_msg) { %>
+            <li><%= messages.error_msg %></li> 
+          <% } %> 
+        </ul>
+        
+    </srodek>
+  </body>
+</html>
