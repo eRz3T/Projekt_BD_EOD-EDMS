@@ -1,6 +1,9 @@
-# eOBIEG - Electronic Document Management System [![Version - 1.0.1](https://img.shields.io/badge/Version-1.0.1-2ea44f)](https://)
+# eOBIEG - Electronic Document Management System [![Version - 1.0.2](https://img.shields.io/badge/Version-1.0.2-2ea44f)](https://)
 
 ## main - production branch
+
+### :rocket: Presentation viedo
+[![eOBIEG - presentation](./prezentacja.png)](https://youtu.be/BURz2i5YcvI)
 
 ### :rocket: Installation steps
 
@@ -13,12 +16,16 @@
    `npm run dev`
 5. Run client using command:
    `npm run dev`
-
+   
 ### :building_construction: Geting started using docker
-
 1. Clone repository
-2. Run `docker-compose up --build` command to build & run docker containers
-3. Applications should open on the following ports: 
+2. Build containers:
+   `docker-compose up --build`
+3. Run migrations for DB (go to ./server folder):
+   `npm run migrations`
+4. Run seeders (if needed):
+   `npm run seeders`
+5. Applications should open on the following ports: 
 
 |Database                |WEB-Client                          |API-Server                         |
 |----------------|-------------------------------|-----------------------------|
