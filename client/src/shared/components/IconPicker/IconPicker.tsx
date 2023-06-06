@@ -21,7 +21,7 @@ export const IconPicker = ({ selectedIcon, onIconSelect, label }: IColorPickerPr
         onClick={toggleOpen}
         className='relative w-full border-solid border-2 rounded-md px-3 py-2 border-gray-300'
       >
-        <div className='text-xl bg-light rounded-md w-16 text-center'>
+        <div className='text-xl bg-light rounded-md w-20 text-center cursor-pointer'>
           <i className={`bx ${selectedIcon}`}></i>
         </div>
         {isOpen && (

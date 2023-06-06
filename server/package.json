@@ -7,8 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "knex migrate:latest && node src/index.js",
     "dev": "nodemon src/index.js",
+    "rollback": "npx knex migrate:rollback",
     "migrations": "npx knex migrate:latest",
-    "seeder": "npx knex seed:run"
+    "seeders": "npx knex seed:run",
+    "seeder:users": "npx knex seed:run --specific=01_insert_users.js"
   },
   "author": "",
   "license": "ISC",

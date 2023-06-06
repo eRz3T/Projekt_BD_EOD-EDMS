@@ -9,12 +9,13 @@ import { AdminPaths } from '@/features/admin/adminTile/AdminTile.types'
 import NotFound from '@/pages/NotFound'
 import Dashboard from '@/pages/Dashboard'
 import Login from '@/pages/Login'
-import Documents from '@/pages/Documents'
 import Case from '@/pages/Case'
 import Admin from '@/pages/Admin'
 import Users from '@/pages/admin/Users'
 import Workflows from '@/pages/admin/Workflows'
 import Categories from '@/pages/admin/Categories'
+import Cases from '@/pages/admin/Cases'
+import Archive from '@/pages/admin/Archive'
 
 const Router = () => {
   const { isAuthenticated } = useAuth()
@@ -26,12 +27,13 @@ const Router = () => {
         <Route element={<ProtectedRoutes />}>
           <Route element={<Dashboard />} path={ClientRoutes.HOME} />
           <Route element={<Dashboard />} path={ClientRoutes.DASHBOARD} />
-          <Route element={<Documents />} path={ClientRoutes.DOCUMENTS} />
           <Route element={<Case />} path={ClientRoutes.CASE} />
           <Route element={<Admin />} path={ClientRoutes.ADMIN} />
           <Route element={<Users />} path={AdminPaths.USERS} />
           <Route element={<Workflows />} path={AdminPaths.WORKFLOWS} />
           <Route element={<Categories />} path={AdminPaths.CATEGORIES} />
+          <Route element={<Cases />} path={AdminPaths.CASES} />
+          <Route element={<Archive />} path={AdminPaths.ARCHIVE} />
         </Route>
         <Route
           element={isAuthenticated ? <Navigate to={ClientRoutes.DASHBOARD} /> : <Login />}

@@ -2,6 +2,7 @@ import moment from 'moment'
 import { ICasePostProps } from './CasePost.types'
 import File from '@/shared/components/File/File'
 import { handleFileDownload } from '@/shared/utilities/downloadFile'
+import avatarPlaceholder from '@/assets/images/avatar_placeholder.jpg'
 
 const CasePost = ({ username, createdAt, description, filename, fileId }: ICasePostProps) => {
   return (
@@ -11,8 +12,8 @@ const CasePost = ({ username, createdAt, description, filename, fileId }: ICaseP
         <div className='flex-[0.27] flex items-center space-x-2 pl-2 self-start'>
           <div className='relative'>
             <img
-              src='https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg'
-              alt='User'
+              src={avatarPlaceholder}
+              alt='User avatar placeholder'
               className='h-12 w-12 rounded-full'
             />
             <span className='absolute right-0 bottom-0 rounded-full w-3 h-3 bg-green-500 border-solid border border-white'></span>
@@ -25,7 +26,9 @@ const CasePost = ({ username, createdAt, description, filename, fileId }: ICaseP
 
         <div className='flex-[0.73]'>
           <p>Data utworzenia: {moment(createdAt).format('DD.MM.YYYY')}r.</p>
-          <p className='text-secondary my-2'>{description}</p>
+          <p className='text-secondary my-2'>
+            {description && description.split('\n').map((item, i) => <div key={i}>{item}</div>)}
+          </p>
           {filename && fileId && (
             <>
               <p>Dodany plik:</p>

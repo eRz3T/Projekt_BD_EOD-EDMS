@@ -1,11 +1,11 @@
-const Comment = require('../models/comment')
-const File = require('../models/file')
+const CommentModel = require('../models/comment')
+const FileModel = require('../models/file')
 const { v4: uuidv4 } = require('uuid')
 
 exports.createComment = async (req, res) => {
   try {
     const file = req.file
-    const newComment = await Comment.createComment(
+    const newComment = await CommentModel.createComment(
       uuidv4(),
       req.body.caseId,
       req.body.userId,
@@ -13,13 +13,13 @@ exports.createComment = async (req, res) => {
     )
 
     if (file) {
-      const uploadedFile = await File.uploadFile(
+      const uploadedFile = await FileModel.uploadFile(
         uuidv4(),
         req.body.caseId,
         req.body.userId,
         file.filename
       )
-      await Comment.linkCommentToFile(newComment.id, uploadedFile.id)
+      await CommentModel.linkCommentToFile(newComment.id, uploadedFile.id)
     }
 
     res.status(201).json({ message: `Comment added successfuly`, newComment })
@@ -30,7 +30,7 @@ exports.createComment = async (req, res) => {
 
 exports.getCaseComments = async (req, res) => {
   try {
-    const caseComments = await Comment.getCaseComments(req.params.caseId)
+    const caseComments = await CommentModel.getCaseComments(req.params.caseId)
 
     res.status(200).json(caseComments)
   } catch (err) {

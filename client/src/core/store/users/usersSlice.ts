@@ -43,30 +43,6 @@ export const usersSlice = createSlice({
   },
 })
 
-// export const createNewComment = createAsyncThunk(
-//   'createNewComment',
-//   async (
-//     comment: { caseId: string; userId: string; content: string; file?: File },
-//     { rejectWithValue }
-//   ) => {
-//     try {
-//       const response = await postNewComment(
-//         comment.caseId,
-//         comment.userId,
-//         comment.content,
-//         comment.file
-//       )
-//       return response
-//     } catch (error) {
-//       if (error instanceof Error) {
-//         return rejectWithValue(error.message)
-//       } else {
-//         return rejectWithValue('Posting new comment failed, unknown error')
-//       }
-//     }
-//   }
-// )
-
 export const getAllUsers = createAsyncThunk(
   'getAllUsers',
   async (token: string, { rejectWithValue }) => {
